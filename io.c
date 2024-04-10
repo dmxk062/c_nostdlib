@@ -1,4 +1,5 @@
 #include "io.h"
+#include "string.h"
 #include "syscall.h"
 
 i64 read(int fd, void* buffer, u64 count) {
@@ -35,3 +36,7 @@ i64 close(u64 fd) {
             0, 0, 0, 0);
 }
 
+void puts(const char* string) {
+    u64 len = strlen(string);
+    write(STDOUT, string, len);
+}

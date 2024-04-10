@@ -4,7 +4,7 @@ AS = gcc
 CCFLAGS = -nostdlib -fno-unwind-tables -fno-asynchronous-unwind-tables -Wno-builtin-declaration-mismatch
 ASFLAGS = -s
 
-SRC_C = syscall.c main.c io.c
+SRC_C = syscall.c main.c io.c string.c
 OBJ_C = $(SRC_C:.c=.o)
 
 SRC_S = _start.S
