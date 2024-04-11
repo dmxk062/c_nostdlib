@@ -1,4 +1,4 @@
-#include "../../include/types.h"
+#include "../include/types.h"
 
 #define STDIN  0
 #define STDOUT 1

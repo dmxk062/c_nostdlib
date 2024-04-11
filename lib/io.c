@@ -1,6 +1,6 @@
-#include "include/io.h"
-#include "include/string.h"
-#include "include/syscall.h"
+#include "io.h"
+#include "string.h"
+#include "syscall.h"
 
 i64 read(int fd, void* buffer, u64 count) {
     return (i64)

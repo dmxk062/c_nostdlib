@@ -1,4 +1,4 @@
-#include "../../include/types.h"
+#include "../include/types.h"
 
 #define SYS_READ 0
 #define SYS_WRITE 1
