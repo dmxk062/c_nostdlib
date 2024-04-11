@@ -1,10 +1,17 @@
 #include "alloc.h"
 #include "../lib/io.h"
 
+/*
+ * Memory Allocator
+ * Based on a linked list design that uses mmap() 
+ */
 
+// the start of our linked list
 mem_chunk* global_head = NULL;
+// whatever element is at the end
 mem_chunk* global_last = NULL;
 
+// return the first chunk that is large enough
 mem_chunk* mem_chunk_find(mem_chunk* head, u64 size) {
     mem_chunk* ptr = head;
     while (ptr != NULL) {
@@ -18,6 +25,7 @@ mem_chunk* mem_chunk_find(mem_chunk* head, u64 size) {
 }
 
 
+// get a new page from linux
 mem_chunk* alloc_new_page(u64 size) {
     void* memspace = mmap(0,
             size,
@@ -32,6 +40,8 @@ mem_chunk* alloc_new_page(u64 size) {
 
     return ptr;
 }
+
+// get the next fitting page size that is larger than what we are given
 
 u64 get_page_size(u64 size) {
     return ((size + MEM_PAGE_SIZE - 1) / MEM_PAGE_SIZE) * MEM_PAGE_SIZE;
@@ -56,23 +66,41 @@ void mem_chunk_split(mem_chunk* ptr, u64 size) {
 }
 
 void* malloc(u64 size) {
+    // first run, allocate a page for our first object
     if (global_head == NULL) {
         u64 new_size = size;
         
         mem_chunk* new = alloc_new_page(get_page_size(size));
+        // oops, either too big of a request or we are oom
+        if (new == NULL) {
+            return NULL;
+        }
+        // new head
         global_head = new;
+        // unlikely that the user asks for exactly 4096
         mem_chunk_split(new, size);
+
         return new->end;
     }
+    
     mem_chunk* ptr;
+    // try to find a block in the area we already mapped
     ptr = mem_chunk_find(global_head, size);
+    // we didnt find a large enoug segment
     if (ptr == NULL) {
+        // get a new page
         mem_chunk* new = alloc_new_page(get_page_size(size));
+        if (new == NULL) {
+            return NULL;
+        }
+        // same as in the initial setup
         mem_chunk_split(new, size);
         global_last->next = new;
         new->prev = global_last;
+
         return new->end;
     }
+    // otherwise just return the segment we need
     mem_chunk_split(ptr, size);
     return ptr->end;
 }
@@ -113,6 +141,7 @@ void free(void* ptr) {
     mem_chunk* target;
     target = ptr - MEM_STRUCT_SIZE + 8;
     target->free = TRUE;
+    // defragment it
     merge_prev(target);
     merge_next(target);
 }
