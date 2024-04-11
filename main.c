@@ -1,6 +1,10 @@
-#include "io.h"
+#include "lib/include/io.h"
+
+
+static const char* password="test";
+static char input_buffer[4096];
 
 int main(int argc, char* argv[]) {
-    puts("Hello World\n");
+    
     return 0;
 }
