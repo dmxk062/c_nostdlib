@@ -1,0 +1,10 @@
+Index:
+  StandardLibrary: No
+
+CompileFlags:
+  Add: [-nostdlib, -fno-unwind-tables, -fno-asynchronous-unwind-tables, -Wno-builtin-declaration-mismatch]
+  Compiler: gcc
+
+Diagnostics:
+  # im not using cpp... 
+  Suppress: [bool_redeclaration]
