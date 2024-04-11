@@ -13,6 +13,8 @@
 
 #define SYS_EXIT  60
 
+#define SYS_NANOSLEEP 35
+
 
 void* syscall_raw(
         void* call,
@@ -25,3 +27,9 @@ void* syscall_raw(
 
 
 void exit(i64 exitcode);
+
+struct timespec {
+    u64 secs;
+    u64 nano;
+};
+i64 sleep(u64 secs, u64 nanosecs);
