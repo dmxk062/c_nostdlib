@@ -1,3 +1,4 @@
+#pragma once
 #include "../include/types.h"
 
 #define SYS_READ   0

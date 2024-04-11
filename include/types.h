@@ -1,4 +1,5 @@
 // vim: ft=c
+#pragma once
 typedef long int            i64;
 typedef unsigned long int   u64;
 typedef int                 bool;

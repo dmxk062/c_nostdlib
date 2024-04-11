@@ -1,3 +1,4 @@
+#pragma once
 #include "mmap.h"
 #include "../include/types.h"
 #include "../lib/syscall.h"
