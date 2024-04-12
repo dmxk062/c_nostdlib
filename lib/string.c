@@ -38,14 +38,6 @@ char* u64_to_hex(u64 num) {
 }
 
 
-void charcpy(char* dest, const char* source, u64 n) {
-
-    for (u64 i = 0; i < n; i++) {
-        dest[i] = source[i];
-    }
-
-}
-
 i64 strformat(const char* format, char* output, u64 inlen, char** strings) {
     u64 fmtlen = strlen(format);
     u64 outlen = 0;
