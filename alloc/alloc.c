@@ -123,6 +123,7 @@ void merge_next(mem_chunk* freed) {
     mem_chunk* next;
     next = freed->next;
 
+
     if (next != NULL && next->free == TRUE) {
         freed->size = freed->size + MEM_STRUCT_SIZE + next->size;
         freed->next = next->next;
@@ -139,9 +140,19 @@ void free(void* ptr) {
         return;
     }
     mem_chunk* target;
-    target = ptr - MEM_STRUCT_SIZE + 8;
+    target = ptr - MEM_STRUCT_SIZE + sizeof(char*);
     target->free = TRUE;
-    // defragment it
-    merge_prev(target);
-    merge_next(target);
+
+    /*
+     * This is a bit hacky
+     * we need to check if the blocks are on the same page we mmaped
+     * otherwise merging them would leave gaps
+     * so we calculate that using pointer offsets
+     */
+    if (target->next != NULL && target->next == (target->end + target->size)){
+        merge_next(target);
+    }
+    if (target->prev != NULL && target == ((target->prev)->end) + (target->prev)->size) {
+        merge_prev(target);
+    }
 }

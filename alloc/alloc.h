@@ -15,7 +15,7 @@ typedef struct mem_chunk {
 
 #define MEM_STRUCT_SIZE sizeof(mem_chunk)
 
-#define MEM_PAGE_SIZE 1024 * 4
+#define MEM_PAGE_SIZE 1024 * 2
 
 void* malloc(u64 size);
 void free(void* ptr);
