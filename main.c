@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
     struct stat st;
     i64 ret = stat(argv[1], &st);
     //
-    char* hex_len = u32_to_hex(st.st_gid);
+    char* hex_len = u64_to_hex(st.st_size);
     puts(hex_len);
     puts("\n");
     free(hex_len);
