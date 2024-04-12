@@ -12,6 +12,7 @@ mem_chunk* global_head = NULL;
 mem_chunk* global_last = NULL;
 
 // return the first chunk that is large enough
+static
 mem_chunk* mem_chunk_find(mem_chunk* head, u64 size) {
     mem_chunk* ptr = head;
     while (ptr != NULL) {
@@ -26,6 +27,7 @@ mem_chunk* mem_chunk_find(mem_chunk* head, u64 size) {
 
 
 // get a new page from linux
+static
 mem_chunk* alloc_new_page(u64 size) {
     void* memspace = mmap(0,
             size,
@@ -43,9 +45,11 @@ mem_chunk* alloc_new_page(u64 size) {
 
 // get the next fitting page size that is larger than what we are given
 
+static
 u64 get_page_size(u64 size) {
     return ((size + MEM_PAGE_SIZE - 1) / MEM_PAGE_SIZE) * MEM_PAGE_SIZE;
 }
+static
 void mem_chunk_split(mem_chunk* ptr, u64 size) {
     mem_chunk* new;
 
@@ -106,6 +110,7 @@ void* malloc(u64 size) {
 }
 
 
+static
 void merge_prev(mem_chunk* freed) {
     mem_chunk* prev;
     prev = freed->prev;
@@ -119,6 +124,7 @@ void merge_prev(mem_chunk* freed) {
     }
 }
 
+static
 void merge_next(mem_chunk* freed) {
     mem_chunk* next;
     next = freed->next;

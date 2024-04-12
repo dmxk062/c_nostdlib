@@ -1,10 +1,11 @@
 # vim: commentstring=#\ %s
 
 .global _start, syscall_raw
+.extern main
+
 
 
 .section .text
-
 _start:
     xor     %rbp,   %rbp
     # move argc into the first argument
@@ -21,7 +22,7 @@ _start:
     mov     $60,    %rax
     syscall 
 
-    ret
+    # ret
 
 syscall_raw:
     # syscall number
