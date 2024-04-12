@@ -2,7 +2,10 @@
 #pragma once
 typedef long int            i64;
 typedef unsigned long int   u64;
+typedef unsigned char       u8;
+typedef signed char         i8;
 typedef int                 bool;
+
 
 #define NULL        0
 #define TRUE        1

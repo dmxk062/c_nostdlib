@@ -16,12 +16,19 @@ OBJ_S = $(addprefix $(OBJDIR)/, $(SRC_S:.S=.o))
 OBJDIR = build
 
 EXEC = no_std
+
+SRC_EXAMPLES = examples/hello.c examples/cat.c
+EXAMPLES = hello cat
+
 LIBRARY = libnostd.o
 
 exec: $(EXEC)
 
 $(EXEC): $(LIBRARY)
 	$(CC) $(CCFLAGS_REMOVE_BUILTINS) $(CCFLAGS) main.c $(LIBRARY) -o $(EXEC)
+
+$(EXAMPLES): $(LIBRARY)
+	$(CC) $(CCFLAGS_REMOVE_BUILTINS) $(CCFLAGS) examples/$@.c $(LIBRARY) -o $@
 
 
 $(OBJDIR)/%.o: %.c
@@ -30,13 +37,18 @@ $(OBJDIR)/%.o: %.c
 $(OBJDIR)/%.o: %.S
 	$(AS) $(ASFLAGS) -c $< -o $@
 
+
 clean:
-	rm -f $(OBJ_C) $(OBJ_S) $(EXEC) $(LIBRARY)
+	rm -f $(OBJ_C) $(OBJ_S) $(EXEC) $(LIBRARY) $(EXAMPLES)
 
 
 $(LIBRARY): $(OBJ_C) $(OBJ_S)
 	ld -r -o $(LIBRARY) $(OBJ_S) $(OBJ_C)
 
 lib: $(LIBRARY)
+
+examples: $(EXAMPLES)
+
+all: lib exec
 
 

@@ -1,5 +1,4 @@
 #include "alloc.h"
-#include "../lib/io.h"
 
 /*
  * Memory Allocator
