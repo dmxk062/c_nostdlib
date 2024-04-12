@@ -1,6 +1,6 @@
 # vim: commentstring=#\ %s
 
-.global _start, syscall_raw
+.global _start 
 .extern main
 
 
@@ -24,16 +24,3 @@ _start:
 
     # ret
 
-syscall_raw:
-    # syscall number
-    mov     %rdi,   %rax
-
-    # arguments
-    mov     %rsi,   %rdi
-    mov     %rdx,   %rsi
-    mov     %rcx,   %rdx
-    mov     %r8,    %r10
-    mov     %r9,    %r8
-
-    syscall
-    ret

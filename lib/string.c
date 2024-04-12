@@ -59,7 +59,7 @@ i64 strformat(const char* format, char* output, u64 inlen, char** strings) {
             if (inlen < len) {
                 return -2;
             }
-            charcpy(output + outlen, *strings, len);
+            memcpy(output + outlen, *strings, len);
             outlen += len;
             strings++;
         } else if (format[i] == '\\' && format[i+1] == '%') {
@@ -69,6 +69,6 @@ i64 strformat(const char* format, char* output, u64 inlen, char** strings) {
         }
     }
     output[outlen++] = '\0';
-    return 0;
+    return --outlen;
     
 }

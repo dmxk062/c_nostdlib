@@ -9,15 +9,39 @@
 
 #define SYS_MMAP   9
 
-#define SYS_BRK   12
+#define SYS_NANOSLEEP 35
 
 #define SYS_EXIT  60
 
-#define SYS_NANOSLEEP 35
 
 
-void* syscall_raw(
-        void* call,
+extern void* syscall0(
+        u64 call
+);
+extern void* syscall1(
+        u64 call,
+        void* arg1
+);
+extern void* syscall2(
+        u64 call,
+        void* arg1,
+        void* arg2
+);
+extern void* syscall3(
+        u64 call,
+        void* arg1,
+        void* arg2,
+        void* arg3
+);
+extern void* syscall4(
+        u64 call,
+        void* arg1,
+        void* arg2,
+        void* arg3,
+        void* arg4
+);
+extern void* syscall5(
+        u64 call,
         void* arg1,
         void* arg2,
         void* arg3,

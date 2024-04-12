@@ -1,6 +1,7 @@
 #pragma once
 #include "io.h"
 #include "../alloc/alloc.h"
+#include "memcpy.h"
 
 
 u64 strlen(const char* string);

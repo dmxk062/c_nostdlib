@@ -1,9 +1,8 @@
 #include "syscall.h"
 
 void exit(i64 exitcode) {
-    syscall_raw((void*)SYS_EXIT,
-            (void*) exitcode,
-            0, 0, 0, 0);
+    syscall1(SYS_EXIT,
+            (void*) exitcode);
 }
 
 i64 sleep(u64 secs, u64 nanosecs) {
@@ -12,7 +11,6 @@ i64 sleep(u64 secs, u64 nanosecs) {
     spec.nano = nanosecs;
 
     return (i64)
-    syscall_raw((void*)SYS_NANOSLEEP, &spec, 
-        0, 0, 0, 0);
+    syscall1(SYS_NANOSLEEP, &spec);
 
 }

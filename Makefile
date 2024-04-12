@@ -7,10 +7,10 @@ CCFLAGS_LIBRARY = -fPIC -nostdlib -nostdinc -fno-unwind-tables -fno-asynchronous
 CCFLAGS = 
 ASFLAGS = -s
 
-SRC_C = lib/syscall.c lib/io.c lib/string.c alloc/mmap.c alloc/alloc.c 
+SRC_C = lib/syscall.c lib/io.c lib/string.c lib/memcpy.c alloc/mmap.c alloc/alloc.c 
 OBJ_C = $(addprefix $(OBJDIR)/, $(SRC_C:.c=.o))
 
-SRC_S = asm/start.S
+SRC_S = asm/start.S asm/syscall.S
 OBJ_S = $(addprefix $(OBJDIR)/, $(SRC_S:.S=.o))
 
 OBJDIR = build
