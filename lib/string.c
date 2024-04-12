@@ -19,11 +19,12 @@ u64 strcmp(const char* string1, const char* string2) {
     return i;
 }
 
-char* u64_to_hex(u64 num) {
-    static const char digits[] = "01234567890ABCDEF";
-    const u64 num_digits = 16;
+static inline
+char* u_to_hex(void* _num, u64 num_digits) {
+    static const char digits[] = "0123456789ABCDEF";
+    u64 num = (u64)_num;
+    char* out = malloc(num_digits + 1);
 
-    char* out = malloc(num_digits+1);
     if (out == NULL) {
         return NULL;
     }
@@ -35,6 +36,12 @@ char* u64_to_hex(u64 num) {
     out[num_digits] = '\0';
 
     return out;
+}
+char* u64_to_hex(u64 num) {
+    return u_to_hex((void*)num, 16);
+}
+char* u32_to_hex(u64 num) {
+    return u_to_hex((void*)num, 8);
 }
 
 

@@ -6,7 +6,7 @@
 #define BUFFER_SIZE 1024 * 4
 
 static const char USAGE_STR[] = ": FILES\n";
-static const char ERROR_STR[] = "Failed to read file: ";
+static const char OPEN_ERROR_STR[] = "Failed to open file: ";
 static const char* NEWLINE = "\n";
 
 
@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
     for (i64 i = 1; i < argc; i++) {
         ret = cat_file(argv[i]);
         if (ret < 0) {
-            write(STDERR, ERROR_STR, sizeof(ERROR_STR));
+            write(STDERR, OPEN_ERROR_STR, sizeof(OPEN_ERROR_STR));
             write(STDERR, argv[i], strlen(argv[i]));
             write(STDERR, NEWLINE, 1);
         }

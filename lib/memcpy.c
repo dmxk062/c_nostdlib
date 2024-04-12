@@ -1,4 +1,5 @@
 #include "memcpy.h"
+
 // slightly faster than naive
 void memcpy (void* dst, const void* src, i64 size) {
     u64* td = (u64*)dst;
