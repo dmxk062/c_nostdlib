@@ -15,6 +15,10 @@
 
 
 
+/*
+ * Use the one that fits best for your function
+ * using fewer registers saves a couple of movqs
+ */
 extern void* syscall0(
         u64 call
 );

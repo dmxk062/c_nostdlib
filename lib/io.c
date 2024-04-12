@@ -32,6 +32,10 @@ i64 close(u64 fd) {
             (void*) fd);
 }
 
+/* 
+ * not standards conformant, doesnt print a newline
+ * should probably be renamed to `print` 
+ */
 void puts(const char* string) {
     u64 len = strlen(string);
     write(STDOUT, string, len);
