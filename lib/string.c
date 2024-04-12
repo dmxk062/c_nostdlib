@@ -1,4 +1,7 @@
 #include "string.h"
+#include "../alloc/alloc.h"
+#include "memcpy.h"
+
 
 u64 strlen(const char *string) {
     u64 count = 0;
@@ -17,6 +20,17 @@ u64 strcmp(const char* string1, const char* string2) {
         i++;
     }
     return i;
+}
+
+char* strdup(const char* str) {
+    u64 len = strlen(str);
+    char* buffer = malloc(len + 1);
+    if (buffer == NULL) {
+        return NULL;
+    }
+    memcpy(buffer, str, len);
+    buffer[len] = '\0';
+    return buffer;
 }
 
 static inline

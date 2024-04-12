@@ -43,5 +43,5 @@ i64 fstat(u64 fd, struct stat* statbuf);
 #define S_WRITE             0200
 #define S_EXEC              0100
 
-#define S_ISREG(mod) (((mode) & S_IFMT) == S_IFREG)
-#define S_ISDIR(mod) (((mode) & S_IFMT) == S_IFDIR)
+#define S_ISREG(mode) (((mode) & S_IFMT) == S_IFREG)
+#define S_ISDIR(mode) (((mode) & S_IFMT) == S_IFDIR)
