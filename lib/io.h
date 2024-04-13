@@ -1,5 +1,8 @@
 #pragma once
 #include "../include/types.h"
+#include "string.h"
+#include "syscall.h"
+
 
 #define STDIN  0
 #define STDOUT 1

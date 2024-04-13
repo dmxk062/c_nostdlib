@@ -1,7 +1,4 @@
 #include "string.h"
-#include "../alloc/alloc.h"
-#include "memcpy.h"
-#include "va_args.h"
 
 
 u64 strlen(const char *string) {
@@ -13,14 +10,24 @@ u64 strlen(const char *string) {
 }
 
 u64 strcmp(const char* string1, const char* string2) {
-    u64 i = 0;
-    while (string1[i] == string2[i]) {
-        if (string1[i] == '\0') {
-            return 0;
-        }
-        i++;
+    while (*string1 && *string2 && *string1 == *string2) {
+        string1++;
+        string2++;
+    
     }
-    return i;
+    return (*string1 - *string2);
+}
+u64 strncmp(const char* string1, const char* string2, u64 len) {
+    while (len > 0 && *string1 && *string2 && *string1 == *string2) {
+        string1++;
+        string2++;
+        len--;
+    }
+    if (len == 0) {
+        return 0;
+    } else {
+        return (*string1 - *string2);
+    }
 }
 
 
