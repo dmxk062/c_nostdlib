@@ -7,6 +7,12 @@
     environ: .quad 0
 
 .section .text
+
+# before calling main, _start has to setup the arguments and the environment
+# the x64 SystemV calling convention requires the first three arguments to a userspace function to be in:
+# %rdi, %rsi and %rdx
+# so that main(int argc, char* argv[], char* environ[]) can work, 
+# we need to move the addresses/values from the stack into these registers
 _start:
     xor     %rbp,   %rbp
     # move argc into the first argument
