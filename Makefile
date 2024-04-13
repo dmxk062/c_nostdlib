@@ -3,11 +3,12 @@ AS = gcc
 
 CCFLAGS_REMOVE_BUILTINS = -nostdlib -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables -Wno-builtin-declaration-mismatch -fno-stack-protector
 
-CCFLAGS_LIBRARY = -fPIC -nostdlib -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables -Wno-builtin-declaration-mismatch -fno-stack-protector 
+CCFLAGS_LIBRARY = -fPIC 
 CCFLAGS = -O2
 ASFLAGS = -s
+LDFLAGS = 
 
-SRC_C = lib/syscall.c lib/io.c lib/string.c lib/memcpy.c lib/stat.c alloc/mmap.c alloc/alloc.c 
+SRC_C = $(wildcard lib/*.c) $(wildcard alloc/*.c)
 OBJ_C = $(addprefix $(OBJDIR)/, $(SRC_C:.c=.o))
 
 SRC_S = asm/start.S asm/syscall.S
@@ -43,7 +44,7 @@ clean:
 
 
 $(LIBRARY): $(OBJ_C) $(OBJ_S)
-	ld -r -o $(LIBRARY) $(OBJ_S) $(OBJ_C)
+	ld -r $(LDFLAGS) -o $(LIBRARY) $(OBJ_S) $(OBJ_C)
 
 lib: $(LIBRARY)
 

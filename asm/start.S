@@ -1,9 +1,10 @@
 # vim: commentstring=#\ %s
 
-.global _start 
+.global _start, environ
 .extern main
 
-
+.section .data
+    environ: .quad 0
 
 .section .text
 _start:
@@ -13,8 +14,21 @@ _start:
     # move argv into the second arg
     mov     %rsp,   %rsi
 
+    # calculate the position of the environment
+    # use argc as an offset
+    # this makes it possible to do:
+    # int main(int argc, char* argv[], char* environ[]);
+    imul    $8,%rdi,%rdx
+    add     %rsp,   %rdx
+    add     $8,     %rdx
+
+    # extern char** environ, the other common way to access it
+    lea     environ(%rip),%r8
+    mov     %rdx,   (%r8)
+
     # align stack
     and     $-16,   %rsp
+    # call the main function
     call    main
 
     # exit from main with the code returned by main

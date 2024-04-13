@@ -1,23 +1,30 @@
 #pragma once
 #include "../include/types.h"
 
-#define SYS_READ   0
-#define SYS_WRITE  1
+#define SYS_READ        0
+#define SYS_WRITE       1
 
-#define SYS_OPEN   2
-#define SYS_CLOSE  3
+#define SYS_OPEN        2
+#define SYS_CLOSE       3
 
-#define SYS_STAT   4
-#define SYS_FSTAT  5
-#define SYS_LSTAT  6
+#define SYS_STAT        4
+#define SYS_FSTAT       5
+#define SYS_LSTAT       6
 
-#define SYS_MMAP   9
+#define SYS_MMAP        9
 
-#define SYS_IOCTL  16
+#define SYS_IOCTL       16
 
-#define SYS_NANOSLEEP 35
+#define SYS_NANOSLEEP   35
 
-#define SYS_EXIT  60
+#define SYS_GETPID      39
+
+#define SYS_FORK        57
+#define SYS_VFORK       58
+
+#define SYS_EXECVE      59
+#define SYS_EXIT        60
+#define SYS_KILL        62
 
 
 
@@ -58,7 +65,3 @@ extern void* syscall5(
         void* arg4,
         void* arg5
 );
-
-
-void exit(i64 exitcode);
-

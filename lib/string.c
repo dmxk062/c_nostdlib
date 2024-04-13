@@ -48,13 +48,9 @@ i64 i_to_base(i64 num, i8 base, char* out, i64 maxlen, u64 padd) {
         num = -num;
     }
 
-    bool had_non0 = FALSE;
     while (num != 0) {
         char digit = digits[num % base];
-        if (had_non0 || digit != '0') {
-            buffer[--index] = digit;
-            had_non0 = TRUE;
-        }
+        buffer[--index] = digit;
         num /= base;
     }
 
