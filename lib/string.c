@@ -172,7 +172,7 @@ i64 f_to_decimal(f64 num, char* out, i64 maxlen, u64 padd, i64 num_frac) {
  *
  * modifiers:
  *  %_{c,s,d,x,o,b,f} : padd to the left, number of spaces/zeros provided in argv
- *  %.{f}             : number of decimals to use, provided in argv
+ *  %.{f,F}           : number of decimals to use, provided in argv
  */
 i64 fmt(const char* format, char* out, u64 outlen, ...) {
 

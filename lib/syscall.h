@@ -9,8 +9,11 @@
 
 #define SYS_STAT   4
 #define SYS_FSTAT  5
+#define SYS_LSTAT  6
 
 #define SYS_MMAP   9
+
+#define SYS_IOCTL  16
 
 #define SYS_NANOSLEEP 35
 

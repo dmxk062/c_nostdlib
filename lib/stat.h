@@ -24,6 +24,7 @@ struct stat {
 };
 
 i64 stat(char* path, struct stat* statbuf);
+i64 lstat(char* path, struct stat* statbuf);
 i64 fstat(u64 fd, struct stat* statbuf);
 
 #define S_IFMT              0170000
