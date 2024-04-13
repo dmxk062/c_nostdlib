@@ -11,9 +11,10 @@ int main(int argc, char* argv[]) {
         puts("Failed to allocate memory\n");
     }
 
-    i64 ret = fmt("%.f\n", text_buffer, text_buffer_size, 1, 332.55567566745674756);
+    i64 ret = fmt("%.f\n", text_buffer, text_buffer_size, 1, (f64)332.55567566745674756L);
 
     if (ret > 0 ) {puts(text_buffer);} else {return ret;}
+    free(text_buffer);
 
     return 0;
 }

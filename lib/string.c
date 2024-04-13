@@ -157,7 +157,7 @@ i64 f_to_decimal(f64 num, char* out, i64 maxlen, u64 padd, i64 num_frac) {
  * Return codes:
  * -1: output string too small for format string
  * -2: values too large
- * -3: failed to null-terminate
+ * -3: failed to null-terminate, use safely with length
  * n > 0: number chars written
  * available formatting sequences:
  * %c : character
@@ -168,6 +168,7 @@ i64 f_to_decimal(f64 num, char* out, i64 maxlen, u64 padd, i64 num_frac) {
  * %b : binary
  *
  * %f : float
+ * %F : 128-bit float, rounds to 64bit
  *
  * modifiers:
  *  %_{c,s,d,x,o,b,f} : padd to the left, number of spaces/zeros provided in argv
@@ -232,6 +233,13 @@ i64 fmt(const char* format, char* out, u64 outlen, ...) {
                 outind += tmplen;
             } else if (format[i] == 'f') {
                 f64 tmpfloat = va_arg(values, f64);
+                i64 length = f_to_decimal(tmpfloat, out + outind, outlen - outind, padding, decimals);
+                if (length < 0) {
+                    return -3;
+                }
+                outind += length;
+            } else if (format[i] == 'F') {
+                f64 tmpfloat = va_arg(values, f128);
                 i64 length = f_to_decimal(tmpfloat, out + outind, outlen - outind, padding, decimals);
                 if (length < 0) {
                     return -3;
