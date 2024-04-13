@@ -1,6 +1,7 @@
 #pragma once
 #include "../include/types.h"
 
+// TODO: add more syscall numbers
 #define SYS_READ        0
 #define SYS_WRITE       1
 

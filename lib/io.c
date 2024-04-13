@@ -30,7 +30,8 @@ i64 close(u64 fd) {
             (void*) fd);
 }
 
-/* 
+/*
+ * FIXME: naming
  * not standards conformant, doesnt print a newline
  * should probably be renamed to `print` 
  */

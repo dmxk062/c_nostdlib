@@ -43,11 +43,11 @@ mem_chunk* alloc_new_page(u64 size) {
 }
 
 // get the next fitting page size that is larger than what we are given
-
 static
 u64 get_page_size(u64 size) {
     return ((size + MEM_PAGE_SIZE - 1) / MEM_PAGE_SIZE) * MEM_PAGE_SIZE;
 }
+
 static
 void mem_chunk_split(mem_chunk* ptr, u64 size) {
     mem_chunk* new;
@@ -69,6 +69,7 @@ void mem_chunk_split(mem_chunk* ptr, u64 size) {
 }
 
 void* malloc(u64 size) {
+
     // first run, allocate a page for our first object
     if (global_head == NULL) {
         u64 new_size = size;
@@ -89,13 +90,16 @@ void* malloc(u64 size) {
     mem_chunk* ptr;
     // try to find a block in the area we already mapped
     ptr = mem_chunk_find(global_head, size);
-    // we didnt find a large enoug segment
+
+    // we didnt find a large enough segment
     if (ptr == NULL) {
+
         // get a new page
         mem_chunk* new = alloc_new_page(get_page_size(size));
         if (new == NULL) {
             return NULL;
         }
+
         // same as in the initial setup
         mem_chunk_split(new, size);
         global_last->next = new;
@@ -144,6 +148,7 @@ void free(void* ptr) {
     if (ptr == NULL) {
         return;
     }
+
     mem_chunk* target;
     target = ptr - MEM_STRUCT_SIZE + sizeof(char*);
     target->free = TRUE;

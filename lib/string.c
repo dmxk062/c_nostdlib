@@ -1,6 +1,7 @@
 #include "string.h"
 
 
+// fairly simple
 u64 strlen(const char *string) {
     u64 count = 0;
     while (*string++ != '\0') {
@@ -18,17 +19,6 @@ u64 strcmp(const char* string1, const char* string2) {
     return (*string1 - *string2);
 }
 
-i64 cinstr(const char c, const char* string) {
-    i64 ret = 0;
-    while(*string++) {
-        if (*string == c) {
-            return ++ret;
-        }
-        ret++;
-    }
-
-}
-
 u64 strncmp(const char* string1, const char* string2, u64 len) {
     while (len > 0 && *string1 && *string2 && *string1 == *string2) {
         string1++;
@@ -43,6 +33,10 @@ u64 strncmp(const char* string1, const char* string2, u64 len) {
 }
 
 
+/*
+ * FIXME: should probably be removed due to implicit allocation
+ * just create a buffer yourself and memcpy into it
+ */
 char* strdup(const char* str) {
     u64 len = strlen(str);
     char* buffer = malloc(len + 1);
@@ -55,6 +49,10 @@ char* strdup(const char* str) {
 }
 
 
+/*
+ * format a number from *base* as a string
+ * uses an internal buffer to calculate length and remove leading 0s
+ */
 i64 i_to_base(i64 num, i8 base, char* out, i64 maxlen, u64 padd) {
     static const char digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     static const i64 buffsize = 256;
@@ -67,6 +65,7 @@ i64 i_to_base(i64 num, i8 base, char* out, i64 maxlen, u64 padd) {
         num = -num;
     }
 
+    // start from the end so we don't need to reverse it
     while (num != 0) {
         char digit = digits[num % base];
         buffer[--index] = digit;
@@ -76,6 +75,7 @@ i64 i_to_base(i64 num, i8 base, char* out, i64 maxlen, u64 padd) {
     
     i64 length = (buffsize - 1) - index;
 
+    // padd the string if requested
     if (padd > length) {
         while (length < padd) {
             buffer[--index] = '0';
@@ -92,15 +92,22 @@ i64 i_to_base(i64 num, i8 base, char* out, i64 maxlen, u64 padd) {
         return -1;
     }
     char* addr = buffer + index;
+
+    // copy it into the user provided buffer
     memcpy(out, addr, length);
     return length;
 
 }
 
+/*
+ * TODO: native support for f128 without rounding down
+ * converts a float into a string
+ */
 i64 f_to_decimal(f64 num, char* out, i64 maxlen, u64 padd, i64 num_frac) {
     static const char digits[] = "0123456789";
     bool is_negative = FALSE;
 
+    // use two separate stack local buffers for integer and fraction 
     static const i64 buffsize = 128;
     char ibuffer[buffsize];
     char fbuffer[buffsize];
@@ -127,6 +134,7 @@ i64 f_to_decimal(f64 num, char* out, i64 maxlen, u64 padd, i64 num_frac) {
     }
     u64 ilen = (buffsize - 1) - iindex; 
 
+    // if requested by the user, only output num_frac digits after the decimal point
     if (num_frac > 0) {
         for (i64 i = num_frac; i > 0; i--) {
             fraction *= 10;
@@ -135,6 +143,7 @@ i64 f_to_decimal(f64 num, char* out, i64 maxlen, u64 padd, i64 num_frac) {
 
             fraction -= digit;
         }
+    // otherwise exhaust it
     } else {
         while (fraction > 0 && findex < buffsize - 1) {
             fraction *= 10;
@@ -150,6 +159,8 @@ i64 f_to_decimal(f64 num, char* out, i64 maxlen, u64 padd, i64 num_frac) {
     if (is_negative) {
         *out++ = '-';
     }
+
+    // calculate and do padding
     i64 total_length = flen + ilen + sizeof(char) + (is_negative * sizeof(char));
     if (padd > total_length) {
         if (padd > maxlen) 
@@ -160,6 +171,7 @@ i64 f_to_decimal(f64 num, char* out, i64 maxlen, u64 padd, i64 num_frac) {
         }
     }
 
+    // construct the final string
     memcpy(out, ibuffer + iindex + 1, ilen);
     out[ilen] = '.';
     memcpy(out + 1 + ilen, fbuffer, findex);
@@ -169,6 +181,7 @@ i64 f_to_decimal(f64 num, char* out, i64 maxlen, u64 padd, i64 num_frac) {
 }
 
 /*
+ * FIXME: implement own va_list instead of using GCC's
  * Return codes:
  * -1: output string too small for format string
  * -2: values too large
@@ -193,18 +206,24 @@ i64 fmt(const char* format, char* out, u64 outlen, ...) {
 
     u64 fmtlen = strlen(format);
     u64 outind = 0;
+
+    // we already couldn't fit the format string into the target, just return
     if (outlen < fmtlen) {
         return -1;
     }
+
 
     va_list values;
     va_start(values, outlen);
 
     // loop iterator
     i64 i = 0;
-    // padding
+
+    // formatting parameters
     u64 padding = 0;
     u64 decimals = 0;
+
+    // for %d, %x, %b, %o
     u8 base = 0;
     bool was_num = FALSE;
     while (i < fmtlen && outind < outlen) {
@@ -218,12 +237,16 @@ i64 fmt(const char* format, char* out, u64 outlen, ...) {
                 decimals = va_arg(values, u64);
                 i++;
             }
+            // treat double % as an escaped version
             if (format[i] == '%') {
                 out[outind++] = '%';
+
+            // single character
             } else if (format[i] == 'c') {
                 char tmpchar = va_arg(values, int);
                 out[outind++] = tmpchar;
             } else if (format[i] == 's') {
+
                 // insert a string
                 char* tmpstr = va_arg(values, char*);
                 u64 tmplen = strlen(tmpstr);
@@ -232,9 +255,11 @@ i64 fmt(const char* format, char* out, u64 outlen, ...) {
                 if (padding > 0 && padding > tmplen) {
                     // how much we still need
                     i64 padding_left = padding - tmplen;
+                    // check if we have space for that
                     if (padding + outind > outlen ){
                         return -2;
                     }
+
                     // pad with spaces
                     while (padding_left > 0) {
                         out[outind++] = ' '; 
@@ -243,23 +268,29 @@ i64 fmt(const char* format, char* out, u64 outlen, ...) {
                 } else if (tmplen + outind > outlen) {
                     return -2;
                 }
-                // copy the string into place
+                // copy the string into place if we have space
                 memcpy(out + outind, tmpstr, tmplen);
                 outind += tmplen;
+
+            // 64 bit floats
             } else if (format[i] == 'f') {
                 f64 tmpfloat = va_arg(values, f64);
                 i64 length = f_to_decimal(tmpfloat, out + outind, outlen - outind, padding, decimals);
                 if (length < 0) {
-                    return -3;
+                    return -2;
                 }
                 outind += length;
             } else if (format[i] == 'F') {
+
+                // cast the f128 to f64, looses precision but saves me from c polymorphism
                 f64 tmpfloat = va_arg(values, f128);
                 i64 length = f_to_decimal(tmpfloat, out + outind, outlen - outind, padding, decimals);
                 if (length < 0) {
-                    return -3;
+                    return -2;
                 }
                 outind += length;
+
+            // all the integer formats, just set the base and then do that in the next step
             } else if (format[i] == 'x') {
                 base = 16;
                 was_num = TRUE;
@@ -273,6 +304,7 @@ i64 fmt(const char* format, char* out, u64 outlen, ...) {
                 base = 2;
                 was_num = TRUE;
             }
+            // actually format the number
             if (was_num) {
                 i64 tmpint = va_arg(values, i64);
                 i64 length = i_to_base(tmpint, base, out + outind, outlen - outind, padding);
@@ -282,13 +314,16 @@ i64 fmt(const char* format, char* out, u64 outlen, ...) {
                 outind += length;
 
             }
+        // otherwise just copy from the format string
         } else {
             out[outind++] = format[i];
         }
         i++;
+        // reset stuff so it doesn't apply to the next
         padding = 0;
         decimals = 0;
     }
+    // return -3 if we succeeded but just failed to null terminate, caller can still use this
     if (outind == outlen) {
         return -3;
     }

@@ -2,6 +2,10 @@
 #include "syscall.h"
 #include "time.h"
 
+/*
+ * see https://github.com/torvalds/linux/blob/master/arch/x86/include/uapi/asm/stat.h
+ */
+
 struct stat {
     u64     st_dev;
     u64     st_ino;
@@ -17,6 +21,12 @@ struct stat {
     i64     st_blksize;
     i64     st_blocks;
 
+    /* 
+     * All of these fields are equivalent to:
+     * u64 seconds;
+     * u64 nanoseconds;
+     * the struct makes it nicer to access
+     */
     struct timespec atime;
     struct timespec mtime;
     struct timespec ctime;
@@ -44,5 +54,6 @@ i64 fstat(u64 fd, struct stat* statbuf);
 #define S_WRITE             0200
 #define S_EXEC              0100
 
+// TODO: the rest of the filetype macros
 #define S_ISREG(mode) (((mode) & S_IFMT) == S_IFREG)
 #define S_ISDIR(mode) (((mode) & S_IFMT) == S_IFDIR)

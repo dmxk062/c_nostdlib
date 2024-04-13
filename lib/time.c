@@ -1,5 +1,8 @@
 #include "time.h"
 
+/* 
+ * if sleep was interrupted, the time remaining will be put into remaining
+ */
 i64 sleep(u64 secs, u64 nanosecs, struct timespec* remaining) {
     struct timespec spec;
     spec.secs = secs;

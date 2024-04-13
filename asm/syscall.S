@@ -1,6 +1,11 @@
 .global syscall0, syscall1, syscall2, syscall3, syscall4, syscall5
 .section .text
 
+# essentially translate between x64 System V userspace and x64 System V kernel space calling conventions
+# user space   : %rdi, %rsi, %rdx, %rcx, %r8, %r9
+# kernel space : %rdi, %rsi, %rdx, %r10, %r8, %r9
+# Those seem pretty similar to each other until you realize that the syscall number, which with any sane design would be the first argument is passed in %rax
+# so we effectively need to shift the registers:
 
 syscall0:
     mov     %rdi,   %rax
