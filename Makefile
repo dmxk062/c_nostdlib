@@ -4,7 +4,7 @@ AS = gcc
 CCFLAGS_REMOVE_BUILTINS = -nostdlib -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables -Wno-builtin-declaration-mismatch -fno-stack-protector
 
 CCFLAGS_LIBRARY = -fPIC -nostdlib -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables -Wno-builtin-declaration-mismatch -fno-stack-protector 
-CCFLAGS = 
+CCFLAGS = -O2
 ASFLAGS = -s
 
 SRC_C = lib/syscall.c lib/io.c lib/string.c lib/memcpy.c lib/stat.c alloc/mmap.c alloc/alloc.c 
@@ -18,7 +18,7 @@ OBJDIR = build
 EXEC = no_std
 
 SRC_EXAMPLES = examples/hello.c examples/cat.c
-EXAMPLES = hello cat
+EXAMPLES = hello stat
 
 LIBRARY = libnostd.o
 

@@ -1,7 +1,7 @@
-#include "lib/string.h"
-#include "lib/stat.h"
-#include "alloc/alloc.h"
-#include "lib/io.h"
+#include "../lib/string.h"
+#include "../lib/stat.h"
+#include "../alloc/alloc.h"
+#include "../lib/io.h"
 
 int main(int argc, char* argv[]) {
     
