@@ -5,35 +5,15 @@
 
 int main(int argc, char* argv[]) {
     
-    if (argc < 2) {
-        puts("specify at least one file or directory\n");
-        return 1;
-    }
-
-
     const i64 text_buffer_size = 4096;
     char* text_buffer = malloc(text_buffer_size);
     if (text_buffer == NULL) {
         puts("Failed to allocate memory\n");
     }
-    struct stat st;
 
-    for (i64 i = 1; i < argc; i++) {
-        i64 ret = stat(argv[i], &st);
-        if (ret < 0) {
-            i64 ret = fmt("Failed to stat %s\n", text_buffer, text_buffer_size, argv[i]);
-            if (ret > 0) {
-                puts(text_buffer);
-            }
-            continue;
-        }
+    i64 ret = fmt("%.f\n", text_buffer, text_buffer_size, 1, 332.55567566745674756);
 
-        ret = fmt("%s:\nUser:  %$d\nGroup: %$d\nSize:  %d\nPerms: %$o\n", text_buffer, text_buffer_size, 
-                argv[i], 4, st.st_uid, 4, st.st_gid, st.st_size, 4, st.st_mode & 0777);
-        if (ret > 0)
-            puts(text_buffer);
-
-    }
+    if (ret > 0 ) {puts(text_buffer);} else {return ret;}
 
     return 0;
 }
