@@ -1,8 +1,8 @@
-#include "lib/io.h"
-#include "lib/process.h"
-#include "lib/time.h"
-#include "lib/env.h"
-#include "lib/string.h"
+#include "../lib/io.h"
+#include "../lib/process.h"
+#include "../lib/time.h"
+#include "../lib/env.h"
+#include "../lib/string.h"
 
 int main(int argc, char* argv[]) {
 

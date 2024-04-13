@@ -20,7 +20,7 @@ typedef long double         f128;
 typedef double              f64;
 typedef float               f32;
 
-typedef int                 bool;
+typedef u8                  bool;
 
 
 #define NULL        0

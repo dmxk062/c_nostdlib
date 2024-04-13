@@ -18,8 +18,8 @@ OBJDIR = build
 
 EXEC = no_std
 
-SRC_EXAMPLES = examples/hello.c examples/cat.c
-EXAMPLES = hello stat
+SRC_EXAMPLES = examples/hello.c examples/cat.c examples/process.c
+EXAMPLES = $(addprefix examples/, hello stat process)
 
 LIBRARY = libnostd.o
 
@@ -29,7 +29,7 @@ $(EXEC): $(LIBRARY)
 	$(CC) $(CCFLAGS_REMOVE_BUILTINS) $(CCFLAGS) main.c $(LIBRARY) -o $(EXEC)
 
 $(EXAMPLES): $(LIBRARY)
-	$(CC) $(CCFLAGS_REMOVE_BUILTINS) $(CCFLAGS) examples/$@.c $(LIBRARY) -o $@
+	$(CC) $(CCFLAGS_REMOVE_BUILTINS) $(CCFLAGS) $@.c $(LIBRARY) -o $@
 
 
 $(OBJDIR)/%.o: %.c

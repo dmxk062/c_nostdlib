@@ -17,6 +17,18 @@ u64 strcmp(const char* string1, const char* string2) {
     }
     return (*string1 - *string2);
 }
+
+i64 cinstr(const char c, const char* string) {
+    i64 ret = 0;
+    while(*string++) {
+        if (*string == c) {
+            return ++ret;
+        }
+        ret++;
+    }
+
+}
+
 u64 strncmp(const char* string1, const char* string2, u64 len) {
     while (len > 0 && *string1 && *string2 && *string1 == *string2) {
         string1++;

@@ -10,6 +10,8 @@ u64 strlen(const char* string);
 u64 strcmp(const char* string1, const char* string2);
 u64 strncmp(const char* string1, const char* string2, u64 len);
 
+i64 cinstr(const char c, const char* string);
+
 
 char* strdup(const char* str);
 
