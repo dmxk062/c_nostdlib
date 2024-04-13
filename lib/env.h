@@ -1,5 +1,6 @@
 #include "string.h"
 #include "memcpy.h"
+#include "../alloc/alloc.h"
 #include "../include/types.h"
 
 extern char** environ;
