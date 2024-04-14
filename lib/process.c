@@ -35,3 +35,31 @@ i64 execve(const char *program, char *const *argv, char *const *envp) {
             (void*)argv,
             (void*)envp);
 }
+
+i64 getuid() {
+    return (i64) 
+    syscall0(SYS_GETUID);
+}
+i64 getgid() {
+    return (i64) 
+    syscall0(SYS_GETGID);
+}
+i64 geteuid() {
+    return (i64) 
+    syscall0(SYS_GETEUID);
+}
+i64 getegid() {
+    return (i64) 
+    syscall0(SYS_GETEGID);
+}
+
+i64 setuid(i64 uid) {
+    return (i64)
+    syscall1(SYS_SETUID,
+            (void*)uid);
+}
+i64 setgid(i64 gid) {
+    return (i64)
+    syscall1(SYS_SETGID,
+            (void*)gid);
+}

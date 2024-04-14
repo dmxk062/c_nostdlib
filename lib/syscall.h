@@ -31,6 +31,14 @@
 #define SYS_EXIT        60
 #define SYS_KILL        62
 
+#define SYS_GETUID      102
+#define SYS_GETGID      104
+#define SYS_SETUID      105
+#define SYS_SETGID      106
+
+#define SYS_GETEUID     107
+#define SYS_GETEGID     108
+
 
 
 /*
