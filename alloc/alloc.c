@@ -149,6 +149,9 @@ void free(void* ptr) {
         return;
     }
 
+    /*
+     * FIXME: find some way to check if it was really a page we allocated
+     */
     mem_chunk* target;
     target = ptr - MEM_STRUCT_SIZE + sizeof(char*);
     target->free = TRUE;

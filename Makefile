@@ -4,7 +4,7 @@ AS = gcc
 CCFLAGS_REMOVE_BUILTINS = -nostdlib -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables -Wno-builtin-declaration-mismatch -fno-stack-protector
 
 CCFLAGS_LIBRARY = -fPIC 
-CCFLAGS = -O2
+CCFLAGS = -O
 ASFLAGS = -s
 LDFLAGS = 
 

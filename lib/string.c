@@ -65,6 +65,10 @@ i64 i_to_base(i64 num, i8 base, char* out, i64 maxlen, u64 padd) {
         num = -num;
     }
 
+    if (num == 0) {
+        buffer[--index] = '0';
+    }
+
     // start from the end so we don't need to reverse it
     while (num != 0) {
         char digit = digits[num % base];

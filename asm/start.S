@@ -57,7 +57,7 @@ _start:
     mov     %rdx,   (%r8)
 
     # align stack since we popped 32 bit argc
-    and     $-16,   %rsp
+    sub     $16,    %rsp
 
     # call the main function
     call    main

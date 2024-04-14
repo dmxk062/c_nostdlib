@@ -14,6 +14,10 @@
 
 #define SYS_MMAP        9
 
+#define SYS_SIGACTION   13
+#define SYS_SIGPROCMASC 14
+#define SYS_SIGRETURN   15
+
 #define SYS_IOCTL       16
 
 #define SYS_NANOSLEEP   35
