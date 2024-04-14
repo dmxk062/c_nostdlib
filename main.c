@@ -14,22 +14,9 @@ bool had_sig = FALSE;
 void signal_handler(i64 signum) {
     return;
 }
-void signal_restorer(void) {
-    asm("mov $15, %rax\nsyscall");
-}
 int main(int argc, char* argv[]) {
-    struct sigaction sa;
-    struct sigaction oa;
-    sa.handler = signal_handler;
-    sa.flags = SA_RESTORER;
-    sa.mask = 0;
-    sa.restorer = signal_restorer;
 
-
-    i64 ret = 0;
-    ret = sigaction(SIGINT, &sa, &oa);
-    syscall0(0x22); // pause
-
-
+    setsigaction(SIGINT, signal_handler, 0, 0, NULL);
+    syscall0(0x22);
     return 0;
 }

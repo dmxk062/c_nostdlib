@@ -11,7 +11,7 @@ LDFLAGS =
 SRC_C = $(wildcard lib/*.c) $(wildcard alloc/*.c)
 OBJ_C = $(addprefix $(OBJDIR)/, $(SRC_C:.c=.o))
 
-SRC_S = asm/start.S asm/syscall.S
+SRC_S = asm/start.S asm/syscall.S asm/signal.S
 OBJ_S = $(addprefix $(OBJDIR)/, $(SRC_S:.S=.o))
 
 OBJDIR = build

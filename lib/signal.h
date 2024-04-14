@@ -21,7 +21,10 @@ struct sigaction {
 i64 sigaction(u64 signal, struct sigaction* sa, struct sigaction* oa);
 i64 sigprocmask(i64 how, sigset_t* newset, sigset_t* oldset);
 
+i64 setsigaction(u64 signal, sighandler_t handler, u64 flags, u64 mask, struct sigaction* old_handler);
+
 void sigset_add(sigset_t* set, u64 signum);
+extern void sigaction_trampoline();
 
 
 #define SIGHUP		 1
@@ -72,4 +75,3 @@ void sigset_add(sigset_t* set, u64 signum);
 #define SIG_BLOCK    0
 #define SIG_UNBLOCK  1
 #define SIG_MASK     2
-

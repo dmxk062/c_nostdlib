@@ -26,3 +26,17 @@ void sigset_add(sigset_t* set, u64 signum) {
     set->bits[index] |= (1UL << offset);
 }
 
+
+i64 setsigaction(u64 signal, sighandler_t handler, u64 flags, u64 mask, struct sigaction* old_handler) {
+    struct sigaction action;
+    action.mask = mask;
+    action.flags = flags | SA_RESTORER;
+
+    action.handler = handler;
+    action.restorer = sigaction_trampoline;
+
+    return
+    sigaction(signal, &action, old_handler);
+
+}
+
