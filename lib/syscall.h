@@ -11,6 +11,8 @@
 #define SYS_STAT        4
 #define SYS_FSTAT       5
 #define SYS_LSTAT       6
+#define SYS_POLL        7
+#define SYS_SEEK        8
 
 #define SYS_MMAP        9
 

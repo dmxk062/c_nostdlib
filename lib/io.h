@@ -18,8 +18,16 @@ i64 write(int fd, void const* data, u64 count);
 #define O_CREAT  001000
 #define O_APPEND 002000
 
+#define SEEK_SET   0
+#define SEEK_CUR   1
+#define SEEK_END   2
+#define SEEK_DATA  3
+#define SEEK_HOLE  4
+
+
     
 i64 open(const char* path, i64 flags, i64 mode);
 i64 close(u64 fd);
+i64 seek(u64 fd, i64 offset, u64 origin);
 
 void puts(const char* string);

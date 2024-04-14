@@ -30,6 +30,15 @@ i64 close(u64 fd) {
             (void*) fd);
 }
 
+
+i64 seek(u64 fd, i64 offset, u64 origin) {
+    return (i64) 
+    syscall3(SYS_SEEK, 
+            (void*)fd,
+            (void*)offset,
+            (void*)origin);
+}
+
 /*
  * FIXME: naming
  * not standards conformant, doesnt print a newline
