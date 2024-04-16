@@ -119,7 +119,7 @@ i64 f_to_decimal(f64 num, char* out, i64 maxlen, u64 padd, i64 num_frac) {
     char fbuffer[buffsize];
 
     i64 findex = 0;
-    i64 iindex = buffsize;
+    i64 iindex = buffsize - 1;
 
     if (num < 0) {
         is_negative = TRUE;
@@ -130,6 +130,10 @@ i64 f_to_decimal(f64 num, char* out, i64 maxlen, u64 padd, i64 num_frac) {
     f64 fraction = num - (f64)integer;
 
     bool had_non0 = FALSE;
+    
+    if (integer == 0) {
+        ibuffer[iindex--] = '0';
+    }
     while (integer != 0) {
         char digit = digits[integer % 10];
         if (had_non0 || digit != '0') {
