@@ -56,8 +56,8 @@ _start:
     lea     environ(%rip),%r8
     mov     %rdx,   (%r8)
 
-    # align stack since we popped 32 bit argc
-    sub     $16,    %rsp
+    # align stack to 16 bits since we popped 32 bit argc
+    and $0xFFFFFFFFFFFFFFF0,%rsp
 
     # call the main function
     call    main
