@@ -187,7 +187,6 @@ i64 f_to_decimal(f64 num, char* out, i64 maxlen, u64 padd, i64 num_frac) {
 }
 
 /*
- * FIXME: implement own va_list instead of using GCC's
  * Return codes:
  * -1: output string too small for format string
  * -2: values too large
@@ -201,7 +200,15 @@ i64 f_to_decimal(f64 num, char* out, i64 maxlen, u64 padd, i64 num_frac) {
  * %o : octal
  * %b : binary
  * %f : float
- * Uppercase versions: with additional format parameters
+ * Uppercase versions: with additional format parameters:
+ * F: 
+ *    - padd: padd with zeroes
+ *    - frac: number of decimals
+ * {D,X,O,B}:
+ *    - padd: padd with zeroes
+ * S: 
+ *    - padd: padd with spaces
+ *
  *
  */
 i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
