@@ -24,4 +24,3 @@ void memcpy (void* dst, const void* src, i64 size) {
         *cd++ = *cs ++;
     }
 }
-

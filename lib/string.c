@@ -1,4 +1,5 @@
 #include "string.h"
+#include "io.h"
 
 
 // fairly simple
@@ -79,18 +80,19 @@ i64 i_to_base(i64 num, i8 base, char* out, i64 maxlen, u64 padd) {
     
     i64 length = (buffsize - 1) - index;
 
+
     // padd the string if requested
-    if (padd > length) {
-        while (length < padd) {
+    if (padd > length + (is_negative * sizeof(char))) {
+        while (length + (is_negative * sizeof(char)) < padd) {
             buffer[--index] = '0';
             length++;
         }
     }
+        
     if (is_negative) {
         buffer[--index] = '-';
         length++;
     }
-        
 
     if (length > maxlen) {
         return -1;
@@ -198,16 +200,11 @@ i64 f_to_decimal(f64 num, char* out, i64 maxlen, u64 padd, i64 num_frac) {
  * %x : hex int
  * %o : octal
  * %b : binary
- *
  * %f : float
- * %F : 128-bit float, rounds to 64bit
+ * Uppercase versions: with additional format parameters
  *
- * modifiers:
- *  %_{c,s,d,x,o,b,f} : padd to the left, number of spaces/zeros provided in argv
- *  %.{f,F}           : number of decimals to use, provided in argv
  */
-i64 fmt(const char* format, char* out, u64 outlen, ...) {
-
+i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
     u64 fmtlen = strlen(format);
     u64 outind = 0;
 
@@ -217,15 +214,9 @@ i64 fmt(const char* format, char* out, u64 outlen, ...) {
     }
 
 
-    va_list values;
-    va_start(values, outlen);
 
     // loop iterator
     i64 i = 0;
-
-    // formatting parameters
-    u64 padding = 0;
-    u64 decimals = 0;
 
     // for %d, %x, %b, %o
     u8 base = 0;
@@ -233,32 +224,34 @@ i64 fmt(const char* format, char* out, u64 outlen, ...) {
     while (i < fmtlen && outind < outlen) {
         if (format[i] == '%') {
             i++;
-            if (format[i] == '_') {
-                padding = va_arg(values, u64);
-                i++;
-            }
-            if (format[i] == '.') {
-                decimals = va_arg(values, u64);
-                i++;
-            }
             // treat double % as an escaped version
             if (format[i] == '%') {
                 out[outind++] = '%';
 
             // single character
             } else if (format[i] == 'c') {
-                char tmpchar = va_arg(values, int);
+                char tmpchar = values->c;
+                values++;
                 out[outind++] = tmpchar;
-            } else if (format[i] == 's') {
-
+            } else if (format[i] == 's' || format[i] == 'S') {
+                char* str_val;
+                u64 padding;
+                if (format[i] == 'S') {
+                    str_val = values->S.val;
+                    padding = values->S.padd;
+                    values++;
+                } else {
+                    str_val = values->s;
+                    values++;
+                    padding = 0;
+                }
                 // insert a string
-                char* tmpstr = va_arg(values, char*);
-                u64 tmplen = strlen(tmpstr);
+                u64 len = strlen(str_val);
 
                 // left padding if necessary
-                if (padding > 0 && padding > tmplen) {
+                if (padding > 0 && padding > len) {
                     // how much we still need
-                    i64 padding_left = padding - tmplen;
+                    i64 padding_left = padding - len;
                     // check if we have space for that
                     if (padding + outind > outlen ){
                         return -2;
@@ -269,26 +262,29 @@ i64 fmt(const char* format, char* out, u64 outlen, ...) {
                         out[outind++] = ' '; 
                         padding_left--;
                     }
-                } else if (tmplen + outind > outlen) {
+                } else if (len + outind > outlen) {
                     return -2;
                 }
                 // copy the string into place if we have space
-                memcpy(out + outind, tmpstr, tmplen);
-                outind += tmplen;
+                memcpy(out + outind, str_val, len);
+                outind += len;
 
-            // 64 bit floats
-            } else if (format[i] == 'f') {
-                f64 tmpfloat = va_arg(values, f64);
-                i64 length = f_to_decimal(tmpfloat, out + outind, outlen - outind, padding, decimals);
-                if (length < 0) {
-                    return -2;
+            // floats
+            } else if (format[i] == 'f' || format[i] == 'F') {
+                f64 float_val;
+                u64 padding;
+                u64 decimals;
+                if (format[i] == 'F') {
+                    float_val = values->F.val;
+                    padding = values->F.padd;
+                    decimals = values->F.frac;
+                    values++;
+                } else {
+                    float_val = values->f;
+                    padding = decimals = 0;
+                    values++;
                 }
-                outind += length;
-            } else if (format[i] == 'F') {
-
-                // cast the f128 to f64, looses precision but saves me from c polymorphism
-                f64 tmpfloat = va_arg(values, f128);
-                i64 length = f_to_decimal(tmpfloat, out + outind, outlen - outind, padding, decimals);
+                i64 length = f_to_decimal(float_val, out + outind, outlen - outind, padding, decimals);
                 if (length < 0) {
                     return -2;
                 }
@@ -310,8 +306,18 @@ i64 fmt(const char* format, char* out, u64 outlen, ...) {
             }
             // actually format the number
             if (was_num) {
-                i64 tmpint = va_arg(values, i64);
-                i64 length = i_to_base(tmpint, base, out + outind, outlen - outind, padding);
+                i64 int_val;
+                u64 padding;
+                if (format[i] <= 'Z') {
+                    int_val = values->I.val;
+                    padding = values->I.padd;
+                    values++;
+                } else {
+                    int_val = values->i;
+                    values++;
+                    padding = 0;
+                }
+                i64 length = i_to_base(int_val, base, out + outind, outlen - outind, padding);
                 if (length < 0) {
                     return -2;
                 }
@@ -324,14 +330,11 @@ i64 fmt(const char* format, char* out, u64 outlen, ...) {
         }
         i++;
         // reset stuff so it doesn't apply to the next
-        padding = 0;
-        decimals = 0;
     }
     // return -3 if we succeeded but just failed to null terminate, caller can still use this
     if (outind == outlen) {
         return -3;
     }
     out[outind] = '\0';
-    va_end(values);
     return outind;
 }
