@@ -23,18 +23,18 @@ char* strdup(const char* str);
 
 typedef struct {
     f64 val;
-    u64 padd;
-    u64 frac;
+    u16 padd;
+    u16 frac;
 } float_fmt;
 
 typedef struct {
     i64 val;
-    u64 padd;
+    u16 padd;
 } int_fmt;
 
 typedef struct {
     char* val;
-    u64 padd;
+    u16 padd;
 } str_fmt;
 
 /*

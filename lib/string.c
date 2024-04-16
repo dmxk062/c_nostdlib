@@ -54,7 +54,7 @@ char* strdup(const char* str) {
  * format a number from *base* as a string
  * uses an internal buffer to calculate length and remove leading 0s
  */
-i64 i_to_base(i64 num, i8 base, char* out, i64 maxlen, u64 padd) {
+i64 i_to_base(i64 num, i8 base, char* out, i64 maxlen, u16 padd) {
     static const char digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     static const i64 buffsize = 256;
 
@@ -109,7 +109,7 @@ i64 i_to_base(i64 num, i8 base, char* out, i64 maxlen, u64 padd) {
  * TODO: native support for f128 without rounding down
  * converts a float into a string
  */
-i64 f_to_decimal(f64 num, char* out, i64 maxlen, u64 padd, i64 num_frac) {
+i64 f_to_decimal(f64 num, char* out, i64 maxlen, u16 padd, u16 num_frac) {
     static const char digits[] = "0123456789";
     bool is_negative = FALSE;
 
@@ -244,7 +244,7 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                 out[outind++] = tmpchar;
             } else if (format[i] == 's' || format[i] == 'S') {
                 char* str_val;
-                u64 padding;
+                u16 padding;
                 if (format[i] == 'S') {
                     str_val = values->S.val;
                     padding = values->S.padd;
@@ -281,8 +281,8 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
             // floats
             } else if (format[i] == 'f' || format[i] == 'F') {
                 f64 float_val;
-                u64 padding;
-                u64 decimals;
+                u16 padding;
+                u16 decimals;
                 if (format[i] == 'F') {
                     float_val = values->F.val;
                     padding = values->F.padd;
@@ -316,7 +316,7 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
             // actually format the number
             if (was_num) {
                 i64 int_val;
-                u64 padding;
+                u16 padding;
                 if (format[i] <= 'Z') {
                     int_val = values->I.val;
                     padding = values->I.padd;
