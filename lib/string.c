@@ -220,8 +220,6 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
         return -1;
     }
 
-
-
     // loop iterator
     i64 i = 0;
 
@@ -329,6 +327,7 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                     return -2;
                 }
                 outind += length;
+                was_num = FALSE;
 
             }
         // otherwise just copy from the format string
