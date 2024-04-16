@@ -28,7 +28,7 @@ To start with assembly and raw syscalls and try to make a C-library-ish thing ou
 
 ### What compiler/stdlib things do I still need to get rid of?
 
-- va_args: I'd really like to replace GCC's builtin implementation with my own
+- ~~va_args: I'd really like to replace GCC's builtin implementation with my own~~ I've decided to not use va_args for formatting functions at all, I prefer using a list that gives me *some* type safety
 
 ### Known issues:
 - Environment handling leaks memory. `setenv()` and `unsetenv()` do not free old values yet, this will probably take a rewrite of the allocator.
