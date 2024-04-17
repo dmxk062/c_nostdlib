@@ -300,16 +300,16 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                 outind += length;
 
             // all the integer formats, just set the base and then do that in the next step
-            } else if (format[i] == 'x') {
+            } else if (format[i] == 'x' || format[i] == 'X') {
                 base = 16;
                 was_num = TRUE;
-            } else if (format[i] == 'd') {
+            } else if (format[i] == 'd' || format[i] == 'D') {
                 base = 10;
                 was_num = TRUE;
-            } else if (format[i] == 'o') {
+            } else if (format[i] == 'o' || format[i] == 'O') {
                 base = 8;
                 was_num = TRUE;
-            } else if (format[i] == 'b') {
+            } else if (format[i] == 'b' || format[i] == 'B') {
                 base = 2;
                 was_num = TRUE;
             }

@@ -40,8 +40,7 @@ typedef struct {
 /*
  * The capital versions offer additional formatting options 
  */
-typedef struct fmt_value {
-    union  {
+typedef union  {
         char*       s;
         str_fmt     S;
         i64         i;
@@ -49,7 +48,6 @@ typedef struct fmt_value {
         f64         f;
         float_fmt   F;
         u8          c;
-    };
 } fmt_value;
 
 typedef fmt_value fmts[];
