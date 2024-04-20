@@ -1,5 +1,8 @@
 #include "format.h"
 
+
+#define FMT_OUTPUT_SIZE 4096
+
 /*
  * format a number from *base* as a string
  * uses an internal buffer to calculate length and remove leading 0s
@@ -298,3 +301,16 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
     return outind;
 }
 
+
+i64 fprint(const char* format, fmts values) {
+    char buffer[FMT_OUTPUT_SIZE];
+
+    i64 ret = fmt(format, buffer, FMT_OUTPUT_SIZE, values);
+    if (ret > 0){
+        print(buffer);
+        return 0;
+    }
+    return -1;
+    
+
+}

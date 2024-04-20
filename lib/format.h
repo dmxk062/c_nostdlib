@@ -2,6 +2,7 @@
 #include "../include/types.h"
 #include "../alloc/alloc.h"
 #include "memcpy.h"
+#include "io.h"
 #include "string.h"
 
 /*
@@ -48,3 +49,5 @@ typedef fmt_value fmts[];
 
 
 i64 fmt(const char* format, char* out, u64 outlen, fmts values);
+
+i64 fprint(const char* format, fmts values);
