@@ -26,7 +26,7 @@ typedef struct {
 
 // a formatted string
 typedef struct {
-    zstr val;
+    char* val;
     u16 padd;
 } str_fmt;
 
@@ -34,7 +34,7 @@ typedef struct {
  * The capital versions offer additional formatting options 
  */
 typedef union  {
-        zstr        s;
+        char*        s;
         str_fmt     S;
         i64         i;
         int_fmt     I;
@@ -47,4 +47,4 @@ typedef fmt_value fmts[];
 
 
 
-i64 fmt(const zstr format, zstr out, u64 outlen, fmts values);
+i64 fmt(const char* format, char* out, u64 outlen, fmts values);

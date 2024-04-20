@@ -4,7 +4,7 @@
  * format a number from *base* as a string
  * uses an internal buffer to calculate length and remove leading 0s
  */
-i64 i_to_base(i64 num, i8 base, zstr out, i64 maxlen, u16 padd) {
+i64 i_to_base(i64 num, i8 base, chars* out, i64 maxlen, u16 padd) {
     static const char digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     static const i64 buffsize = 256;
 
@@ -47,7 +47,7 @@ i64 i_to_base(i64 num, i8 base, zstr out, i64 maxlen, u16 padd) {
     if (length > maxlen) {
         return -1;
     }
-    zstr addr = buffer + index;
+    char* addr = buffer + index;
 
     // copy it into the user provided buffer
     memcpy(out, addr, length);
@@ -59,7 +59,7 @@ i64 i_to_base(i64 num, i8 base, zstr out, i64 maxlen, u16 padd) {
  * TODO: native support for f128 without rounding down
  * converts a float into a string
  */
-i64 f_to_decimal(f64 num, zstr out, i64 maxlen, u16 padd, u16 num_frac) {
+i64 f_to_decimal(f64 num, char* out, i64 maxlen, u16 padd, u16 num_frac) {
     static const char digits[] = "0123456789";
     bool is_negative = FALSE;
 
@@ -165,7 +165,7 @@ i64 f_to_decimal(f64 num, zstr out, i64 maxlen, u16 padd, u16 num_frac) {
  *
  *
  */
-i64 fmt(const zstr format, zstr out, u64 outlen, fmt_value* values) {
+i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
     u64 fmtlen = strlen(format);
     u64 outind = 0;
 
@@ -193,7 +193,7 @@ i64 fmt(const zstr format, zstr out, u64 outlen, fmt_value* values) {
                 values++;
                 out[outind++] = tmpchar;
             } else if (format[i] == 's' || format[i] == 'S') {
-                zstr str_val;
+                char* str_val;
                 u16 padding;
                 if (format[i] == 'S') {
                     str_val = values->S.val;
