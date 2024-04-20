@@ -1,10 +1,10 @@
 CC = gcc
 AS = gcc
 
-CCFLAGS_REMOVE_BUILTINS = -nostdlib -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables -Wno-builtin-declaration-mismatch -fno-stack-protector
+CCFLAGS_REMOVE_BUILTINS = -nostdlib -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables -Wno-builtin-declaration-mismatch -fno-stack-protector -Wall 
 
 CCFLAGS_LIBRARY = -fPIC 
-CCFLAGS = -O
+CCFLAGS = 
 ASFLAGS = -s
 LDFLAGS = 
 
@@ -33,7 +33,7 @@ $(EXAMPLES): $(LIBRARY)
 
 
 $(OBJDIR)/%.o: %.c
-	$(CC) $(CCFLAGS_LIBRARY) $(CCFLAGS_REMOVE_BUILTINS) -c $< -o $@
+	$(CC) $(CCFLAGS_LIBRARY) $(CCFLAGS) $(CCFLAGS_REMOVE_BUILTINS) -c $< -o $@
 
 $(OBJDIR)/%.o: %.S
 	$(AS) $(ASFLAGS) -c $< -o $@
