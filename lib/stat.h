@@ -8,6 +8,11 @@
 
 
 
+/*
+ * Extremely little-Endian, amd64 and linux specific
+ * it could be considered a crime
+ * but it's a lot nicer to use
+ */
 union struct_mode {
     u32 st_mode_bits;
     union {
