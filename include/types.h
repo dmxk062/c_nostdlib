@@ -59,7 +59,9 @@ typedef struct {
 } result;
 
 
-// zero terminated string
 
+// zero terminated string
 typedef char*               zstr;
 
+// might be annoying
+typedef void*               untyped;

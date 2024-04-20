@@ -12,8 +12,8 @@ inline i64 char_to_int(char c) {
     return -1;
 }
 
-i64 str_to_int(const char* string, u64 n, u64 base) {
-    i64 result = 0;
+result str_to_int(const char* string, u64 n, u64 base) {
+    i64 parsed = 0;
 
     bool is_negative = FALSE;
 
@@ -26,22 +26,22 @@ i64 str_to_int(const char* string, u64 n, u64 base) {
     for (i64 i = 0; i < n; i++) {
         i64 digit = char_to_int(string[i]);
         if (digit == -1 || digit >= base) {
-            return 0;
+            return (result){.success = FALSE, .errno = 1};
         }
         // result += digit * pow(base, n - i - 1);
         i64 pwr = 1;
         for (i64 j = 0; j < n - 1 -i; j++) {
             pwr *= base;
         }
-        result += digit * pwr;
+        parsed += digit * pwr;
 
 
     }
 
     if (is_negative) {
-        return -result;
+        parsed = -parsed;
     }
-    return result;
+    return (result){.success = TRUE, .value = (untyped)parsed};
 
 
 }

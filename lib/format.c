@@ -4,7 +4,7 @@
  * format a number from *base* as a string
  * uses an internal buffer to calculate length and remove leading 0s
  */
-i64 i_to_base(i64 num, i8 base, chars* out, i64 maxlen, u16 padd) {
+i64 i_to_base(i64 num, i8 base, char* out, i64 maxlen, u16 padd) {
     static const char digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     static const i64 buffsize = 256;
 
