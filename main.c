@@ -3,31 +3,46 @@
 #include "lib/parsers.h"
 #include "lib/format.h"
 #include "lib/io.h"
+#include "lib/stat.h"
 #include "alloc/alloc.h"
+
+const char rwx[] = "rwx-";
+const char bits[] = "ugs-";
+
+void index_perms(char* out, bool r, bool w, bool x, const char* fmt) {
+    if (r) out[0]=fmt[0];
+    else out[0]=fmt[3];
+    if (w) out[1]=fmt[1];
+    else out[1]=fmt[3];
+    if (x) out[2]=fmt[2];
+    else out[2]=fmt[3];
+}
 
 i32 main(i32 argc, zstr argv[]) {
 
     if (argc != 2) {
-        return 1;
-    }
-    result integer = str_to_int(argv[1], strlen(argv[1]), 10);
-
-    if (!integer.success) {
         return 2;
     }
 
-    zstr buffer = malloc(4096);
-    if (!buffer) {
-        return 3;
-    }
+    struct stat st;
 
-    i64 ret = fmt("0x%x\n", buffer, 4096, (fmts){{ .i = (i64)integer.value }});
-    if (ret < 0) {
-        return 4;
-    }
+    stat(argv[1], &st);
+
+    char buffer[1024];
+
+    index_perms(buffer, st.mode.setuid, st.mode.setgid, st.mode.sticky, bits);
+    index_perms(buffer + 3, st.mode.uread, st.mode.uwrite, st.mode.uexec, rwx);
+    index_perms(buffer + 6, st.mode.gread, st.mode.gwrite, st.mode.gexec, rwx);
+    index_perms(buffer + 9, st.mode.oread, st.mode.owrite, st.mode.oexec, rwx);
+    buffer[12] = '\0';
+
+    fprint("%s %o\n", (fmts){
+            {buffer}, {.i = st.mode.type}
+            });
+
+
+
     
-    print(buffer);
-    free(buffer);
 
     return 0;
 }
