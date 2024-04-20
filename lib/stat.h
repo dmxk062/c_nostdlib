@@ -19,23 +19,25 @@ union struct_mode {
         union {
             u16 perms : 12;
             struct {
-
-                bool    oread  : 1;
-                bool    owrite : 1;
+                /*
+                 * From right to left:
+                 * e.g. 000 111 101 101 : 755
+                 */
                 bool    oexec  : 1;
+                bool    owrite : 1;
+                bool    oread  : 1;
 
-                bool    gread  : 1;
-                bool    gwrite : 1;
                 bool    gexec  : 1;
+                bool    gwrite : 1;
+                bool    gread  : 1;
 
-                bool    uread  : 1;
-                bool    uwrite : 1;
                 bool    uexec  : 1;
+                bool    uwrite : 1;
+                bool    uread  : 1;
 
-                bool    suid   : 1;
-                bool    sgid   : 1;
                 bool    sticky : 1;
-
+                bool    setgid : 1;
+                bool    setuid : 1;
             };
         };
         struct {
