@@ -30,4 +30,4 @@ i64 open(const char* path, i64 flags, i64 mode);
 i64 close(u64 fd);
 i64 seek(u64 fd, i64 offset, u64 origin);
 
-void puts(const char* string);
+void print(const char* string);

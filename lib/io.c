@@ -40,11 +40,9 @@ i64 seek(u64 fd, i64 offset, u64 origin) {
 }
 
 /*
- * FIXME: naming
- * not standards conformant, doesnt print a newline
- * should probably be renamed to `print` 
+ * write NULL terminated string to stdout
  */
-void puts(const char* string) {
+void print(const char* string) {
     u64 len = strlen(string);
     write(STDOUT, string, len);
 }
