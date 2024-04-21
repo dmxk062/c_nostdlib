@@ -12,6 +12,9 @@ inline i64 char_to_int(char c) {
     return -1;
 }
 
+/*
+ * parse a string into an integer, zero error tolerance
+ */
 RESULT(i64) str_to_int(const char* string, u64 n, u64 base) {
     i64 parsed = 0;
 
@@ -25,10 +28,11 @@ RESULT(i64) str_to_int(const char* string, u64 n, u64 base) {
 
     for (i64 i = 0; i < n; i++) {
         i64 digit = char_to_int(string[i]);
+        // we got smth we can't really handle, tell the caller at which index
         if (digit == -1 || digit >= base) {
             return (RESULT(i64)){.success = FALSE, .errno = i};
         }
-        // result += digit * pow(base, n - i - 1);
+        // calculate the positional value
         i64 pwr = 1;
         for (i64 j = 0; j < n - 1 -i; j++) {
             pwr *= base;
@@ -38,28 +42,34 @@ RESULT(i64) str_to_int(const char* string, u64 n, u64 base) {
 
     }
 
-    if (is_negative) {
-        parsed = -parsed;
-    }
+    if (is_negative) parsed = -parsed;
+
     return (RESULT(i64)){.success = TRUE, .value = parsed};
 }
 
+/*
+ * zero error tolerance like str_to_int above
+ * accepted format:
+ * (-)[0-9].[0-9]
+ */
 RESULT(f128) str_to_float(const char* string, u64 n) {
     f64 result;
 
     bool is_negative;
     bool has_decimals;
     u64 target;
-    f128 integer = 0;
+    // build up the number of two components
+    f128 integer  = 0.0;
     f128 rational = 0.0;
 
-    i64 i = 0;
     if (string[0] == '-') {
         is_negative = TRUE;
         string++;
         n--;
     }
 
+    // figure out where/if the decimal point is
+    // TODO: add support for locale specific ones like ','
     i64 decimal_position = strfind(string, n, '.');
     if (decimal_position < 0) {
         has_decimals = FALSE;
@@ -71,6 +81,7 @@ RESULT(f128) str_to_float(const char* string, u64 n) {
 
     for (i64 i = 0; i < target; i++) {
         i64 digit = char_to_int(string[i]);
+        // only base 10 for now
         if (digit == -1 || digit >= 10) {
             return (RESULT(f128)){.success = FALSE, .errno = i};
         }
@@ -82,17 +93,20 @@ RESULT(f128) str_to_float(const char* string, u64 n) {
         integer += digit * pwr;
     }
 
+    // we don't even have to care about the component < 0
+    // just return the first part
     if (!has_decimals) {
         if (is_negative) integer = -integer;
-        result = (f64)integer;
-        return (RESULT(f128)){.success = TRUE, .value = result};
+        return (RESULT(f128)){.success = TRUE, .value = integer};
     }
 
+    // iterate over the rest of the string
     for (i64 i = decimal_position + 1; i < n; i++) {
         i64 digit = char_to_int(string[i]);
         if (digit == -1 || digit >= 10) {
             return (RESULT(f128)){.success = FALSE, .errno = i};
         }
+        // continuously divide, values get smaller as we go right
         f128 pwr = 0.1L;
         for (i64 j = decimal_position + 1; j < i; j++) {
             pwr /= 10.0L;

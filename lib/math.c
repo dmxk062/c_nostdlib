@@ -1,6 +1,6 @@
 #include "math.h"
 
-f64 fabs(f64 x) {
+f128 fabs(f64 x) {
     return x < 0 ? -x : x;
 }
 
@@ -8,8 +8,8 @@ u64 abs(i64 x) {
     return x < 0 ? -x : x;
 }
 
-f64 pow(f64 base, i64 exponent) {
-    f64 result = 1.0;
+f128 pow(f128 base, i64 exponent) {
+    f128 result = 1.0;
     i64 i;
 
     for (i = 0; i < exponent; ++i) {
@@ -19,16 +19,22 @@ f64 pow(f64 base, i64 exponent) {
     return result;
 }
 
-f64 root(f64 number, i64 exponent) {
+f128 root(f128 number, u64 exponent) {
     if (number < 0 && exponent % 2 == 0) {
+        // even roots of negative numbers are undefined
         return NAN;
     }
 
-    f64 guess = number / 2.0;
-    f64 epsilon = 0.000001;
+    f128 guess = number / 2.0L;
+
+    // maximum difference
+    f128 epsilon = 0.000001L;
 
     while (TRUE) {
-        f64 next_guess = ((exponent - 1) * guess + number / pow(guess, exponent - 1)) / exponent;
+        f128 next_guess = (
+                (exponent - 1) * guess 
+                + number / pow(guess, exponent - 1)
+                ) / exponent;
         if (fabs(next_guess - guess) < epsilon) {
             return next_guess;
         }
