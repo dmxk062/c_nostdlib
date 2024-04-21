@@ -46,3 +46,19 @@ void print(const char* string) {
     u64 len = strlen(string);
     write(STDOUT, string, len);
 }
+
+i64 fwrite(u64 fd, const char* format, fmts values) {
+    char buffer[FMT_OUTPUT_SIZE];
+
+    i64 ret = fmt(format, buffer, FMT_OUTPUT_SIZE, values);
+    if (ret > 0 || ret == -3){
+        write(fd, buffer, ret);
+        return 0;
+    }
+    return -1;
+}
+
+i64 fprint(const char* format, fmts values) {
+    return
+    fwrite(STDOUT, format, values);
+}

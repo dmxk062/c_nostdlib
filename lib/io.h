@@ -2,6 +2,10 @@
 #include "../include/types.h"
 #include "string.h"
 #include "syscall.h"
+#include "format.h"
+
+#define FMT_OUTPUT_SIZE 4096
+
 
 
 #define STDIN  0
@@ -31,3 +35,7 @@ i64 close(u64 fd);
 i64 seek(u64 fd, i64 offset, u64 origin);
 
 void print(const char* string);
+
+i64 fwrite(u64 fd, const char* format, fmts values);
+i64 fprint(const char* format, fmts values);
+
