@@ -70,7 +70,7 @@ typedef struct {
         char    c;
         char*   s;
 
-        untyped   untyped;
+        untyped   any;
     };
 } unitype;
 
@@ -88,6 +88,11 @@ typedef struct {
 } __result_t_##name; \
 
 
+/*
+ * general naming convention:
+ * for regular scalar types or typedef'd structs/unions: just the type name
+ * for pointers <type>ptr
+ */
 #define RESULT(name) \
     __result_t_##name
 
