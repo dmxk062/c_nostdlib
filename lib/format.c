@@ -97,6 +97,9 @@ i64 f_to_decimal(f64 num, char* out, i64 maxlen, u16 padd, u16 num_frac) {
     u64 ilen = (buffsize - 1) - iindex; 
 
     // if requested by the user, only output num_frac digits after the decimal point
+    if (fraction == 0.0) {
+        fbuffer[findex++] = '0';
+    }
     if (num_frac > 0) {
         for (i64 i = num_frac; i > 0; i--) {
             fraction *= 10;
