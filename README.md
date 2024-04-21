@@ -45,6 +45,12 @@ I tried to do a few things differently since I am no longer limited by the regul
 I decided to use more idiomatic naming for most types. `u8` and `i64` are nicer to read and understand than `unsigned char` and `long int`. 
 This is also why i generally use `bool` for functions that have two possible return values only.
 
+`result`: This is a struct type for functions that can possibly return any value but still need error checking. Common practices such as returning `NULL` or `-1` do not work if that is a possible valid return value.
+(e.g. in a text parsing function).  
+Instead of relying on some error handlig pointer being passed in, returning `result` allows the caller to explicitly check for errors.
+
+
+
 #### Slightly different semantics
 
 I try to avoid automatic allocations for a couple reasons:
