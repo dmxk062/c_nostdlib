@@ -13,7 +13,7 @@
  * it could be considered a crime,
  * but it's a lot nicer to use
  */
-union struct_mode {
+union stat_mode {
     u16 st_mode_bits;
     union {
         u16 perms : 12;
@@ -48,7 +48,7 @@ struct stat {
     u64     st_ino;
     u64     st_nlink;
 
-    union struct_mode mode;
+    union stat_mode mode;
     u32     st_uid;
     u32     st_gid;
     u32     : 4;
