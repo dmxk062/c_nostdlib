@@ -13,10 +13,11 @@
 
 // a formatted float
 typedef struct {
-    f64  val;
+    f128 val;
     u16 padd;
     u16 frac;
 } float_fmt;
+
 
 // a formatted int
 typedef struct {
@@ -34,11 +35,11 @@ typedef struct {
  * The capital versions offer additional formatting options 
  */
 typedef union  {
-        char*        s;
+        char*       s;
         str_fmt     S;
         i64         i;
         int_fmt     I;
-        f64         f;
+        f128        f;
         float_fmt   F;
         u8          c;
 } fmt_value;

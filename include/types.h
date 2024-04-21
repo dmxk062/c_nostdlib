@@ -100,5 +100,6 @@ typedef struct {
 DEFRESULT(i64, i64);
 DEFRESULT(u64, u64);
 DEFRESULT(f64, f64);
+DEFRESULT(f128, f128);
 DEFRESULT(void*, untyped);
 DEFRESULT(char*, charptr);

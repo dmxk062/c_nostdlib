@@ -61,7 +61,7 @@ i64 i_to_base(i64 num, i8 base, char* out, i64 maxlen, u16 padd) {
  * TODO: native support for f128 without rounding down
  * converts a float into a string
  */
-i64 f_to_decimal(f64 num, char* out, i64 maxlen, u16 padd, u16 num_frac) {
+i64 f_to_decimal(f128 num, char* out, i64 maxlen, u16 padd, u16 num_frac) {
     static const char digits[] = "0123456789";
     bool is_negative = FALSE;
 
@@ -79,7 +79,7 @@ i64 f_to_decimal(f64 num, char* out, i64 maxlen, u16 padd, u16 num_frac) {
     }
 
     u64 integer = (u64)num;
-    f64 fraction = num - (f64)integer;
+    f128 fraction = num - (f128)integer;
 
     bool had_non0 = FALSE;
     
@@ -96,10 +96,10 @@ i64 f_to_decimal(f64 num, char* out, i64 maxlen, u16 padd, u16 num_frac) {
     }
     u64 ilen = (buffsize - 1) - iindex; 
 
-    // if requested by the user, only output num_frac digits after the decimal point
     if (fraction == 0.0) {
         fbuffer[findex++] = '0';
     }
+    // if requested by the user, only output num_frac digits after the decimal point
     if (num_frac > 0) {
         for (i64 i = num_frac; i > 0; i--) {
             fraction *= 10;
@@ -235,7 +235,7 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
 
             // floats
             } else if (format[i] == 'f' || format[i] == 'F') {
-                f64 float_val;
+                f128 float_val;
                 u16 padding;
                 u16 decimals;
                 if (format[i] == 'F') {

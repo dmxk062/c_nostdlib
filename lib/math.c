@@ -19,7 +19,7 @@ f64 pow(f64 base, i64 exponent) {
     return result;
 }
 
-f64 root(f64 number, u64 exponent) {
+f64 root(f64 number, i64 exponent) {
     if (number < 0 && exponent % 2 == 0) {
         return NAN;
     }

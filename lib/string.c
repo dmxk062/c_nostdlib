@@ -49,3 +49,10 @@ char* strdup(const char* str) {
 }
 
 
+i64 strfind(const char* string, u64 len, char c) {
+    for (i64 i = 0; i < len; i++) {
+        if (string[i] == c)
+            return i;
+    }
+    return -1;
+}
