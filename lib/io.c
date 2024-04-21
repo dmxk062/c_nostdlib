@@ -47,6 +47,10 @@ void print(const char* string) {
     write(STDOUT, string, len);
 }
 
+/*
+ * write formatted text to fd
+ * maximum size: FMT_OUTPUT_SIZE
+ */
 i64 fwrite(u64 fd, const char* format, fmts values) {
     char buffer[FMT_OUTPUT_SIZE];
 
@@ -58,6 +62,10 @@ i64 fwrite(u64 fd, const char* format, fmts values) {
     return -1;
 }
 
+/*
+ * print formatted text
+ * maximum size: FMT_OUTPUT_SIZE
+ */
 i64 fprint(const char* format, fmts values) {
     return
     fwrite(STDOUT, format, values);
