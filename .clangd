@@ -2,7 +2,12 @@ Index:
   StandardLibrary: No
 
 CompileFlags:
-  Add: [-nostdlib, -fno-unwind-tables, -fno-asynchronous-unwind-tables, -Wno-builtin-declaration-mismatch, -xc, -Wno-builtin-requires-header]
+  Add: [-nostdlib,
+    -fno-unwind-tables,
+    -fno-asynchronous-unwind-tables,
+    -Wno-builtin-declaration-mismatch,
+    -xc, -Wno-builtin-requires-header,
+    -Wno-incompatible-library-redeclaration]
   Compiler: gcc
 
 Diagnostics:
