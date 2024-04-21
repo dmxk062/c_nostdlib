@@ -37,31 +37,63 @@ typedef signed char         i8;
 // 8 bit unsigned integer
 typedef unsigned char       u8;
 
-
 typedef long double         f128;
 typedef double              f64;
 typedef float               f32;
 
+
 typedef _Bool               bool;
 #define TRUE                1
 #define FALSE               0
-
-/*
- * Return value for a function
- * Check for errors before using value or errno
- */
-typedef struct {
-    bool        success;
-    union {
-        void*   value;
-        u64     errno;
-    };
-} result;
-
-
 
 // zero terminated string
 typedef char*               zstr;
 
 // might be annoying
 typedef void*               untyped;
+
+enum TYPES {
+    SINT,
+    UINT,
+    FLOAT,
+    CHAR,
+    STRING,
+    UNTYPED
+};
+
+typedef struct {
+    enum TYPES type;
+    union {
+        i64     i;
+        u64     u;
+        f64     f;
+        char    c;
+        char*   s;
+
+        untyped   untyped;
+    };
+} unitype;
+
+/*
+ * better option for type safety
+ */
+
+#define DEFRESULT(type, name) \
+    typedef struct __result_struct_##name { \
+    bool    success; \
+    union { \
+        u64 errno; \
+        type value; \
+    }; \
+} __result_t_##name; \
+
+
+#define RESULT(name) \
+    __result_t_##name
+
+
+DEFRESULT(i64, i64);
+DEFRESULT(u64, u64);
+DEFRESULT(f64, f64);
+DEFRESULT(void*, untyped);
+DEFRESULT(char*, charptr);
