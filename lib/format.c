@@ -81,17 +81,12 @@ i64 f_to_decimal(f128 num, char* out, i64 maxlen, u16 padd, u16 num_frac) {
     u64 integer = (u64)num;
     f128 fraction = num - (f128)integer;
 
-    bool had_non0 = FALSE;
-    
     if (integer == 0) {
         ibuffer[iindex--] = '0';
     }
     while (integer != 0) {
         char digit = digits[integer % 10];
-        if (had_non0 || digit != '0') {
-            ibuffer[iindex--] = digit;
-            had_non0 = TRUE;
-        }
+        ibuffer[iindex--] = digit;
         integer /= 10;
     }
     u64 ilen = (buffsize - 1) - iindex; 
