@@ -53,7 +53,7 @@ RESULT(i64) str_to_int(const char* string, u64 n, u64 base) {
  * (-)[0-9].[0-9]
  */
 RESULT(f128) str_to_float(const char* string, u64 n) {
-    f64 result;
+    f128 result;
 
     bool is_negative;
     bool has_decimals;
