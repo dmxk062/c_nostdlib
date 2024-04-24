@@ -55,6 +55,7 @@ typedef void*               untyped;
 enum TYPES {
     SINT,
     UINT,
+    BOOL,
     FLOAT,
     CHAR,
     STRING,
@@ -88,6 +89,8 @@ typedef struct {
 } __result_t_##name; \
 
 
+
+
 /*
  * general naming convention:
  * for regular scalar types or typedef'd structs/unions: just the type name
@@ -96,6 +99,9 @@ typedef struct {
 #define RESULT(name) \
     __result_t_##name
 
+
+#define ARRLEN(array) \
+    sizeof(array) / sizeof(array[0])
 
 DEFRESULT(i64, i64);
 DEFRESULT(u64, u64);
