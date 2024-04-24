@@ -3,11 +3,13 @@ Index:
 
 CompileFlags:
   Add: [-nostdlib,
+    -nostdinc,
     -fno-unwind-tables,
     -fno-asynchronous-unwind-tables,
     -Wno-builtin-declaration-mismatch,
     -xc, -Wno-builtin-requires-header,
-    -Wno-incompatible-library-redeclaration]
+    -Wno-incompatible-library-redeclaration,
+    -Ilib/, -Ialloc/, -Iinclude/]
   Compiler: gcc
 
 Diagnostics:
