@@ -11,15 +11,18 @@ i64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct named_argumen
         }
         for (i64 j = 0; j < named_count; j++) {
             if (streq(argv[i], named[j].long_option) || streq(argv[i], named[j].short_option)) {
+                bool success = FALSE;
                 switch (named[j].type) {
                 case STRING: {
                     if (argv[i+1] != NULL) {
                         *(char**)named[j].target = argv[++i];
                         recognized_args+=2;
+                        success = TRUE;
                     }
                     break;}
                 case BOOL: {
                     *(bool*)named[j].target = TRUE;
+                    success = TRUE;
                     recognized_args++;
                     break;}
 
@@ -29,6 +32,7 @@ i64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct named_argumen
                         if (integer.success) {
                             *(i64*)named[j].target = integer.value;
                             recognized_args++;
+                            success = TRUE;
                         } else {
                             i--;
                         }
@@ -42,6 +46,7 @@ i64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct named_argumen
                         if (decimal.success) {
                             *(f128*)named[j].target = decimal.value;
                             recognized_args++;
+                            success = TRUE;
                         } else {
                             i--;
                         }
@@ -50,17 +55,19 @@ i64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct named_argumen
                     break;}
                 }
                 found_arg = TRUE;
-                if (named[j].found_index != NULL)
+                if (named[j].found_index != NULL && success)
                     *named[j].found_index = i;
                 break;
             }
         }
         if (!found_arg) {
             if (uindex < unnamed_count) {
+                bool success = FALSE;
                 switch (unnamed[uindex].type) {
                 case STRING: {
                     *(char**)unnamed[uindex].target = argv[i];
                     recognized_args++;
+                    success = TRUE;
                     break;}
 
                 case INT: {
@@ -68,6 +75,7 @@ i64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct named_argumen
                     if (integer.success) {
                         *(i64*)unnamed[uindex].target = integer.value;
                         recognized_args++;
+                        success = TRUE;
                     } 
                     break;}
                 case FLOAT: {
@@ -75,10 +83,11 @@ i64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct named_argumen
                     if (decimal.success) {
                         *(f128*)unnamed[uindex].target = decimal.value;
                         recognized_args++;
+                        success = TRUE;
                     }
                     break;}
                 }
-                if (unnamed[uindex].found_index != NULL)
+                if (unnamed[uindex].found_index != NULL && success)
                     *unnamed[uindex].found_index = i;
                 uindex++;
             }
