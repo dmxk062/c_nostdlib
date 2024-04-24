@@ -15,7 +15,7 @@ i64 parse_arguments(i64 argc, zstr argv[], i64 named_count, struct named_argumen
                 case STRING:
                     if (argv[i+1] != NULL) {
                         *(char**)named[j].target = argv[++i];
-                        recognized_args++;
+                        recognized_args+=2;
                     }
                     break;
                 case BOOL:
