@@ -19,6 +19,17 @@ u64 strcmp(const char* string1, const char* string2) {
     return (*string1 - *string2);
 }
 
+bool streq(const char* string1, const char* string2) {
+    while(*string1 && *string2) {
+        if (*string1 != *string2) {
+            return FALSE;
+        }
+        string1++;
+        string2++;
+    }
+    return (*string1 == '\0' && *string2 == '\0');
+}
+
 u64 strncmp(const char* string1, const char* string2, u64 len) {
     while (len > 0 && *string1 && *string2 && *string1 == *string2) {
         string1++;
