@@ -53,6 +53,7 @@ typedef char*               zstr;
 typedef void*               untyped;
 
 enum TYPES {
+    INT,
     SINT,
     UINT,
     BOOL,
