@@ -12,12 +12,14 @@ struct named_argument {
     void*           target;
     enum TYPES      type;
     i64*            found_index;
+    bool*           success;
 };
 
 struct unnamed_argument {
     void*           target;
     enum TYPES      type;
     i64*            found_index;
+    bool*           success;
 };
 
 i64 parse_arguments(i64 argc, zstr argv[],

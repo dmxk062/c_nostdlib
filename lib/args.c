@@ -55,8 +55,11 @@ i64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct named_argumen
                     break;}
                 }
                 found_arg = TRUE;
-                if (named[j].found_index != NULL && success)
+                if (named[j].found_index != NULL)
                     *named[j].found_index = i;
+
+                if (named[j].success != NULL)
+                    *named[j].success = success;
                 break;
             }
         }
@@ -87,8 +90,11 @@ i64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct named_argumen
                     }
                     break;}
                 }
-                if (unnamed[uindex].found_index != NULL && success)
+                if (unnamed[uindex].found_index != NULL)
                     *unnamed[uindex].found_index = i;
+
+                if (unnamed[uindex].success != NULL)
+                    *unnamed[uindex].success = success;
                 uindex++;
             }
         }
