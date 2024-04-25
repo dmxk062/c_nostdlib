@@ -1,4 +1,4 @@
-#include "../include/types.h"
+#include "types.h"
 #include "syscall.h"
 #include "time.h"
 

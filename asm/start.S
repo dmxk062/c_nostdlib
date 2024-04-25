@@ -70,4 +70,3 @@ _start:
 
     # we shoudn't need to return here, if we ever reach this, we will segfault
     ret
-

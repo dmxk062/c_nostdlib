@@ -1,6 +1,6 @@
 #pragma once
-#include "../include/types.h"
-#include "../lib/syscall.h"
+#include "types.h"
+#include "syscall.h"
 
 #define PROT_READ	1
 #define PROT_WRITE	2

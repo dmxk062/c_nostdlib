@@ -1,7 +1,7 @@
 #pragma once
 #include "mmap.h"
-#include "../include/types.h"
-#include "../lib/syscall.h"
+#include "types.h"
+#include "syscall.h"
 
 typedef struct mem_chunk {
     u64 size;

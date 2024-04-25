@@ -1,5 +1,5 @@
-#include "stat.h"
-#include "syscall.h"
+#include "include/stat.h"
+#include "include/syscall.h"
 
 i64 stat(char* path, struct stat* statbuf) {
     return (i64)

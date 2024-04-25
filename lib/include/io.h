@@ -1,5 +1,5 @@
 #pragma once
-#include "../include/types.h"
+#include "types.h"
 #include "string.h"
 #include "syscall.h"
 #include "format.h"

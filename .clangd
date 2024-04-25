@@ -9,7 +9,7 @@ CompileFlags:
     -Wno-builtin-declaration-mismatch,
     -xc, -Wno-builtin-requires-header,
     -Wno-incompatible-library-redeclaration,
-    -Ilib/, -Ialloc/, -Iinclude/]
+    -Ilib/include/]
   Compiler: gcc
 
 Diagnostics:

@@ -1,4 +1,4 @@
-#include "../include/types.h"
+#include "types.h"
 
 static char* ERROR_MESSAGES[] = {
     "Success",

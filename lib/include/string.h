@@ -1,6 +1,6 @@
 #pragma once
-#include "../include/types.h"
-#include "../alloc/alloc.h"
+#include "types.h"
+#include "alloc.h"
 #include "memcpy.h"
 
 

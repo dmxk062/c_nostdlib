@@ -1,4 +1,4 @@
-#include "args.h"
+#include "include/args.h"
 
 
 u64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct named_argument named[], u64 unnamed_count, struct unnamed_argument unnamed[]) {

@@ -1,4 +1,4 @@
-#include "memcpy.h"
+#include "include/memcpy.h"
 
 
 /*
@@ -16,7 +16,7 @@ void memcpy (void* dst, const void* src, i64 size) {
         *td++ = *ts++;
     }
 
-    // we have less than 1 i64 left, copy chars now
+    // we have less than 1 u64 left, copy chars now
     cd = (char*)td;
     cs = (char*)ts;
     

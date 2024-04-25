@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../include/types.h"
+#include "types.h"
 #include "syscall.h"
 
 
