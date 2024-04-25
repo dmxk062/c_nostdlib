@@ -1,3 +1,4 @@
+#pragma once
 #include "string.h"
 #include "memcpy.h"
 #include "alloc.h"

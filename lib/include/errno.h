@@ -1,3 +1,4 @@
+#pragma once
 #include "types.h"
 
 static char* ERROR_MESSAGES[] = {
