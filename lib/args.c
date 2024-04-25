@@ -69,7 +69,6 @@ i64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct named_argumen
                 switch (unnamed[uindex].type) {
                 case STRING: {
                     *(char**)unnamed[uindex].target = argv[i];
-                    recognized_args++;
                     success = TRUE;
                     break;}
 
@@ -77,7 +76,6 @@ i64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct named_argumen
                     RESULT(i64) integer = str_to_int(argv[i], strlen(argv[i]), 10);
                     if (integer.success) {
                         *(i64*)unnamed[uindex].target = integer.value;
-                        recognized_args++;
                         success = TRUE;
                     } 
                     break;}
@@ -85,7 +83,6 @@ i64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct named_argumen
                     RESULT(f128) decimal = str_to_float(argv[i], strlen(argv[i]));
                     if (decimal.success) {
                         *(f128*)unnamed[uindex].target = decimal.value;
-                        recognized_args++;
                         success = TRUE;
                     }
                     break;}
@@ -95,6 +92,7 @@ i64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct named_argumen
 
                 if (unnamed[uindex].success != NULL)
                     *unnamed[uindex].success = success;
+                recognized_args++;
                 uindex++;
             }
         }
