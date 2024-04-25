@@ -1,5 +1,5 @@
 #include "include/process.h"
-#include "syscall.h"
+#include "include/syscall.h"
 
 
 void exit(i64 exitcode) {
