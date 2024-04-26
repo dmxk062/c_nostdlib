@@ -18,8 +18,8 @@ OBJDIR = build
 
 EXEC = no_std
 
-SRC_EXAMPLES = examples/hello.c examples/cat.c examples/process.c
-EXAMPLES = $(addprefix examples/, hello stat process)
+SRC_EXAMPLES = $(wildcard examples/*.c)
+EXAMPLES = $(SRC_EXAMPLES:.c=)
 
 LIBRARY = libnostd.o
 
