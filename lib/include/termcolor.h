@@ -13,16 +13,16 @@ union Color24Bit {
 
 
 enum AnsiColor {
-    DEFAULT = '9',
-    BLACK   = '0',
-    RED     = '1',
-    GREEN   = '2',
-    YELLOW  = '3',
-    BLUE    = '4',
-    MAGENTA = '5',
-    CYAN    = '6',
-    WHITE   = '7',
-    NONE    = '\0',
+    CDEFAULT = '9',
+    CBLACK   = '0',
+    CRED     = '1',
+    CGREEN   = '2',
+    CYELLOW  = '3',
+    CBLUE    = '4',
+    CMAGENTA = '5',
+    CCYAN    = '6',
+    CWHITE   = '7',
+    CNONE    = '\0',
 
 };
 
@@ -38,4 +38,4 @@ struct AnsiFormat {
 
 #define ANSI_RESET "\e[0m"
 
-i64 gen_ansi_escape(char* dest, u64 max_len, struct AnsiFormat format);
+i64 ansi_format_escape(char* dest, u64 max_len, struct AnsiFormat format);

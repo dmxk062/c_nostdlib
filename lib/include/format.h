@@ -2,6 +2,7 @@
 #include "types.h"
 #include "alloc.h"
 #include "memcpy.h"
+#include "termcolor.h"
 #include "string.h"
 
 /*
@@ -37,6 +38,8 @@ typedef struct {
 typedef union  {
         char*       s;
         str_fmt     S;
+        // colors etc
+        struct AnsiFormat a;
         i64         i;
         int_fmt     I;
         f128        f;

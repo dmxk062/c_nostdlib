@@ -1,6 +1,6 @@
 #include "include/termcolor.h"
 
-i64 gen_ansi_escape(char* dest, u64 max_len, struct AnsiFormat format) {
+i64 ansi_format_escape(char* dest, u64 max_len, struct AnsiFormat format) {
     char buffer[64] = {'\e', '['};
     i64  i = 2;
 

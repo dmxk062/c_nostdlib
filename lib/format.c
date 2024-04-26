@@ -154,6 +154,7 @@ i64 f_to_decimal(f128 num, char* out, i64 maxlen, u16 padd, u16 num_frac) {
  * %o : octal
  * %b : binary
  * %f : float
+ * %a : ansi escape sequences
  * Uppercase versions: with additional format parameters:
  * F: 
  *    - padd: padd with zeroes
@@ -227,6 +228,15 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                 // copy the string into place if we have space
                 memcpy(out + outind, str_val, len);
                 outind += len;
+
+            } else if (format[i] == 'a') {
+                struct AnsiFormat format = values->a;
+                values++;
+                i64 length = ansi_format_escape(out + outind, outlen - outind, format);
+                if (length < 0) {
+                    return -2;
+                }
+                outind += length;
 
             // floats
             } else if (format[i] == 'f' || format[i] == 'F') {
