@@ -2,16 +2,6 @@
 #include "types.h"
 #include "memcpy.h"
 
-union Color24Bit {
-    u64 value;
-    struct {
-        u8 r;
-        u8 g;
-        u8 b;
-    };
-};
-
-
 enum AnsiColor {
     CDEFAULT = '9',
     CBLACK   = '0',

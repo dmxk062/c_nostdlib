@@ -237,6 +237,12 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                     return -2;
                 }
                 outind += length;
+            } else if (format[i] == 'A') {
+                if (outlen - outind < sizeof(ANSI_RESET)) {
+                    return -2;
+                }
+                memcpy(out + outind, ANSI_RESET, sizeof(ANSI_RESET));
+                outind += sizeof(ANSI_RESET);
 
             // floats
             } else if (format[i] == 'f' || format[i] == 'F') {
