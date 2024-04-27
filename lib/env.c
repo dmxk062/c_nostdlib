@@ -1,4 +1,7 @@
 #include "include/env.h"
+#include "include/alloc.h"
+#include "include/string.h"
+#include "include/memcpy.h"
 
 /*
  * get an environment variable from the global environment vector

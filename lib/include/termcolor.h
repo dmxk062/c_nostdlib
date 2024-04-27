@@ -1,6 +1,5 @@
 #pragma once
 #include "types.h"
-#include "memcpy.h"
 
 enum AnsiColor {
     CDEFAULT = '9',

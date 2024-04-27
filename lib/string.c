@@ -1,4 +1,6 @@
 #include "include/string.h"
+#include "include/memcpy.h"
+#include "include/alloc.h"
 
 
 // fairly simple

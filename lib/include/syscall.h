@@ -33,6 +33,8 @@
 #define SYS_EXIT        60
 #define SYS_KILL        62
 
+#define SYS_GETDENTS    78
+
 #define SYS_GETUID      102
 #define SYS_GETGID      104
 #define SYS_SETUID      105

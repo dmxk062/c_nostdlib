@@ -1,4 +1,5 @@
 #include "include/parsers.h"
+#include "include/string.h"
 
 
 inline i64 char_to_int(char c) {

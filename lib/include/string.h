@@ -1,7 +1,5 @@
 #pragma once
 #include "types.h"
-#include "alloc.h"
-#include "memcpy.h"
 
 
 

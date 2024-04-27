@@ -1,6 +1,5 @@
 #pragma once
 #include "types.h"
-#include "string.h"
 
 i64 char_to_int(const char c);
 

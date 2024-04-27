@@ -1,9 +1,6 @@
 #pragma once
 #include "types.h"
-#include "alloc.h"
-#include "memcpy.h"
 #include "termcolor.h"
-#include "string.h"
 
 /*
  * Parameters for fmt()

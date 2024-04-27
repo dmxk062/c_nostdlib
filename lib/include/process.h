@@ -1,7 +1,6 @@
 #pragma once
 
 #include "types.h"
-#include "syscall.h"
 
 
 void exit(i64 exitcode);

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "syscall.h"
 #include "types.h"
 
 typedef void (*sighandler_t)(i64);

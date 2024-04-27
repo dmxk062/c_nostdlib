@@ -1,7 +1,4 @@
 #pragma once
-#include "string.h"
-#include "memcpy.h"
-#include "alloc.h"
 #include "types.h"
 
 extern char** environ;

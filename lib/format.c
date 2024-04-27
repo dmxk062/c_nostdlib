@@ -1,3 +1,5 @@
+#include "include/memcpy.h"
+#include "include/string.h"
 #include "include/format.h"
 
 
@@ -229,6 +231,7 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                 memcpy(out + outind, str_val, len);
                 outind += len;
 
+            // ansi format
             } else if (format[i] == 'a') {
                 struct AnsiFormat format = values->a;
                 values++;
@@ -237,6 +240,7 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                     return -2;
                 }
                 outind += length;
+            // reset ansi color escapes
             } else if (format[i] == 'A') {
                 if (outlen - outind < sizeof(ANSI_RESET)) {
                     return -2;

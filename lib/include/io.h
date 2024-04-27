@@ -1,7 +1,5 @@
 #pragma once
 #include "types.h"
-#include "string.h"
-#include "syscall.h"
 #include "format.h"
 
 #define FMT_OUTPUT_SIZE 4096
@@ -12,8 +10,8 @@
 #define STDOUT 1
 #define STDERR 2
 
-i64 read(int fd, void* buffer, u64 count);
-i64 write(int fd, void const* data, u64 count);
+RESULT(u64) read(int fd, void* buffer, u64 count);
+RESULT(u64) write(int fd, void const* data, u64 count);
 
 #define O_RDONLY 00
 #define O_WRONLY 01
@@ -30,9 +28,9 @@ i64 write(int fd, void const* data, u64 count);
 
 
     
-i64 open(const char* path, i64 flags, i64 mode);
-i64 close(u64 fd);
-i64 seek(u64 fd, i64 offset, u64 origin);
+RESULT(u64) open(const char* path, i64 flags, i64 mode);
+RESULT(u64) close(u64 fd);
+RESULT(u64) seek(u64 fd, i64 offset, u64 origin);
 
 void print(const char* string);
 
