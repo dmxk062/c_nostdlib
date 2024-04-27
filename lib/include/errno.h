@@ -18,6 +18,7 @@ static char* ERROR_MESSAGES[] = {
     "Permission denied",
     "Bad address",
     "Not a block device",
+    "Device or resource busy",
     "File already exists",
     "Cross-device link",
     "No such device",
