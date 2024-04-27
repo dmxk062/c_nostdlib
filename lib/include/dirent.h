@@ -3,12 +3,24 @@
 
 #define DIRENT_BUF_SIZE 256
 
+enum DT_TYPE {
+    DT_UNKNOWN = 0,
+    DT_FIFO    = 1,
+    DT_CHR     = 2,
+    DT_DIR     = 4,
+    DT_BLK     = 6,
+    DT_REG     = 8,
+    DT_LNK     = 10,
+    DT_SOCK    = 12,
+    DT_WHT     = 14,
+};
+
 typedef struct dirent {
     u64     ino;
     u64     off;
 
     u16     len;
-    u8      type;
+    enum DT_TYPE type : 8;
     char    name[5];
 } dirent;
 
@@ -24,14 +36,4 @@ RESULT(u64) _getdents(u64 fd, dirent* ent, u64 count);
 
 DEFRESULT(dirent*, dirent);
 RESULT(dirent) nextdir(u64 fd, directory_buffer* buf);
-
-#define DT_UNKNOWN  0
-#define DT_FIFO     1
-#define DT_CHR      2
-#define DT_DIR      4
-#define DT_BLK      6
-#define DT_REG      8
-#define DT_LNK      10
-#define DT_SOCK     12
-#define DT_WHT      14
 
