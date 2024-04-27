@@ -34,6 +34,7 @@
 #define SYS_KILL        62
 
 #define SYS_GETDENTS    78
+#define SYS_GETDENTS64  217
 
 #define SYS_GETUID      102
 #define SYS_GETGID      104

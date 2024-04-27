@@ -13,4 +13,4 @@
 
 
 
-void* mmap(u64 addr, u64 len, u64 prot, u64 flags, u64 fd, u64 offset);
+RESULT(untyped) mmap(u64 addr, u64 len, u64 prot, u64 flags, u64 fd, u64 offset);

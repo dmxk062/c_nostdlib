@@ -13,12 +13,18 @@
 RESULT(u64) read(int fd, void* buffer, u64 count);
 RESULT(u64) write(int fd, void const* data, u64 count);
 
-#define O_RDONLY 00
-#define O_WRONLY 01
-#define O_RDWR   02
-#define O_EXCL   00200
-#define O_CREAT  001000
-#define O_APPEND 002000
+#define O_RDONLY    00000000
+#define O_WRONLY    00000001
+#define O_RDWR      00000002
+#define O_CREAT     00000100
+#define O_EXCL      00000200
+#define O_APPEND    00002000
+#define O_NONBLOCK  00004000
+#define O_LARGEFILE 00100000
+#define O_DIRECTORY 00200000
+#define O_NOFOLLOW  00400000
+#define O_NOATIME   01000000
+#define O_CLOEXEC   02000000
 
 #define SEEK_SET   0
 #define SEEK_CUR   1

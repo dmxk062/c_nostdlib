@@ -29,12 +29,15 @@ mem_chunk* mem_chunk_find(mem_chunk* head, u64 size) {
 // get a new page from linux
 static
 mem_chunk* alloc_new_page(u64 size) {
-    void* memspace = mmap(0,
+    RESULT(untyped) memspace = mmap(0,
             size,
             PROT_READ|PROT_WRITE,
             MAP_ANONYMOUS|MAP_PRIVATE,
             0, 0);
-    mem_chunk* ptr = memspace;
+    if (!memspace.success) {
+        return NULL;
+    }
+    mem_chunk* ptr = memspace.value;
     ptr->size = MEM_PAGE_SIZE - MEM_STRUCT_SIZE;
     ptr->prev = NULL;
     ptr->next = NULL;
