@@ -9,14 +9,14 @@ i32 main(i32 argc, zstr argv[]) {
     bool color_red  = FALSE;
     bool color_blue = FALSE;
 
-    named_arguments nargs = {
+    NamedArguments nargs = {
         {"-r", "--red", &color_red,   ARGBOOL},
         {"-b", "--blue", &color_blue, ARGBOOL}
     };
 
     zstr positional = NULL;
     bool got_positional = FALSE;
-    unnamed_arguments uargs = {
+    UnnamedArguments uargs = {
         {&positional, ARGSTRING, NULL, &got_positional}
     };
 

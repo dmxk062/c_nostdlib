@@ -47,14 +47,14 @@ i32 main(i32 argc, zstr argv[]) {
     bool no_color = FALSE;
     bool no_icons = FALSE;
     bool show_hidden = FALSE;
-    named_arguments nargs = {
+    NamedArguments nargs = {
         {"-C", "--no-color", &no_color, ARGBOOL},
         {"-I", "--no-icons", &no_icons, ARGBOOL},
         {"-a", "--all", &show_hidden,   ARGBOOL},
     };
 
     zstr path = ".";
-    unnamed_arguments uargs = {
+    UnnamedArguments uargs = {
         {&path, ARGSTRING},
     };
 
@@ -73,10 +73,10 @@ i32 main(i32 argc, zstr argv[]) {
     }
 
     u64 fd = dirfd.value;
-    directory_buffer dirbuf;
+    DirectoryBuffer dirbuf;
 
     RESULT(dirent) ent;
-    dirent* file;
+    Dirent* file;
 
     enum AnsiColor color;
     zstr icon;

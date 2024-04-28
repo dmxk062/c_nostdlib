@@ -10,7 +10,7 @@ i32 main(i32 argc, zstr argv[]) {
     i64  count  = 0;
     bool got_string = FALSE;
     bool got_count  = FALSE;
-    unnamed_arguments uargs = {
+    UnnamedArguments uargs = {
         {&to_index, ARGSTRING, NULL, &got_string},
         {&count,    ARGINT,    NULL, &got_count},
     };
@@ -19,9 +19,9 @@ i32 main(i32 argc, zstr argv[]) {
             NULL, NULL,
             ARRLEN(uargs), uargs);
 
-    string argument = string_new_from_zstr(to_index).value;
+    String argument = string_new_from_zstr(to_index).value;
 
-    RESULT(string) sliced = string_slice(argument, 0, count);
+    RESULT(String) sliced = string_slice(argument, 0, count);
     if (!sliced.success) {
         fwrite(STDERR, "`%s` is shorter than %d\n", (fmts){
             {.s = argument}, {.i = count}
