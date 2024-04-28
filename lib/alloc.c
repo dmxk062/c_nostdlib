@@ -10,6 +10,7 @@
 mem_chunk* global_head = NULL;
 // whatever element is at the end
 mem_chunk* global_last = NULL;
+u64 global_allocated_pages = 0;
 
 // return the first chunk that is large enough
 static
@@ -42,6 +43,7 @@ mem_chunk* alloc_new_page(u64 size) {
     ptr->prev = NULL;
     ptr->next = NULL;
     ptr->free = TRUE;
+    global_allocated_pages++;
 
     return ptr;
 }
@@ -184,4 +186,7 @@ u64 get_used_chunk_count() {
     }
 
     return count;
+}
+u64 get_used_page_count() {
+    return global_allocated_pages;
 }
