@@ -1,21 +1,22 @@
 #include "include/stat.h"
 #include "include/syscall.h"
+#include "types.h"
 
-i64 stat(char* path, struct stat* statbuf) {
-    return (i64)
+errno_t stat(char* path, struct stat* statbuf) {
+    return (errno_t)-(i64)
     syscall2(SYS_STAT, 
             path, 
             statbuf);
 }
-i64 lstat(char* path, struct stat* statbuf) {
-    return (i64)
+errno_t lstat(char* path, struct stat* statbuf) {
+    return (errno_t)-(i64)
     syscall2(SYS_STAT, 
             path, 
             statbuf);
 }
 
-i64 fstat(u64 fd, struct stat* statbuf) {
-    return (i64)
+errno_t fstat(u64 fd, struct stat* statbuf) {
+    return (errno_t)-(i64)
     syscall2(SYS_FSTAT, 
             (void*)fd, 
             statbuf);

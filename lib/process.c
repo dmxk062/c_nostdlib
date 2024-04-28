@@ -1,5 +1,6 @@
 #include "include/process.h"
 #include "include/syscall.h"
+#include "types.h"
 
 
 void exit(i64 exitcode) {
@@ -12,54 +13,61 @@ u64 getpid() {
     syscall0(SYS_GETPID);
 }
 
-i64 fork(){
-    return (i64) 
-    syscall0(SYS_FORK);
+RESULT(u64) fork(){
+    i64 ret = (i64)syscall0(SYS_FORK);
+    if (ret < 0) 
+        return (RESULT(u64)){.success = FALSE, .errno = -ret};
+    else
+        return (RESULT(u64)){.success = TRUE, .value = ret};
 }
-i64 vfork(){
-    return (i64) 
-    syscall0(SYS_VFORK);
+RESULT(u64) vfork(){
+    i64 ret = (i64)syscall0(SYS_VFORK);
+    if (ret < 0) 
+        return (RESULT(u64)){.success = FALSE, .errno = -ret};
+    else
+        return (RESULT(u64)){.success = TRUE, .value = ret};
 }
 
-i64 kill(i64 pid, i64 signal) {
-    return (i64)
+errno_t kill(i64 pid, i64 signal) {
+    return (errno_t)-(i64)
     syscall2(SYS_KILL,
             (void*)pid,
             (void*)signal);
 }
 
-i64 execve(const char *program, char *const *argv, char *const *envp) {
-    return (i64)
+errno_t execve(const char *program, char *const *argv, char *const *envp) {
+    return (errno_t)-(i64)
     syscall3(SYS_EXECVE,
             (void*)program,
             (void*)argv,
             (void*)envp);
 }
 
-i64 getuid() {
-    return (i64) 
+u64 getuid() {
+    return (u64) 
     syscall0(SYS_GETUID);
 }
-i64 getgid() {
-    return (i64) 
+u64 getgid() {
+    return (u64) 
     syscall0(SYS_GETGID);
 }
-i64 geteuid() {
-    return (i64) 
+u64 geteuid() {
+    return (u64) 
     syscall0(SYS_GETEUID);
 }
-i64 getegid() {
-    return (i64) 
+u64 getegid() {
+    return (u64) 
     syscall0(SYS_GETEGID);
 }
 
-i64 setuid(i64 uid) {
-    return (i64)
+errno_t setuid(u64 uid) {
+    return (errno_t)-(i64)
     syscall1(SYS_SETUID,
             (void*)uid);
 }
-i64 setgid(i64 gid) {
-    return (i64)
+errno_t setgid(u64 gid) {
+    return (errno_t)-(i64)
     syscall1(SYS_SETGID,
             (void*)gid);
 }
+

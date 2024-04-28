@@ -71,9 +71,9 @@ struct stat {
 };
 
 
-i64 stat(char* path, struct stat* statbuf);
-i64 lstat(char* path, struct stat* statbuf);
-i64 fstat(u64 fd, struct stat* statbuf);
+errno_t stat(char* path, struct stat* statbuf);
+errno_t lstat(char* path, struct stat* statbuf);
+errno_t fstat(u64 fd, struct stat* statbuf);
 
 #define	S_DIR     004
 #define	S_CHR     002

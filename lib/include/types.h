@@ -52,6 +52,9 @@ typedef char*               zstr;
 // might be annoying
 typedef void*               untyped;
 
+// error number
+typedef u64                 errno_t;
+
 enum TYPES {
     INT,
     SINT,
