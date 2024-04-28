@@ -11,14 +11,14 @@ i32 main(i32 argc, zstr argv[]) {
     bool color_blue = FALSE;
 
     named_arguments nargs = {
-        {"-r", "--red", &color_red, BOOL},
-        {"-b", "--blue", &color_blue, BOOL}
+        {"-r", "--red", &color_red,   ARGBOOL},
+        {"-b", "--blue", &color_blue, ARGBOOL}
     };
 
     zstr positional = NULL;
     bool got_positional = FALSE;
     unnamed_arguments uargs = {
-        {&positional, STRING, NULL, &got_positional}
+        {&positional, ARGSTRING, NULL, &got_positional}
     };
 
     i64 num_parsed = parse_arguments(argc-1, argv+1,
@@ -35,8 +35,8 @@ i32 main(i32 argc, zstr argv[]) {
         color = CBLUE;
 
     if (got_positional) {
-        fprint("%a%s%A\n", (fmts){
-            {.a = {.fg = CBLACK, .bg = color}}, 
+        fprint("%e%s%E\n", (fmts){
+            {.e = {.fg = CBLACK, .bg = color}}, 
             {.s = positional}
         });
     }
