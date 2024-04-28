@@ -1,6 +1,6 @@
 #include "include/env.h"
 #include "include/alloc.h"
-#include "include/string.h"
+#include "include/cstring.h"
 #include "include/memcpy.h"
 
 /*

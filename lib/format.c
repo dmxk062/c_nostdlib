@@ -1,5 +1,5 @@
 #include "include/memcpy.h"
-#include "include/string.h"
+#include "include/cstring.h"
 #include "include/format.h"
 
 
