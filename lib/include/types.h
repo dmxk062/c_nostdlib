@@ -76,6 +76,7 @@ typedef struct {
     };
 } unitype;
 
+#ifndef RESULT
 /*
  * better option for type safety
  */
@@ -89,9 +90,6 @@ typedef struct {
     }; \
 } __result_t_##name; \
 
-
-
-
 /*
  * general naming convention:
  * for regular scalar types or typedef'd structs/unions: just the type name
@@ -100,9 +98,26 @@ typedef struct {
 #define RESULT(name) \
     __result_t_##name
 
+#endif /* RESULT */
 
+#ifndef WHILE_SUCCESS
+
+/*
+ * Perform an action until the RESULT() returned is not successful
+ */
+#define WHILE_SUCCESS(var, funct) \
+    for(var = funct; var.success; var = funct)
+
+#endif /* WHILE_SUCCESS */
+
+#ifndef ARRLEN
+/*
+ * get the number of items in a static array
+ */
 #define ARRLEN(array) \
     sizeof(array) / sizeof(array[0])
+
+#endif /* ARRLEN */
 
 DEFRESULT(i64, i64);
 DEFRESULT(u64, u64);
@@ -110,3 +125,4 @@ DEFRESULT(f64, f64);
 DEFRESULT(f128, f128);
 DEFRESULT(void*, untyped);
 DEFRESULT(char*, charptr);
+DEFRESULT(zstr,  zstr);
