@@ -23,20 +23,25 @@ u64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct named_argumen
                 if (parsing_named && streq(argv[i], named[j].long_option) || streq(argv[i], named[j].short_option)) {
                     bool success = FALSE;
                     switch (named[j].type) {
-                    case STRING: {
+                    case ARGSTRING: {
                         if (argv[i+1] != NULL) {
                             *(char**)named[j].target = argv[++i];
                             recognized_args+=2;
                             success = TRUE;
                         }
                         break;}
-                    case BOOL: {
+                    case ARGBOOL: {
                         *(bool*)named[j].target = TRUE;
                         success = TRUE;
                         recognized_args++;
                         break;}
+                    case ARGTOGGLE: {
+                        *(bool*)named[j].target = !*(bool*)named[j].target;
+                        success = TRUE;
+                        recognized_args++;
+                        break;}
 
-                    case INT: {
+                    case ARGINT: {
                         if (argv[i+1] != NULL) {
                             RESULT(i64) integer = str_to_int(argv[i], strlen(argv[i]), 10);
                             if (integer.success) {
@@ -50,7 +55,7 @@ u64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct named_argumen
                         recognized_args++;
                         break;}
 
-                    case FLOAT: {
+                    case ARGFLOAT: {
                         if (argv[i+1] != NULL) {
                             RESULT(f128) decimal = str_to_float(argv[i], strlen(argv[i]));
                             if (decimal.success) {
@@ -79,19 +84,19 @@ u64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct named_argumen
             if (uindex < unnamed_count) {
                 bool success = FALSE;
                 switch (unnamed[uindex].type) {
-                case STRING: {
+                case ARGSTRING: {
                     *(char**)unnamed[uindex].target = argv[i];
                     success = TRUE;
                     break;}
 
-                case INT: {
+                case ARGINT: {
                     RESULT(i64) integer = str_to_int(argv[i], strlen(argv[i]), 10);
                     if (integer.success) {
                         *(i64*)unnamed[uindex].target = integer.value;
                         success = TRUE;
                     } 
                     break;}
-                case FLOAT: {
+                case ARGFLOAT: {
                     RESULT(f128) decimal = str_to_float(argv[i], strlen(argv[i]));
                     if (decimal.success) {
                         *(f128*)unnamed[uindex].target = decimal.value;

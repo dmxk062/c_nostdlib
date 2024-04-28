@@ -4,18 +4,26 @@
 
 
 
+enum argtypes {
+    ARGINT,
+    ARGFLOAT,
+    ARGSTRING,
+    ARGBOOL,
+    ARGTOGGLE
+};
+
 struct named_argument {
     zstr            short_option;
     zstr            long_option;
     void*           target;
-    enum TYPES      type;
+    enum argtypes   type;
     u64*            found_index;
     bool*           success;
 };
 
 struct unnamed_argument {
     void*           target;
-    enum TYPES      type;
+    enum argtypes   type;
     u64*            found_index;
     bool*           success;
 };
