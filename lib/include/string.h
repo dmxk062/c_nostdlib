@@ -32,4 +32,6 @@ RESULT(String) string_slice(const String str, u64 start, u64 end);
 RESULT(StringList) string_list_new(u64 size);
 errno_t string_list_free(StringList* strings);
 
-u64 string_split(String str, StringList* buffer, char delim);
+u64 string_split_char(String str, StringList* buffer, char delim);
+
+RESULT(String) string_list_join(StringList* list, String delim);

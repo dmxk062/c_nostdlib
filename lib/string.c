@@ -131,14 +131,14 @@ errno_t string_list_free(StringList* strings) {
     return SUCCESS;
 }
 
-u64 string_split(String str, StringList* buffer, char delim) {
+u64 string_split_char(String str, StringList* buffer, char delim) {
     u64 start_at = buffer->len;
     u64 index = start_at;
 
     u64 start = 0;
     u64 end   = 0;
 
-    for (i64 i = 0; i < str->len; ++i) {
+    for (i64 i = 0; i < str->len; i++) {
         if (str->buffer[i] == delim) {
             end = i;
             if (index < buffer->size) {
@@ -165,4 +165,38 @@ u64 string_split(String str, StringList* buffer, char delim) {
     }
 
     return index - start_at;
+}
+
+RESULT(String) string_list_join(StringList* list, String delim) {
+    u64 total_length = 0;
+    for (u64 i = 0; i < list->len; i++) {
+        total_length += list->strings[i]->len;
+        if (i != list->len - 1)
+            total_length += delim->len;
+    }
+
+    RESULT(String) new_string = string_new(total_length);
+    if (!new_string.success) 
+        return new_string;
+
+    String str = new_string.value;
+
+    u64 outindex = 0;
+
+    for(u64 i = 0; i < list->len; i++) {
+        memcpy(str->buffer + outindex,
+                list->strings[i]->buffer,
+                list->strings[i]->len);
+        outindex += list->strings[i]->len;
+        if (i != list->len - 1) {
+            memcpy(str->buffer + outindex,
+                    delim->buffer,
+                    delim->len);
+            outindex += delim->len;
+        }
+    }
+
+    str->len=total_length;
+    return (RESULT(String)){.success = TRUE, .value = str};
+    
 }
