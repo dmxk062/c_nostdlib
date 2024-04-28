@@ -156,7 +156,8 @@ i64 f_to_decimal(f128 num, char* out, i64 maxlen, u16 padd, u16 num_frac) {
  * %o : octal
  * %b : binary
  * %f : float
- * %a : ansi escape sequences
+ * %e : ansi escape sequences
+ * %E : reset ansi escape sequences
  * Uppercase versions: with additional format parameters:
  * F: 
  *    - padd: padd with zeroes
@@ -232,8 +233,8 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                 outind += len;
 
             // ansi format
-            } else if (format[i] == 'a') {
-                struct AnsiFormat format = values->a;
+            } else if (format[i] == 'e') {
+                struct AnsiFormat format = values->e;
                 values++;
                 i64 length = ansi_format_escape(out + outind, outlen - outind, format);
                 if (length < 0) {
@@ -241,7 +242,7 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                 }
                 outind += length;
             // reset ansi color escapes
-            } else if (format[i] == 'A') {
+            } else if (format[i] == 'E') {
                 if (outlen - outind < sizeof(ANSI_RESET)) {
                     return -2;
                 }

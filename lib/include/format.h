@@ -35,8 +35,8 @@ typedef struct {
 typedef union  {
         char*       s;
         str_fmt     S;
-        // colors etc
-        struct AnsiFormat a;
+        // **escape**code
+        struct AnsiFormat e;
         i64         i;
         int_fmt     I;
         f128        f;

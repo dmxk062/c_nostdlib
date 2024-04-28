@@ -64,8 +64,8 @@ i32 main(i32 argc, zstr argv[]) {
 
     RESULT(u64) dirfd = opendir(path);
     if (!dirfd.success) {
-        fwrite(STDERR, "%aFailed to open %s: %s%A\n", (fmts){
-            {.a = {.fg = CRED}},
+        fwrite(STDERR, "%eFailed to open %s: %s%E\n", (fmts){
+            {.e = {.fg = CRED}},
             {.s = path},
             {.s = ERROR_MESSAGES[dirfd.errno]}
         });
@@ -97,8 +97,8 @@ i32 main(i32 argc, zstr argv[]) {
         else
             icon = FILETYPE_ICONS[file->type];
 
-        fprint("%a%s%s%A\n", (fmts){
-            {.a = {.fg = color}},
+        fprint("%e%s%s%E\n", (fmts){
+            {.e = {.fg = color}},
             {.s = icon},
             {.s = file->name},
         });
