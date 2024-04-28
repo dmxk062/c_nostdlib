@@ -1,3 +1,4 @@
 build/
 no_std
 libnostd.o
+compile_commands.json
