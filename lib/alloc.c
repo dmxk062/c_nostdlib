@@ -10,7 +10,13 @@
 mem_chunk* global_head = NULL;
 // whatever element is at the end
 mem_chunk* global_last = NULL;
-u64 global_allocated_pages = 0;
+
+struct {
+    u64 pages;
+    u64 total;
+    u64 in_use;
+
+} malloc_stats;
 
 // return the first chunk that is large enough
 static
@@ -43,7 +49,7 @@ mem_chunk* alloc_new_page(u64 size) {
     ptr->prev = NULL;
     ptr->next = NULL;
     ptr->free = TRUE;
-    global_allocated_pages++;
+    malloc_stats.pages++;
 
     return ptr;
 }
@@ -79,6 +85,9 @@ void* malloc(u64 size) {
     // first run, allocate a page for our first object
     if (global_head == NULL) {
         u64 new_size = size;
+        malloc_stats.pages  = 0;
+        malloc_stats.in_use = 0;
+        malloc_stats.total  = 0;
         
         mem_chunk* new = alloc_new_page(get_page_size(size));
         // oops, either too big of a request or we are oom
@@ -174,6 +183,7 @@ void free(void* ptr) {
     if (target->prev != NULL && target == ((target->prev)->end) + (target->prev)->size) {
         merge_prev(target);
     }
+    malloc_stats.in_use--;
 }
 
 u64 get_used_chunk_count() {
@@ -188,5 +198,5 @@ u64 get_used_chunk_count() {
     return count;
 }
 u64 get_used_page_count() {
-    return global_allocated_pages;
+    return malloc_stats.pages;
 }
