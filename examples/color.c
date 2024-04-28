@@ -34,9 +34,9 @@ i32 main(i32 argc, zstr argv[]) {
         color = CBLUE;
 
     if (got_positional) {
-        fprint("%e%s%E\n", (fmts){
+        fprint("%e%z%E\n", (fmts){
             {.e = {.fg = CBLACK, .bg = color}}, 
-            {.s = positional}
+            {.z = positional}
         });
     }
 
