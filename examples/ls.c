@@ -24,7 +24,7 @@ const static enum AnsiColor FILETYPE_COLORS[] = {
     CWHITE
 };
 
-const static char* FILETYPE_ICONS[] = {
+const static zstr FILETYPE_ICONS[] = {
     "󰈔 ",
     "󰟥 ",
     " ",
@@ -64,10 +64,10 @@ i32 main(i32 argc, zstr argv[]) {
 
     RESULT(u64) dirfd = opendir(path);
     if (!dirfd.success) {
-        fwrite(STDERR, "%eFailed to open %s: %s%E\n", (fmts){
+        fwrite(STDERR, "%eFailed to open %z: %z%E\n", (fmts){
             {.e = {.fg = CRED}},
-            {.s = path},
-            {.s = ERROR_MESSAGES[dirfd.errno]}
+            {.z = path},
+            {.z = ERROR_MESSAGES[dirfd.errno]}
         });
         return dirfd.errno;
     }
@@ -79,13 +79,14 @@ i32 main(i32 argc, zstr argv[]) {
     dirent* file;
 
     enum AnsiColor color;
-    char* icon;
+    zstr icon;
     WHILE_SUCCESS(ent, nextdir(fd, &dirbuf)) {
 
         file = ent.value;
         if (!show_hidden && file->name[0] == '.') {
             continue;
         }
+
 
         if (no_color)
             color = CNONE;
@@ -97,10 +98,10 @@ i32 main(i32 argc, zstr argv[]) {
         else
             icon = FILETYPE_ICONS[file->type];
 
-        fprint("%e%s%s%E\n", (fmts){
+        fprint("%e%z%z%E\n", (fmts){
             {.e = {.fg = color}},
-            {.s = icon},
-            {.s = file->name},
+            {.z = icon},
+            {.z = file->name},
         });
     }
 }
