@@ -8,7 +8,7 @@ RESULT(u64) opendir(const char* path) {
     return open(path, NULL, mode);
 }
 
-RESULT(u64) _getdents(u64 fd, dirent* ent, u64 count) {
+RESULT(u64) _getdents(u64 fd, Dirent* ent, u64 count) {
     i64 ret = (i64) syscall3(SYS_GETDENTS64, 
             (untyped)fd,
             ent,
@@ -19,7 +19,7 @@ RESULT(u64) _getdents(u64 fd, dirent* ent, u64 count) {
         return (RESULT(u64)){.success = TRUE, .value = ret};
 }
 
-RESULT(dirent) nextdir(u64 fd, directory_buffer* buf) {
+RESULT(dirent) nextdir(u64 fd, DirectoryBuffer* buf) {
     bool new_entries = FALSE;
     while (TRUE) {
         if (buf->len == 0 || buf->len < buf->offset || new_entries) {
@@ -33,9 +33,9 @@ RESULT(dirent) nextdir(u64 fd, directory_buffer* buf) {
             new_entries = FALSE;
         }
 
-        dirent* d;
+        Dirent* d;
         while (buf->offset < buf->len) {
-            d = (dirent*)(buf->buffer + buf->offset);
+            d = (Dirent*)(buf->buffer + buf->offset);
             buf->offset += d->len;
             if (d->ino != 0)
                 return (RESULT(dirent)){.success = TRUE, .value = d};

@@ -32,7 +32,7 @@ typedef struct {
 
 // a formatted string
 typedef struct {
-    string val;
+    String val;
     u16 padd;
 } string_fmt;
 
@@ -45,7 +45,7 @@ typedef union  {
         zstr_fmt    Z;
 
         // string object
-        string      s;
+        String      s;
         string_fmt  S;
 
         // **escape**code

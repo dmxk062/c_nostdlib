@@ -1,7 +1,7 @@
 #include <signal.h>
 #include <syscall.h>
 
-i64 sigaction(u64 signal, struct sigaction* sa, struct sigaction* oa) {
+i64 sigaction(u64 signal, struct Sigaction* sa, struct Sigaction* oa) {
     return (i64) 
     syscall4(SYS_SIGACTION,
             (void*)signal,
@@ -28,8 +28,8 @@ void sigset_add(sigset_t* set, u64 signum) {
 }
 
 
-i64 setsigaction(u64 signal, sighandler_t handler, u64 flags, u64 mask, struct sigaction* old_handler) {
-    struct sigaction action;
+i64 setsigaction(u64 signal, sighandler_t handler, u64 flags, u64 mask, struct Sigaction* old_handler) {
+    struct Sigaction action;
     action.mask = mask;
     action.flags = flags | SA_RESTORER;
 

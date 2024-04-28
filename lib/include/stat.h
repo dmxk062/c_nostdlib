@@ -13,7 +13,7 @@
  * it could be considered a crime,
  * but it's a lot nicer to use
  */
-union stat_mode {
+union StatMode {
     u16 st_mode_bits;
     union {
         u16 perms : 12;
@@ -43,12 +43,12 @@ union stat_mode {
     };
 };
 
-struct stat {
+struct Stat {
     u64     st_dev;
     u64     st_ino;
     u64     st_nlink;
 
-    union stat_mode mode;
+    union StatMode mode;
     u32     st_uid;
     u32     st_gid;
     u32     : 4;
@@ -64,16 +64,16 @@ struct stat {
      * u64 nanoseconds;
      * the struct makes it nicer to access
      */
-    struct timespec atime;
-    struct timespec mtime;
-    struct timespec ctime;
+    struct Timespec atime;
+    struct Timespec mtime;
+    struct Timespec ctime;
     i64     __unused[3];
 };
 
 
-errno_t stat(char* path, struct stat* statbuf);
-errno_t lstat(char* path, struct stat* statbuf);
-errno_t fstat(u64 fd, struct stat* statbuf);
+errno_t stat(char* path, struct Stat* statbuf);
+errno_t lstat(char* path, struct Stat* statbuf);
+errno_t fstat(u64 fd, struct Stat* statbuf);
 
 #define	S_DIR     004
 #define	S_CHR     002

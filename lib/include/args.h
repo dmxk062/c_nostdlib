@@ -12,7 +12,7 @@ enum argtypes {
     ARGTOGGLE
 };
 
-struct named_argument {
+struct NamedArgument {
     zstr            short_option;
     zstr            long_option;
     void*           target;
@@ -21,7 +21,7 @@ struct named_argument {
     bool*           success;
 };
 
-struct unnamed_argument {
+struct UnnamedArgument {
     void*           target;
     enum argtypes   type;
     u64*            found_index;
@@ -29,8 +29,8 @@ struct unnamed_argument {
 };
 
 u64 parse_arguments(i64 argc, zstr argv[],
-        u64 named_count, struct named_argument named[],
-        u64 unnamed_count, struct unnamed_argument unnamed[]);
+        u64 named_count, struct NamedArgument named[],
+        u64 unnamed_count, struct UnnamedArgument unnamed[]);
 
-typedef struct named_argument named_arguments[];
-typedef struct unnamed_argument unnamed_arguments[];
+typedef struct NamedArgument NamedArguments[];
+typedef struct UnnamedArgument UnnamedArguments[];

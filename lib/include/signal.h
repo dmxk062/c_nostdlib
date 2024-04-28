@@ -9,7 +9,7 @@ typedef struct {
     u64     bits[2];
 } sigset_t;
 
-struct sigaction {
+struct Sigaction {
     sighandler_t handler;
     u64          flags;
     sigrestore_t restorer;
@@ -17,10 +17,10 @@ struct sigaction {
 };
 
 
-i64 sigaction(u64 signal, struct sigaction* sa, struct sigaction* oa);
+i64 sigaction(u64 signal, struct Sigaction* sa, struct Sigaction* oa);
 i64 sigprocmask(i64 how, sigset_t* newset, sigset_t* oldset);
 
-i64 setsigaction(u64 signal, sighandler_t handler, u64 flags, u64 mask, struct sigaction* old_handler);
+i64 setsigaction(u64 signal, sighandler_t handler, u64 flags, u64 mask, struct Sigaction* old_handler);
 
 void sigset_add(sigset_t* set, u64 signum);
 extern void sigaction_trampoline();

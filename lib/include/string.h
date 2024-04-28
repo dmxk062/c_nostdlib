@@ -10,8 +10,8 @@ typedef struct {
     char*   buffer;
 } __string_t;
 
-typedef __string_t* string;
-DEFRESULT(string, string);
+typedef __string_t* String;
+DEFRESULT(String, String);
 
 /*
  * Create a string object from a static c string
@@ -21,13 +21,13 @@ DEFRESULT(string, string);
 
 
 
-RESULT(string) string_new(u64 size);
-RESULT(string) string_new_from_zstr(zstr char_array);
+RESULT(String) string_new(u64 size);
+RESULT(String) string_new_from_zstr(zstr char_array);
 
 
-errno_t string_grow(string string, u64 size);
-errno_t string_append(string dst, const string src);
+errno_t string_grow(String string, u64 size);
+errno_t string_append(String dst, const String src);
 
-RESULT(string) string_slice(const string string, u64 start, u64 end);
+RESULT(String) string_slice(const String string, u64 start, u64 end);
 
-errno_t string_free(string string);
+errno_t string_free(String string);

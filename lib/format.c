@@ -234,7 +234,7 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                 outind += len;
 
             } else if (format[i] == 's' || format[i] == 'S') {
-                string str_val;
+                String str_val;
                 u16 padding;
                 if (format[i] == 'S') {
                     str_val = values->S.val;

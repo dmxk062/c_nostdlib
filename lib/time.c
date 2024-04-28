@@ -4,8 +4,8 @@
 /* 
  * if sleep was interrupted, the time remaining will be put into remaining
  */
-i64 sleep(u64 secs, u64 nanosecs, struct timespec* remaining) {
-    struct timespec spec;
+i64 sleep(u64 secs, u64 nanosecs, struct Timespec* remaining) {
+    struct Timespec spec;
     spec.secs = secs;
     spec.nano = nanosecs;
 

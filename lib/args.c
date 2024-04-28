@@ -3,7 +3,7 @@
 #include <parsers.h>
 
 
-u64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct named_argument named[], u64 unnamed_count, struct unnamed_argument unnamed[]) {
+u64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct NamedArgument named[], u64 unnamed_count, struct UnnamedArgument unnamed[]) {
     u64 recognized_args = 0;
     u64 uindex = 0;
     bool parsing_named = TRUE;

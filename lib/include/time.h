@@ -3,9 +3,9 @@
 #include <types.h>
 
 
-struct timespec {
+struct Timespec {
     u64 secs;
     u64 nano;
 };
 
-i64 sleep(u64 secs, u64 nanosecs, struct timespec* remaining);
+i64 sleep(u64 secs, u64 nanosecs, struct Timespec* remaining);

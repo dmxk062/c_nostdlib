@@ -22,18 +22,18 @@ typedef struct dirent {
     u16     len;
     enum DT_TYPE type : 8;
     char    name[5];
-} dirent;
+} Dirent;
 
 typedef struct directory_buffer {
     u64     offset;
     u64     len;
     char    buffer[DIRENT_BUF_SIZE];
-} directory_buffer;
+} DirectoryBuffer;
 
 RESULT(u64) opendir(const char* path);
 
-RESULT(u64) _getdents(u64 fd, dirent* ent, u64 count);
+RESULT(u64) _getdents(u64 fd, Dirent* ent, u64 count);
 
-DEFRESULT(dirent*, dirent);
-RESULT(dirent) nextdir(u64 fd, directory_buffer* buf);
+DEFRESULT(Dirent*, dirent);
+RESULT(dirent) nextdir(u64 fd, DirectoryBuffer* buf);
 
