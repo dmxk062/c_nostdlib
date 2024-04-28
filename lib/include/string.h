@@ -7,7 +7,6 @@ typedef struct {
     u64     size;
     // index of last used character
     u64     len;
-    // storage
     char*   buffer;
 } __string_t;
 
@@ -24,3 +23,11 @@ DEFRESULT(string, string);
 
 RESULT(string) string_new(u64 size);
 RESULT(string) string_new_from_zstr(zstr char_array);
+
+
+errno_t string_grow(string string, u64 size);
+errno_t string_append(string dst, const string src);
+
+RESULT(string) string_slice(const string string, u64 start, u64 end);
+
+errno_t string_free(string string);
