@@ -48,9 +48,9 @@ i32 main(i32 argc, zstr argv[]) {
     bool no_icons = FALSE;
     bool show_hidden = FALSE;
     named_arguments nargs = {
-        {"-C", "--no-color", &no_color, BOOL},
-        {"-I", "--no-icons", &no_icons, BOOL},
-        {"-a", "--all", &show_hidden,   BOOL},
+        {"-C", "--no-color", &no_color, ARGBOOL},
+        {"-I", "--no-icons", &no_icons, ARGBOOL},
+        {"-a", "--all", &show_hidden,   ARGBOOL},
     };
 
     zstr path = ".";
