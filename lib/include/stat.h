@@ -1,6 +1,6 @@
 #pragma once
-#include "types.h"
-#include "time.h"
+#include <types.h>
+#include <time.h>
 
 /*
  * see https://github.com/torvalds/linux/blob/master/arch/x86/include/uapi/asm/stat.h

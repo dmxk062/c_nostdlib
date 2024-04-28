@@ -1,6 +1,6 @@
 #pragma once
-#include "types.h"
-#include "termcolor.h"
+#include <types.h>
+#include <termcolor.h>
 
 /*
  * Parameters for fmt()

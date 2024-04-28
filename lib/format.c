@@ -1,6 +1,6 @@
-#include "include/memcpy.h"
-#include "include/cstring.h"
-#include "include/format.h"
+#include <memcpy.h>
+#include <cstring.h>
+#include <format.h>
 
 
 

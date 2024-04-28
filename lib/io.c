@@ -1,6 +1,6 @@
-#include "include/io.h"
-#include "include/syscall.h"
-#include "include/cstring.h"
+#include <io.h>
+#include <syscall.h>
+#include <cstring.h>
 
 RESULT(u64) read(int fd, void* buffer, u64 count) {
     i64 ret = (i64)syscall3(SYS_READ,

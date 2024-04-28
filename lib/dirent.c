@@ -1,7 +1,7 @@
-#include "include/dirent.h"
-#include "include/io.h"
-#include "include/types.h"
-#include "include/syscall.h"
+#include <dirent.h>
+#include <io.h>
+#include <types.h>
+#include <syscall.h>
 
 RESULT(u64) opendir(const char* path) {
     u64 mode = O_RDONLY|O_DIRECTORY|O_CLOEXEC;

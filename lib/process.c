@@ -1,6 +1,6 @@
-#include "include/process.h"
-#include "include/syscall.h"
-#include "types.h"
+#include <process.h>
+#include <syscall.h>
+#include <types.h>
 
 
 void exit(i64 exitcode) {

@@ -1,6 +1,6 @@
-#include "include/cstring.h"
-#include "include/memcpy.h"
-#include "include/alloc.h"
+#include <cstring.h>
+#include <memcpy.h>
+#include <alloc.h>
 
 
 // fairly simple

@@ -1,6 +1,6 @@
 #pragma once
-#include "types.h"
-#include "format.h"
+#include <types.h>
+#include <format.h>
 
 #define FMT_OUTPUT_SIZE 4096
 

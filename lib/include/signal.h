@@ -1,6 +1,6 @@
 #pragma once
 
-#include "types.h"
+#include <types.h>
 
 typedef void (*sighandler_t)(i64);
 typedef void (*sigrestore_t)(void);

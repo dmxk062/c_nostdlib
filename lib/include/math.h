@@ -1,5 +1,5 @@
 #pragma once
-#include "types.h"
+#include <types.h>
 
 #define NAN (0.0 / 0.0)
 #define ISNAN(x) ((x) != (x))

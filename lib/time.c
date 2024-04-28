@@ -1,5 +1,5 @@
-#include "include/time.h"
-#include "include/syscall.h"
+#include <time.h>
+#include <syscall.h>
 
 /* 
  * if sleep was interrupted, the time remaining will be put into remaining

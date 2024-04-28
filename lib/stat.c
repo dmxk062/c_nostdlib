@@ -1,6 +1,6 @@
-#include "include/stat.h"
-#include "include/syscall.h"
-#include "types.h"
+#include <stat.h>
+#include <syscall.h>
+#include <types.h>
 
 errno_t stat(char* path, struct stat* statbuf) {
     return (errno_t)-(i64)

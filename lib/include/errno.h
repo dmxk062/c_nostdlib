@@ -1,7 +1,7 @@
 #pragma once
-#include "types.h"
+#include <types.h>
 
-static char* ERROR_MESSAGES[] = {
+static zstr ERROR_MESSAGES[] = {
     "Success",
     "Operation not permitted",
     "No such file or directory",

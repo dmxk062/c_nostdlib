@@ -1,5 +1,5 @@
-#include "include/ioctl.h"
-#include "include/syscall.h"
+#include <ioctl.h>
+#include <syscall.h>
 
 RESULT(u64) ioctl(u64 fd, u64 cmd, void* arg) {
     i64 ret = (i64)syscall3(SYS_IOCTL,

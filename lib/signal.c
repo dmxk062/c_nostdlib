@@ -1,5 +1,5 @@
-#include "include/signal.h"
-#include "include/syscall.h"
+#include <signal.h>
+#include <syscall.h>
 
 i64 sigaction(u64 signal, struct sigaction* sa, struct sigaction* oa) {
     return (i64) 
