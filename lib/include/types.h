@@ -121,6 +121,17 @@ typedef struct {
 
 #endif /* ARRLEN */
 
+#ifndef COUNTED_ARRAY
+
+#define COUNTED_ARRAY(type, name) \
+    struct { \
+        u64     size; \
+        u64     len; \
+        type    name; \
+    }
+
+#endif /* COUNTED_ARRAY */
+
 DEFRESULT(i64, i64);
 DEFRESULT(u64, u64);
 DEFRESULT(f64, f64);
