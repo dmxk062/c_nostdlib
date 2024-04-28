@@ -173,3 +173,15 @@ void free(void* ptr) {
         merge_prev(target);
     }
 }
+
+u64 get_used_chunk_count() {
+    u64 count = 0;
+    mem_chunk* ptr = global_head;
+    while (ptr != NULL) {
+        if (!ptr->free)
+            count++;
+        ptr = ptr->next;
+    }
+
+    return count;
+}

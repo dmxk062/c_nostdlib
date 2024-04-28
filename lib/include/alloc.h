@@ -17,3 +17,5 @@ typedef struct mem_chunk {
 
 void* malloc(u64 size);
 void free(void* ptr);
+
+u64 get_used_chunk_count(void);
