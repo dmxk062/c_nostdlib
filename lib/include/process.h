@@ -3,7 +3,7 @@
 #include "types.h"
 
 
-void noreturn exit(i64 exitcode);
+void exit(i64 exitcode);
 
 u64 getpid();
 
