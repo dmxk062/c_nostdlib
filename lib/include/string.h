@@ -1,2 +1,26 @@
 #pragma once
 #include <types.h>
+
+
+typedef struct {
+    // the available size
+    u64     size;
+    // index of last used character
+    u64     len;
+    // storage
+    char*   buffer;
+} __string_t;
+
+typedef __string_t* string;
+DEFRESULT(string, string);
+
+/*
+ * Create a string object from a static c string
+ */
+#define STRING(cstring) \
+    &(__string_t){.size = sizeof(cstring), .len = sizeof(cstring), .buffer = cstring}
+
+
+
+RESULT(string) string_new(u64 size);
+RESULT(string) string_new_from_zstr(zstr char_array);

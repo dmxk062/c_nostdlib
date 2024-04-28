@@ -1,5 +1,6 @@
 #include <memcpy.h>
 #include <cstring.h>
+#include <string.h>
 #include <format.h>
 
 
@@ -150,6 +151,7 @@ i64 f_to_decimal(f128 num, char* out, i64 maxlen, u16 padd, u16 num_frac) {
  * n > 0: number chars written
  * available formatting sequences:
  * %c : character
+ * %z : null terminated string
  * %s : string
  * %d : decimal
  * %x : hex int
@@ -196,18 +198,17 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                 char tmpchar = values->c;
                 values++;
                 out[outind++] = tmpchar;
-            } else if (format[i] == 's' || format[i] == 'S') {
+            } else if (format[i] == 'z' || format[i] == 'Z') {
                 char* str_val;
                 u16 padding;
-                if (format[i] == 'S') {
-                    str_val = values->S.val;
-                    padding = values->S.padd;
-                    values++;
+                if (format[i] == 'Z') {
+                    str_val = values->Z.val;
+                    padding = values->Z.padd;
                 } else {
-                    str_val = values->s;
-                    values++;
+                    str_val = values->z;
                     padding = 0;
                 }
+                values++;
                 // insert a string
                 u64 len = strlen(str_val);
 
@@ -230,6 +231,39 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                 }
                 // copy the string into place if we have space
                 memcpy(out + outind, str_val, len);
+                outind += len;
+
+            } else if (format[i] == 's' || format[i] == 'S') {
+                string str_val;
+                u16 padding;
+                if (format[i] == 'S') {
+                    str_val = values->S.val;
+                    padding = values->S.padd;
+                } else {
+                    str_val = values->s;
+                    padding = 0;
+                }
+                values++;
+                u64 len = str_val->len;
+                // left padding if necessary
+                if (padding > 0 && padding > len) {
+                    // how much we still need
+                    i64 padding_left = padding - len;
+                    // check if we have space for that
+                    if (padding + outind > outlen ){
+                        return -2;
+                    }
+
+                    // pad with spaces
+                    while (padding_left > 0) {
+                        out[outind++] = ' '; 
+                        padding_left--;
+                    }
+                } else if (len + outind > outlen) {
+                    return -2;
+                }
+                // copy the string into place if we have space
+                memcpy(out + outind, str_val->buffer, len);
                 outind += len;
 
             // ansi format

@@ -1,6 +1,7 @@
 #pragma once
 #include <types.h>
 #include <termcolor.h>
+#include <string.h>
 
 /*
  * Parameters for fmt()
@@ -23,18 +24,30 @@ typedef struct {
     u16 padd;
 } int_fmt;
 
+// a formatted null terminated string
+typedef struct {
+    zstr val;
+    u16 padd;
+} zstr_fmt;
+
 // a formatted string
 typedef struct {
-    char* val;
+    string val;
     u16 padd;
-} str_fmt;
+} string_fmt;
 
 /*
  * The capital versions offer additional formatting options 
  */
 typedef union  {
-        char*       s;
-        str_fmt     S;
+        // null terminated char*
+        zstr        z;
+        zstr_fmt    Z;
+
+        // string object
+        string      s;
+        string_fmt  S;
+
         // **escape**code
         struct AnsiFormat e;
         i64         i;
