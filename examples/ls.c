@@ -55,7 +55,7 @@ i32 main(i32 argc, zstr argv[]) {
 
     zstr path = ".";
     unnamed_arguments uargs = {
-        {&path, STRING},
+        {&path, ARGSTRING},
     };
 
     u64 num_parsed = parse_arguments(argc-1, argv+1,
@@ -80,10 +80,7 @@ i32 main(i32 argc, zstr argv[]) {
 
     enum AnsiColor color;
     char* icon;
-    while (TRUE) {
-        ent = nextdir(fd, &dirbuf);
-        if (!ent.success)
-            break;
+    WHILE_SUCCESS(ent, nextdir(fd, &dirbuf)) {
 
         file = ent.value;
         if (!show_hidden && file->name[0] == '.') {
@@ -106,8 +103,4 @@ i32 main(i32 argc, zstr argv[]) {
             {.s = file->name},
         });
     }
-
-
-
-
 }

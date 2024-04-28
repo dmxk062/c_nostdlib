@@ -80,7 +80,6 @@ typedef struct {
 /*
  * better option for type safety
  */
-
 #define DEFRESULT(type, name) \
     typedef struct __result_struct_##name { \
     bool    success; \
