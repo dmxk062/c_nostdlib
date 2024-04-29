@@ -20,7 +20,7 @@ u64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct NamedArgument
                 continue;
             }
             for (i64 j = 0; j < named_count; j++) {
-                if (parsing_named && streq(argv[i], named[j].long_option) || streq(argv[i], named[j].short_option)) {
+                if (parsing_named && (streq(argv[i], named[j].long_option) || streq(argv[i], named[j].short_option))) {
                     bool success = FALSE;
                     switch (named[j].type) {
                     case ARGSTRING: {
@@ -43,14 +43,12 @@ u64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct NamedArgument
 
                     case ARGINT: {
                         if (argv[i+1] != NULL) {
-                            RESULT(i64) integer = str_to_int(argv[i], strlen(argv[i]), 10);
+                            RESULT(i64) integer = str_to_int(argv[i+1], strlen(argv[i+1]), 10);
                             if (integer.success) {
                                 *(i64*)named[j].target = integer.value;
                                 recognized_args++;
                                 success = TRUE;
-                            } else {
-                                i--;
-                            }
+                            } 
                         }
                         recognized_args++;
                         break;}
