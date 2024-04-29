@@ -124,6 +124,8 @@ static zstr ERROR_MESSAGES[] = {
 #define EPIPE         32
 #define EDOM          33
 #define ERANGE        34
+#define ENAMETOOLONG  36
+#define ENOLCK        37
 #define ENOSYS        38    
 #define ENOTEMPTY     39    
 #define ELOOP         40    

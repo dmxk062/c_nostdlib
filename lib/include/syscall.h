@@ -2,47 +2,68 @@
 #include <types.h>
 
 // TODO: add more syscall numbers
-#define SYS_READ        0
-#define SYS_WRITE       1
+enum Syscalls {
+/*
+ * I/O
+ */
+SYS_READ  = 0,
+SYS_WRITE = 1,
+SYS_OPEN  = 2,
+SYS_CLOSE = 3,
 
-#define SYS_OPEN        2
-#define SYS_CLOSE       3
+/*
+ * Non I/O file operations
+ */
+SYS_STAT  = 4,
+SYS_FSTAT = 5,
+SYS_LSTAT = 6,
+SYS_POLL  = 7,
+SYS_SEEK  = 8,
+SYS_MMAP  = 9,
 
-#define SYS_STAT        4
-#define SYS_FSTAT       5
-#define SYS_LSTAT       6
-#define SYS_POLL        7
-#define SYS_SEEK        8
+/*
+ * Signals
+ */
+SYS_SIGACTION   = 13,
+SYS_SIGPROCMASC = 14,
+SYS_SIGRETURN   = 15,
 
-#define SYS_MMAP        9
+SYS_IOCTL = 16,
 
-#define SYS_SIGACTION   13
-#define SYS_SIGPROCMASC 14
-#define SYS_SIGRETURN   15
+SYS_NANOSLEEP = 35,
 
-#define SYS_IOCTL       16
+SYS_GETPID = 39,
 
-#define SYS_NANOSLEEP   35
+/*
+ * Socket calls
+ */
+SYS_SOCKET   = 41,
+SYS_CONNECT  = 42,
+SYS_ACCEPT   = 43,
+SYS_SENDTO   = 44,
+SYS_RECVFROM = 45,
+SYS_SENDMSG  = 46,
+SYS_RECVFMSG = 47,
 
-#define SYS_GETPID      39
+SYS_FORK = 57,
+SYS_VFORK = 58,
 
-#define SYS_FORK        57
-#define SYS_VFORK       58
+SYS_EXECVE = 59,
+SYS_EXIT = 60,
+SYS_KILL = 62,
 
-#define SYS_EXECVE      59
-#define SYS_EXIT        60
-#define SYS_KILL        62
+SYS_GETDENTS = 78,
+SYS_GETDENTS64 = 217,
 
-#define SYS_GETDENTS    78
-#define SYS_GETDENTS64  217
+SYS_GETUID = 102,
+SYS_GETGID = 104,
+SYS_SETUID = 105,
+SYS_SETGID = 106,
 
-#define SYS_GETUID      102
-#define SYS_GETGID      104
-#define SYS_SETUID      105
-#define SYS_SETGID      106
+SYS_GETEUID = 107,
+SYS_GETEGID = 108,
 
-#define SYS_GETEUID     107
-#define SYS_GETEGID     108
+};
 
 
 
@@ -51,32 +72,32 @@
  * using fewer registers saves a couple of movqs
  */
 extern void* syscall0(
-        u64 call
+        enum Syscalls call
 );
 extern void* syscall1(
-        u64 call,
+        enum Syscalls call,
         void* arg1
 );
 extern void* syscall2(
-        u64 call,
+        enum Syscalls call,
         void* arg1,
         void* arg2
 );
 extern void* syscall3(
-        u64 call,
+        enum Syscalls call,
         void* arg1,
         void* arg2,
         void* arg3
 );
 extern void* syscall4(
-        u64 call,
+        enum Syscalls call,
         void* arg1,
         void* arg2,
         void* arg3,
         void* arg4
 );
 extern void* syscall5(
-        u64 call,
+        enum Syscalls call,
         void* arg1,
         void* arg2,
         void* arg3,
