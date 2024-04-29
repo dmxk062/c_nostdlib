@@ -37,7 +37,7 @@ RESULT(u64) socket_new_unix(char* path, u64 path_length) {
     addr.family = AF_UNIX;
     memcpy(addr.path, path, path_length);
 
-    errno_t errno = socket_connect(new_sockfd.value, (struct SocketAddress*)&addr, path_length);
+    errno_t errno = socket_connect(new_sockfd.value, (struct SocketAddress*)&addr, path_length + 2);
     if (errno) {
         return (RESULT(u64)){.success = FALSE, .errno = errno};
     }
@@ -57,3 +57,22 @@ RESULT(u64) socket_recv(u64 fd, void* buffer, u64 count, u64 flags) {
     else
         return (RESULT(u64)){.success = TRUE, .value = ret};
 }
+
+RESULT(u64) socket_send(u64 fd, void* buffer, u64 count, u64 flags) {
+    i64 ret = (i64)syscall4(SYS_SENDTO,
+            (untyped)fd,
+            buffer,
+            (untyped)count,
+            (untyped)flags);
+    if (ret < 0) 
+        return (RESULT(u64)){.success = FALSE, .errno = -ret};
+    else
+        return (RESULT(u64)){.success = TRUE, .value = ret};
+}
+
+errno_t socket_shutdown(u64 fd, enum SocketShutdown how) {
+    return (errno_t) -(i64)syscall2(SYS_SHUTDOWN,
+            (untyped)fd,
+            (untyped)how);
+}
+
