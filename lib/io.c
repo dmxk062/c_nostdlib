@@ -2,7 +2,7 @@
 #include <syscall.h>
 #include <cstring.h>
 
-RESULT(u64) read(int fd, void* buffer, u64 count) {
+RESULT(u64) read(u64 fd, void* buffer, u64 count) {
     i64 ret = (i64)syscall3(SYS_READ,
             (void*) (long int) fd,
             (void*) buffer,
@@ -14,7 +14,7 @@ RESULT(u64) read(int fd, void* buffer, u64 count) {
     
 }
 
-RESULT(u64) write(int fd, void const* data, u64 count) {
+RESULT(u64) write(u64 fd, void const* data, u64 count) {
     i64 ret = (i64)syscall3(SYS_WRITE,
             (void*) (long int) fd,
             (void*) data,
