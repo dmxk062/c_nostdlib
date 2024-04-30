@@ -5,7 +5,7 @@
 #include <string.h>
 #include <errno.h>
 
-RESULT(String) string_new(u64 size) {
+RESULT(String) String_new(u64 size) {
     String str = malloc(sizeof(__string_t));
     if (str == NULL)
         return (RESULT(String)){.success = FALSE, .errno = ENOMEM};
@@ -26,16 +26,16 @@ RESULT(String) string_new(u64 size) {
     return (RESULT(String)){.success = TRUE, .value = str};
 }
 
-errno_t string_free(String str) {
+errno_t String_free(String str) {
     free(str->buffer);
     free(str);
     return SUCCESS;
 }
 
-RESULT(String) string_new_from_zstr(zstr char_array) {
+RESULT(String) String_new_from_zstr(zstr char_array) {
     u64 length = strlen(char_array);
 
-    RESULT(String) new_string = string_new(length);
+    RESULT(String) new_string = String_new(length);
     if (!new_string.success) {
         return new_string;
     }
@@ -46,8 +46,20 @@ RESULT(String) string_new_from_zstr(zstr char_array) {
     return (RESULT(String)){.success = TRUE, .value = str};
 }
 
+RESULT(zstr) String_to_zstr(String str) {
+    u64 new_length = str->len + sizeof(char);
 
-errno_t string_grow(String str, u64 size) {
+    zstr new_str = malloc(new_length);
+    if (new_str == NULL)
+        return (RESULT(zstr)){.success = FALSE, .errno = ENOMEM};
+
+    memcpy(new_str, str->buffer, str->len);
+    new_str[new_length] = '\0';
+    return (RESULT(zstr)){.success = TRUE, .value = new_str};
+}
+
+
+errno_t String_grow(String str, u64 size) {
     if (size <= str->size) {
         return SUCCESS;
     }
@@ -64,10 +76,10 @@ errno_t string_grow(String str, u64 size) {
     return SUCCESS;
 }
 
-errno_t string_append(String dst, const String src) {
+errno_t String_append(String dst, const String src) {
     u64 new_size = dst->len + src->len;
     if (new_size > dst->size) {
-        errno_t ret = string_grow(dst, new_size);
+        errno_t ret = String_grow(dst, new_size);
         if (ret > 0) 
             return ret;
     }
@@ -77,7 +89,7 @@ errno_t string_append(String dst, const String src) {
     return SUCCESS;
 }
 
-RESULT(String) string_slice(const String str, u64 start, u64 end) {
+RESULT(String) String_slice(const String str, u64 start, u64 end) {
     u64 new_len = end - start;
     if (new_len == 0) {
         new_len = 1;
@@ -86,7 +98,7 @@ RESULT(String) string_slice(const String str, u64 start, u64 end) {
         return (RESULT(String)){.success = FALSE, .errno = 1};
     }
 
-    RESULT(String) new_string = string_new(new_len);
+    RESULT(String) new_string = String_new(new_len);
     if (!new_string.success) {
         return new_string;
     }
@@ -99,7 +111,7 @@ RESULT(String) string_slice(const String str, u64 start, u64 end) {
 }
 
 
-RESULT(StringList) string_list_new(u64 size) {
+RESULT(StringList) StringList_new(u64 size) {
     StringList* new_list = malloc(sizeof(StringList));
     if (new_list == NULL) 
         return (RESULT(StringList)){.success = FALSE, .errno = ENOMEM};
@@ -121,17 +133,17 @@ RESULT(StringList) string_list_new(u64 size) {
     return (RESULT(StringList)){.success = TRUE, .value = new_list};
 }
 
-errno_t string_list_free(StringList* strings) {
+errno_t StringList_free(StringList* strings) {
     for (u64 i = 0; i < strings->len; i++) {
         if (strings->strings[i] != NULL)
-            string_free(strings->strings[i]);
+            String_free(strings->strings[i]);
     }
     free(strings->strings);
     free(strings);
     return SUCCESS;
 }
 
-u64 string_split_char(String str, StringList* buffer, char delim) {
+u64 String_split_char(String str, StringList* buffer, char delim) {
     u64 start_at = buffer->len;
     u64 index = start_at;
 
@@ -142,7 +154,7 @@ u64 string_split_char(String str, StringList* buffer, char delim) {
         if (str->buffer[i] == delim) {
             end = i;
             if (index < buffer->size) {
-                RESULT(String) new_str = string_slice(str, start, end);
+                RESULT(String) new_str = String_slice(str, start, end);
                 if (!new_str.success) 
                     return index - start_at;
 
@@ -156,7 +168,7 @@ u64 string_split_char(String str, StringList* buffer, char delim) {
     }
 
     if (end < str->len && index < buffer->size) {
-        RESULT(String) new_str = string_slice(str, start, str->len);
+        RESULT(String) new_str = String_slice(str, start, str->len);
         if (!new_str.success) {
             return index - start_at;
         }
@@ -167,7 +179,8 @@ u64 string_split_char(String str, StringList* buffer, char delim) {
     return index - start_at;
 }
 
-RESULT(String) string_list_join(StringList* list, String delim) {
+
+RESULT(String) StringList_join(StringList* list, String delim) {
     u64 total_length = 0;
     for (u64 i = 0; i < list->len; i++) {
         total_length += list->strings[i]->len;
@@ -175,7 +188,7 @@ RESULT(String) string_list_join(StringList* list, String delim) {
             total_length += delim->len;
     }
 
-    RESULT(String) new_string = string_new(total_length);
+    RESULT(String) new_string = String_new(total_length);
     if (!new_string.success) 
         return new_string;
 

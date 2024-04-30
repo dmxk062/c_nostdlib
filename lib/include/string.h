@@ -19,19 +19,21 @@ DEFRESULT(StringList*, StringList);
 
 
 
-RESULT(String) string_new(u64 size);
-RESULT(String) string_new_from_zstr(zstr char_array);
-errno_t string_free(String str);
+RESULT(String) String_new(u64 size);
+RESULT(String) String_new_from_zstr(zstr char_array);
+errno_t String_free(String str);
+
+RESULT(zstr) String_to_zstr(String str);
 
 
-errno_t string_grow(String str, u64 size);
-errno_t string_append(String dst, const String src);
+errno_t String_grow(String str, u64 size);
+errno_t String_append(String dst, const String src);
 
-RESULT(String) string_slice(const String str, u64 start, u64 end);
+RESULT(String) String_slice(const String str, u64 start, u64 end);
 
-RESULT(StringList) string_list_new(u64 size);
-errno_t string_list_free(StringList* strings);
+RESULT(StringList) StringList_new(u64 size);
+errno_t StringList_free(StringList* strings);
 
-u64 string_split_char(String str, StringList* buffer, char delim);
+u64 String_split_char(String str, StringList* buffer, char delim);
 
-RESULT(String) string_list_join(StringList* list, String delim);
+RESULT(String) StringList_join(StringList* list, String delim);
