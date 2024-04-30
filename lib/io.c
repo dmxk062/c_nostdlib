@@ -1,3 +1,4 @@
+#include "types.h"
 #include <io.h>
 #include <syscall.h>
 #include <cstring.h>
@@ -69,22 +70,22 @@ void print(const char* string) {
  * write formatted text to fd
  * maximum size: FMT_OUTPUT_SIZE
  */
-i64 fwrite(u64 fd, const char* format, fmts values) {
+RESULT(u64) fwrite(u64 fd, const char* format, fmts values) {
     char buffer[FMT_OUTPUT_SIZE];
 
-    i64 ret = fmt(format, buffer, FMT_OUTPUT_SIZE, values);
-    if (ret > 0 || ret == -3){
-        write(fd, buffer, ret);
-        return 0;
+    RESULT(u64) ret = fmt(format, buffer, FMT_OUTPUT_SIZE, values);
+    if (!ret.success) {
+        return ret;
     }
-    return -1;
+    write(fd, buffer, ret.value);
+    return ret;
 }
 
 /*
  * print formatted text
  * maximum size: FMT_OUTPUT_SIZE
  */
-i64 fprint(const char* format, fmts values) {
+RESULT(u64) fprint(const char* format, fmts values) {
     return
     fwrite(STDOUT, format, values);
 }

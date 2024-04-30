@@ -1,7 +1,9 @@
+#include "types.h"
 #include <memcpy.h>
 #include <cstring.h>
 #include <string.h>
 #include <format.h>
+#include <errno.h>
 
 
 
@@ -144,10 +146,10 @@ i64 f_to_decimal(f128 num, char* out, i64 maxlen, u16 padd, u16 num_frac) {
 }
 
 /*
- * Return codes:
- * -1: output string too small for format string
- * -2: values too large
- * -3: failed to null-terminate, use safely with length
+ * Does *not* null-terminate the output string
+ * returns number of chars written on success or an errno on failure:
+ *    - 1: format string too large
+ *    - 2: couldnt fit the whole string
  * n > 0: number chars written
  * available formatting sequences:
  * %c : character
@@ -171,13 +173,13 @@ i64 f_to_decimal(f128 num, char* out, i64 maxlen, u16 padd, u16 num_frac) {
  *
  *
  */
-i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
+RESULT(u64) fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
     u64 fmtlen = strlen(format);
     u64 outind = 0;
 
     // we already couldn't fit the format string into the target, just return
     if (outlen < fmtlen) {
-        return -1;
+        return (RESULT(u64)){.success = FALSE, .errno = 1};
     }
 
     // loop iterator
@@ -218,7 +220,7 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                     i64 padding_left = padding - len;
                     // check if we have space for that
                     if (padding + outind > outlen ){
-                        return -2;
+                        return (RESULT(u64)){.success = FALSE, .errno = 2};
                     }
 
                     // pad with spaces
@@ -227,7 +229,7 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                         padding_left--;
                     }
                 } else if (len + outind > outlen) {
-                    return -2;
+                    return (RESULT(u64)){.success = FALSE, .errno = 2};
                 }
                 // copy the string into place if we have space
                 memcpy(out + outind, str_val, len);
@@ -251,7 +253,7 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                     i64 padding_left = padding - len;
                     // check if we have space for that
                     if (padding + outind > outlen ){
-                        return -2;
+                        return (RESULT(u64)){.success = FALSE, .errno = 2};
                     }
 
                     // pad with spaces
@@ -260,7 +262,7 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                         padding_left--;
                     }
                 } else if (len + outind > outlen) {
-                    return -2;
+                    return (RESULT(u64)){.success = FALSE, .errno = 2};
                 }
                 // copy the string into place if we have space
                 memcpy(out + outind, str_val->buffer, len);
@@ -272,13 +274,13 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                 values++;
                 i64 length = ansi_format_escape(out + outind, outlen - outind, format);
                 if (length < 0) {
-                    return -2;
+                    return (RESULT(u64)){.success = FALSE, .errno = 2};
                 }
                 outind += length;
             // reset ansi color escapes
             } else if (format[i] == 'E') {
                 if (outlen - outind < sizeof(ANSI_RESET)) {
-                    return -2;
+                    return (RESULT(u64)){.success = FALSE, .errno = 2};
                 }
                 memcpy(out + outind, ANSI_RESET, sizeof(ANSI_RESET));
                 outind += sizeof(ANSI_RESET);
@@ -300,7 +302,7 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                 }
                 i64 length = f_to_decimal(float_val, out + outind, outlen - outind, padding, decimals);
                 if (length < 0) {
-                    return -2;
+                    return (RESULT(u64)){.success = FALSE, .errno = 2};
                 }
                 outind += length;
 
@@ -333,7 +335,7 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                 }
                 i64 length = i_to_base(int_val, base, out + outind, outlen - outind, padding);
                 if (length < 0) {
-                    return -2;
+                    return (RESULT(u64)){.success = FALSE, .errno = 2};
                 }
                 outind += length;
                 was_num = FALSE;
@@ -345,12 +347,7 @@ i64 fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
         }
         i++;
     }
-    // return -3 if we succeeded but just failed to null terminate, caller can still use this
-    if (outind == outlen) {
-        return -3;
-    }
-    out[outind] = '\0';
-    return outind;
+    return (RESULT(u64)){.success = TRUE, .value = outind};
 }
 
 

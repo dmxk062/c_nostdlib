@@ -40,6 +40,6 @@ RESULT(u64) seek(u64 fd, i64 offset, u64 origin);
 
 void print(const char* string);
 
-i64 fwrite(u64 fd, const char* format, fmts values);
-i64 fprint(const char* format, fmts values);
+RESULT(u64) fwrite(u64 fd, const char* format, fmts values);
+RESULT(u64) fprint(const char* format, fmts values);
 
