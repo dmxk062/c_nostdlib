@@ -1,60 +1,65 @@
-### What is this?
+## What is this?
 
 Whenever you use C, a supposedly low level language, on a modern computer, a ton of things are already taken care of by the runtime. 
 Even if you do not use the standard library directly, the compiler still does a lot of things in the background, most of them useful.
 
 My goal here is to see how far I could get without the standard library and while using the minimum amount of compiler features. 
-To start with assembly and raw syscalls and try to make a C-library-ish thing out of this.
+To start with assembly and raw syscalls and try to make a C-library-ish thing out of this. Ideally while coming up with my own ideas and not copying what C libraries do right now.
 
 ### Goals
-
-- implement most common syscalls and their structures as functions to better understand how this works internally in Linux
-- write as much of the code as possible at a fairly low level to be able to understand exactly what I am doing
-- not use the standard library or system headers at all
-
-
-### What do I have?
-- very basic allocator/memory management
-- basic string formatting using my own `fmt()` function
-- wrappers for a couple basic syscalls
-- very basic library functions, e.g. `strcmp()` and `memcpy()`
-
-### Things I don't want to do:
-- Implement a full C standard library. This is just a hobby project and nobody should actually use this.
-- Make functions I have compliant with some standard. This is intentionally different.
-- Fix all issues. This is mainly about me trying to find out how things work under the hood and not trying to write a viable library.
-- Make this cross platform. amd64 on linux with gcc is all I want to work on, mainly because I want to learn all the lower level things.
+- [x] simple syscall wrappers for a lot of things and basic utility functions:
+    - [x] string formatting and formatted printing
+- [x] basic memory allocator:
+    - [ ] improve safety
+- [ ] understand kernel interal data structures better and how to wrap them for userspace
+- [ ] come up with my own ways of doing things instead of copying a regular libc
 
 
-### What compiler/stdlib things do I still need to get rid of?
-
-- ~~va_args: I'd really like to replace GCC's builtin implementation with my own~~ I've decided to not use va_args for formatting functions at all, I prefer using a list that gives me *some* type safety
-
-### Known issues:
-- Environment handling leaks memory. `setenv()` and `unsetenv()` do not free old values yet, this will probably take a rewrite of the allocator.
-This is not that bad for now, since whenever you `setenv()` you're not far away from an `execve()` anyways
-- The memory allocator is less than robust and can get fragmented, values might not get freed correctly and the internal data structure can get corrupted
-- *Nothing* is thread safe. That would be too much work for me right now, especially as I won't need threads here.
-- I do not set `errno` for *anything* yet
-
-### Differences to "regular" C
-
-I tried to do a few things differently since I am no longer limited by the regular C conventions:
-#### Different/New types: 
-
-I decided to use more idiomatic naming for most types. `u8` and `i64` are nicer to read and understand than `unsigned char` and `long int`. 
-This is also why i generally use `bool` for functions that have two possible return values only.
-
-`result`: This is a struct type for functions that can possibly return any value but still need error checking. Common practices such as returning `NULL` or `-1` do not work if that is a possible valid return value.
-(e.g. in a text parsing function).  
-Instead of relying on some error handlig pointer being passed in, returning `result` allows the caller to explicitly check for errors.
+### Non-Goals
+- Cross platform/architecture support. This will stay amd64/Linux. This applies to structure layout, type size and syscall numbers
+- Make this safe/fast/very stable. I want to experiment more than I want to learn an actually viable piece of software. No one should use this except to have fun.
+- Make it possible to compile existing C libraries or programs against this. I want to keep my own semantics and not imitate a POSIX libc
 
 
+## Differences to "regular" C
 
-#### Slightly different semantics
+### Type names
 
-I try to avoid automatic allocations for a couple reasons:
-- No need to remember whether something needs to be freed
-- I can use the stack or static memory instead if needed
-- More robust error checking since functions can return an integer for the number of bytes written instead of a `char*` that can only indicate an error using `NULL`
-for example: `fmt()` returns `-3` if it managed to fully format the string, but didn't have enough space for a null terminator. This allows the caller to proceed as normal if it does not need the terminator
+I'm using `i64`, `u64` and other more descriptive and shorter type names instead of `long int` and `unsigned long int`.
+This is mainly for readability but also to make things like structure layouts easier to see.
+
+
+### Error handling
+
+##### Bad
+Right now there are a few ways to return errors from a function in C, none of them that great:
+- Return `NULL` on error. This is not possible if a function could return `0` and does not have a good way to communicate *what* happened outside of setting `errno`, which relies on a single global symbol.
+- Return a negative number on error and a positive one on success. Does not work if negative return values are possible or if the return value is anything but an integer. This also sacrifices half of the size of a variable for error handling.
+
+##### What i do
+Return a success value and put output into a pointer argument. This is actually not that bad, but not as nice syntactically, since
+it does not allow you to assign to the result. I use this in a few places where it makes sense, but try to not overuse it. 
+I.e. I do not use it when the return value has any other purpose than to communicate an error
+```c
+struct SomeStruct var;
+errno_t err = some_function(&var);
+if (err) {
+    handle_error(err);
+} else {
+    do_stuff(var);
+}
+```
+
+Return some structure containing a success flag and a value/errno union. This is what I settled one for most things. Generally these end up being custom types of some kind. I decided to use the macros `DEFRESULT` and `RESULT` for nicer syntax:
+```c
+RESULT(i64) new_value = function(void);
+if (!new_value.success) {
+    handle_error(new_value.errno)
+} else {
+    do_thing(new_value.value)
+}
+```
+
+This is not that bad syntactically and also communicates the return type quite well. It also makes it as easy to return an error from
+a function if an error occured in a function it cast as with the other way
+
