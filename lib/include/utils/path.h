@@ -11,6 +11,6 @@ struct PathAccess {
 };
 
 
-errno_t find_in_path(struct PathAccess* path, String out, String search);
+errno_t find_in_path(struct PathAccess* path, String out, String search, u64 mode);
 
 #endif
