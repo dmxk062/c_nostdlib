@@ -1,4 +1,8 @@
 #pragma once
+#ifndef _ERRNO_H
+#define _ERRNO_H
+
+
 #include <types.h>
 
 static zstr ERROR_MESSAGES[] = {
@@ -222,3 +226,5 @@ static zstr ERROR_MESSAGES[] = {
 #define ENOTRECOVERABLE    131    
 #define ERFKILL     132    
 #define EHWPOISON 133    
+
+#endif

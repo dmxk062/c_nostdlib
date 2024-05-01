@@ -1,5 +1,8 @@
 // vim: ft=c
 #pragma once
+#ifndef _TYPES_H
+#define _TYPES_H
+
 
 #define NULL        0
 
@@ -76,6 +79,7 @@ typedef u64                 errno_t;
 #define RESULT(name) \
     __result_t_##name
 
+
 #endif /* RESULT */
 
 #ifndef WHILE_SUCCESS
@@ -114,3 +118,5 @@ DEFRESULT(f64, f64);
 DEFRESULT(f128, f128);
 DEFRESULT(untyped, untyped);
 DEFRESULT(zstr,  zstr);
+
+#endif

@@ -1,4 +1,6 @@
 #pragma once
+#ifndef _STAT_H
+#define _STAT_H
 #include <types.h>
 #include <time.h>
 
@@ -82,3 +84,5 @@ errno_t fstat(u64 fd, struct Stat* statbuf);
 #define	S_IFO     001
 #define	S_LNK     012
 #define	S_SOCK    014
+
+#endif

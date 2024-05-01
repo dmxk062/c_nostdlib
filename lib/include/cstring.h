@@ -1,4 +1,8 @@
 #pragma once
+
+#ifndef _CSTRING_H
+#define _CSTRING_H
+
 #include <types.h>
 
 
@@ -11,6 +15,4 @@ i64 strfind(const char* string, u64 len, char c);
 
 char* strdup(const char* str);
 
-
-
-
+#endif

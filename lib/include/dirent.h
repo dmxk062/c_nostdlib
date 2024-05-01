@@ -1,4 +1,9 @@
 #pragma once
+
+#ifndef _DIRENT_H
+#define _DIRENT_H
+
+
 #include <types.h>
 
 #define DIRENT_BUF_SIZE 256
@@ -37,3 +42,4 @@ RESULT(u64) _getdents(u64 fd, Dirent* ent, u64 count);
 DEFRESULT(Dirent*, Dirent);
 RESULT(Dirent) nextdir(u64 fd, DirectoryBuffer* buf);
 
+#endif

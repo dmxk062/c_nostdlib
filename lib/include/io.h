@@ -1,4 +1,7 @@
 #pragma once
+#ifndef _IO_H
+#define _IO_H
+
 #include <types.h>
 #include <format.h>
 
@@ -43,3 +46,4 @@ void print(const char* string);
 RESULT(u64) fwrite(u64 fd, const char* format, fmts values);
 RESULT(u64) fprint(const char* format, fmts values);
 
+#endif

@@ -1,4 +1,7 @@
 #pragma once
+#ifndef _TERMCOLOR_H
+#define _TERMCOLOR_H
+
 #include <types.h>
 
 enum AnsiColor {
@@ -28,3 +31,5 @@ struct AnsiFormat {
 #define ANSI_RESET "\e[0m"
 
 i64 ansi_format_escape(char* dest, u64 max_len, struct AnsiFormat format);
+
+#endif

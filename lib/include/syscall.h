@@ -1,4 +1,7 @@
 #pragma once
+#ifndef _SYSCALL_H
+#define _SYSCALL_H
+
 #include <types.h>
 
 // TODO: add more syscall numbers
@@ -114,3 +117,4 @@ extern void* syscall5(
         void* arg4,
         void* arg5
 );
+#endif

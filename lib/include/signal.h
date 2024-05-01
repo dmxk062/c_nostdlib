@@ -1,4 +1,9 @@
 #pragma once
+#ifndef _SIGNAL_H
+#define _SIGNAL_H
+
+
+
 
 #include <types.h>
 
@@ -78,3 +83,5 @@ extern void sigaction_trampoline();
 #define SIG_BLOCK    0
 #define SIG_UNBLOCK  1
 #define SIG_MASK     2
+
+#endif

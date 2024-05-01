@@ -1,4 +1,10 @@
 #pragma once
+#ifndef _SOCKET_H
+#define _SOCKET_H
+
+
+
+
 #include <types.h>
 #include <constants.h>
 
@@ -51,3 +57,5 @@ RESULT(u64) Socket_new_Unix(char* path, u64 path_length);
 #define MSG_PEEK            0x2
 #define MSG_DONTROUTE       0x4
 #define MSG_MORE            0x8000
+
+#endif

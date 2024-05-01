@@ -1,4 +1,8 @@
 #pragma once
+#ifndef _ARGS_H
+#define _ARGS_H
+
+
 #include <types.h>
 
 
@@ -34,3 +38,5 @@ u64 parse_arguments(i64 argc, zstr argv[],
 
 typedef struct NamedArgument NamedArguments[];
 typedef struct UnnamedArgument UnnamedArguments[];
+
+#endif 

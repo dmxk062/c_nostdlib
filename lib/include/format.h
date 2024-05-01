@@ -1,4 +1,8 @@
 #pragma once
+#ifndef _FORMAT_H
+#define _FORMAT_H
+
+
 #include <types.h>
 #include <termcolor.h>
 #include <string.h>
@@ -62,3 +66,5 @@ typedef fmt_value fmts[];
 
 
 RESULT(u64) fmt(const char* format, char* out, u64 outlen, fmts values);
+
+#endif

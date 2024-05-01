@@ -1,4 +1,7 @@
 #pragma once
+#ifndef _MMAP_H
+#define _MMAP_H
+
 #include <types.h>
 
 #define PROT_READ	1
@@ -14,3 +17,4 @@
 
 
 RESULT(untyped) mmap(u64 addr, u64 len, u64 prot, u64 flags, u64 fd, u64 offset);
+#endif

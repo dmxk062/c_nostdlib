@@ -1,4 +1,9 @@
 #pragma once
+#ifndef _PROCESS_H
+#define _PROCESS_H
+
+
+
 
 #include <types.h>
 
@@ -22,3 +27,4 @@ u64 getegid();
 
 errno_t setuid(u64 uid);
 errno_t setgid(u64 gid);
+#endif

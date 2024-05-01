@@ -1,4 +1,7 @@
 #pragma once
+#ifndef _STRING_H
+#define _STRING_H
+
 #include <types.h>
 
 
@@ -38,3 +41,4 @@ u64 String_split_char(String str, StringList* buffer, char delim);
 
 RESULT(String) StringList_join(StringList* list, String delim);
 
+#endif

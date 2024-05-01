@@ -1,4 +1,7 @@
 #pragma once
+#ifndef _ALLOC_H
+#define _ALLOC_H
+
 #include <types.h>
 
 typedef struct mem_chunk {
@@ -20,3 +23,5 @@ void free(void* ptr);
 
 u64 get_used_chunk_count(void);
 u64 get_used_page_count(void);
+
+#endif
