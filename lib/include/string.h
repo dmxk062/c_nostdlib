@@ -18,7 +18,7 @@ DEFRESULT(StringList*, StringList);
  * Create a string object from a static c string
  */
 #define STRING(cstring) \
-    &(__string_t){.size = sizeof(cstring), .len = sizeof(cstring), .buffer = cstring}
+    &(__string_t){.size = sizeof(cstring), .len = sizeof(cstring) - sizeof(char), .buffer = cstring}
 
 
 
@@ -29,6 +29,8 @@ errno_t String_free(String str);
 RESULT(zstr) String_to_zstr(String str);
 
 
+bool String_eq(String str1, String str2);
+bool String_buf_eq(const char* char1array, u64 char1len, const char* char2array, u64 char2len);
 
 errno_t String_grow(String str, u64 size);
 errno_t String_append(String dst, const String src);

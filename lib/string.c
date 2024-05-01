@@ -55,7 +55,7 @@ RESULT(zstr) String_to_zstr(String str) {
         return (RESULT(zstr)){.success = FALSE, .errno = ENOMEM};
 
     memcpy(new_str, str->buffer, str->len);
-    new_str[new_length] = '\0';
+    new_str[new_length - sizeof(char)] = '\0';
     return (RESULT(zstr)){.success = TRUE, .value = new_str};
 }
 
@@ -77,17 +77,20 @@ errno_t String_grow(String str, u64 size) {
     return SUCCESS;
 }
 
-errno_t String_append(String dst, const String src) {
-    u64 new_size = dst->len + src->len;
+errno_t String_append_buf(String dst, zstr char_array, u64 charlen) {
+    u64 new_size = dst->len + charlen;
     if (new_size > dst->size) {
         errno_t ret = String_grow(dst, new_size);
         if (ret > 0) 
             return ret;
     }
 
-    memcpy(dst->buffer + dst->len, src->buffer, src->len);
-    dst->len += src->len;
+    memcpy(dst->buffer + dst->len, char_array, charlen);
+    dst->len += charlen;
     return SUCCESS;
+}
+errno_t String_append(String dst, const String src) {
+    return String_append_buf(dst, src->buffer, src->len);
 }
 
 RESULT(String) String_slice(const String str, u64 start, u64 end) {
@@ -214,3 +217,32 @@ RESULT(String) StringList_join(StringList* list, String delim) {
     return (RESULT(String)){.success = TRUE, .value = str};
 }
 
+
+bool String_eq(const String str1, const String str2) {
+    return String_buf_eq(str1->buffer, str1->len, str2->buffer, str2->len);
+}
+
+inline
+bool String_buf_eq(const char* char1array, u64 char1len, const char* char2array, u64 char2len) {
+    if (char1len != char2len)
+        return FALSE;
+
+    u64 size = char1len;
+    u64* l1 = (u64*)char1array;
+    u64* l2 = (u64*)char2array;
+
+    for (; size > 8; size -= 8) {
+        if (*l1++ != *l2++) 
+            return FALSE;
+    }
+
+    u8* s1 = (u8*)l1;
+    u8* s2 = (u8*)l2;
+
+    while (size-- > 0) {
+        if (*s1++ != *s2++) 
+            return FALSE;
+    }
+
+    return TRUE;
+}
