@@ -54,9 +54,9 @@ struct Sigaction {
 };
 
 
-i64 sigaction(enum Signal signal, struct Sigaction* sa, struct Sigaction* oa);
+errno_t sigaction(enum Signal signal, struct Sigaction* sa, struct Sigaction* oa);
 
-i64 Signal_action(enum Signal signal, SignalHandler handler, u64 flags, u64 mask, struct Sigaction* old_handler);
+errno_t Signal_action(enum Signal signal, SignalHandler handler, u64 flags, u64 mask, struct Sigaction* old_handler);
 
 extern void sigaction_trampoline();
 
@@ -71,6 +71,9 @@ extern void sigaction_trampoline();
 #define SA_NODEFER	 0x40000000
 #define SA_RESETHAND 0x80000000
 #define SA_RESTORER  0x04000000
+
+#define SIG_DFL ((SignalHandler) 0)
+#define SIG_IGN ((SignalHandler) 1)
 
 #define SIG_BLOCK    0
 #define SIG_UNBLOCK  1
