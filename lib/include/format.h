@@ -60,11 +60,12 @@ typedef union  {
         float_fmt   F;
         u8          c;
 } fmt_value;
-
 typedef fmt_value fmts[];
 
 
 
+
 RESULT(u64) fmt(const char* format, char* out, u64 outlen, fmts values);
+RESULT(u64) String_format(const zstr format, String str, fmt_value values[]);
 
 #endif

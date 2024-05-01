@@ -42,7 +42,5 @@ u64 String_split_char(String str, StringList* buffer, char delim);
 
 RESULT(String) StringList_join(StringList* list, String delim);
 
-#include <format.h>
-RESULT(u64) String_format(const zstr format, String str, fmts values);
 
 #endif

@@ -350,4 +350,11 @@ RESULT(u64) fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
     return (RESULT(u64)){.success = TRUE, .value = outind};
 }
 
+RESULT(u64) String_format(zstr format, String str, fmt_value* values) {
+    RESULT(u64) ret = fmt(format, str->buffer, str->size, values);
+    if (ret.success){
+        str->len = ret.value;
+    }
+    return ret;
+}
 
