@@ -6,6 +6,10 @@
 
 errno_t unlink(const zstr path);
 errno_t access(const zstr path, u64 mode);
+errno_t chdir(const zstr path);
+errno_t getcwd(char* buf, u64 size);
+
+
 
 enum AccessMode {
     AccessMode_R = 4,
