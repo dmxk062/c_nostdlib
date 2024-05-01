@@ -2,20 +2,18 @@
 #ifndef _PROCESS_H
 #define _PROCESS_H
 
-
-
-
+#include "signal.h"
 #include <types.h>
 
 
-void exit(i64 exitcode);
+void exit(u8 exitcode);
 
 u64 getpid();
 
 RESULT(u64) fork();
 RESULT(u64) vfork();
 
-errno_t kill(i64 pid, i64 signal);
+errno_t send_signal(u64 pid, enum Signal sig);
 
 errno_t execve(const char* program, char* const argv[], char* const envp[]);
 

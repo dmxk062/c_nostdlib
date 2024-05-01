@@ -1,11 +1,12 @@
+#include "signal.h"
 #include <process.h>
 #include <syscall.h>
 #include <types.h>
 
 
-void exit(i64 exitcode) {
+void exit(u8 exitcode) {
     syscall1(SYS_EXIT,
-            (void*) exitcode);
+            (untyped) exitcode);
 }
 
 u64 getpid() {
@@ -28,19 +29,19 @@ RESULT(u64) vfork(){
         return (RESULT(u64)){.success = TRUE, .value = ret};
 }
 
-errno_t kill(i64 pid, i64 signal) {
-    return (errno_t)-(i64)
+errno_t send_signal(u64 pid, enum Signal sig) {
+    return (errno_t) -(i64)
     syscall2(SYS_KILL,
-            (void*)pid,
-            (void*)signal);
+            (untyped)pid,
+            (untyped)sig);
 }
 
 errno_t execve(const char *program, char *const *argv, char *const *envp) {
-    return (errno_t)-(i64)
+    return (errno_t) -(i64)
     syscall3(SYS_EXECVE,
-            (void*)program,
-            (void*)argv,
-            (void*)envp);
+            (untyped)program,
+            (untyped)argv,
+            (untyped)envp);
 }
 
 u64 getuid() {
@@ -63,11 +64,11 @@ u64 getegid() {
 errno_t setuid(u64 uid) {
     return (errno_t)-(i64)
     syscall1(SYS_SETUID,
-            (void*)uid);
+            (untyped)uid);
 }
 errno_t setgid(u64 gid) {
     return (errno_t)-(i64)
     syscall1(SYS_SETGID,
-            (void*)gid);
+            (untyped)gid);
 }
 
