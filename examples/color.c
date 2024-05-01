@@ -10,32 +10,32 @@ i32 main(i32 argc, zstr argv[]) {
     bool color_blue = FALSE;
 
     NamedArguments nargs = {
-        {"-r", "--red", &color_red,   ARGBOOL},
-        {"-b", "--blue", &color_blue, ARGBOOL}
+        {"-r", "--red", &color_red,   ArgumentType_BOOL},
+        {"-b", "--blue", &color_blue, ArgumentType_BOOL}
     };
 
     zstr positional = NULL;
     bool got_positional = FALSE;
     UnnamedArguments uargs = {
-        {&positional, ARGSTRING, NULL, &got_positional}
+        {&positional, ArgumentType_STRING, NULL, &got_positional}
     };
 
     i64 num_parsed = parse_arguments(argc-1, argv+1,
             ARRLEN(nargs), nargs,
             ARRLEN(uargs), uargs);
 
-    enum AnsiColor color = CNONE;
+    enum AnsiColor color = AnsiColor_NONE;
 
     if (color_red && color_blue)
-        color = CMAGENTA;
+        color = AnsiColor_MAGENTA;
     else if (color_red) 
-        color = CRED;
+        color = AnsiColor_RED;
     else if (color_blue)
-        color = CBLUE;
+        color = AnsiColor_BLUE;
 
     if (got_positional) {
         fprint("%e%z%E\n", (fmts){
-            {.e = {.fg = CBLACK, .bg = color}}, 
+            {.e = {.fg = AnsiColor_BLACK, .bg = color}}, 
             {.z = positional}
         });
     }

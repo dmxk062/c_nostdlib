@@ -7,21 +7,21 @@
 
 
 const static enum AnsiColor FILETYPE_COLORS[] = {
-    CWHITE,
-    CYELLOW,
-    CYELLOW,
-    CNONE,
-    CCYAN,
-    CNONE,
-    CMAGENTA,
-    CNONE,
-    CWHITE,
-    CNONE,
-    CBLUE,
-    CNONE,
-    CMAGENTA,
-    CNONE,
-    CWHITE
+    AnsiColor_WHITE,
+    AnsiColor_YELLOW,
+    AnsiColor_YELLOW,
+    AnsiColor_NONE,
+    AnsiColor_CYAN,
+    AnsiColor_NONE,
+    AnsiColor_MAGENTA,
+    AnsiColor_NONE,
+    AnsiColor_WHITE,
+    AnsiColor_NONE,
+    AnsiColor_BLUE,
+    AnsiColor_NONE,
+    AnsiColor_MAGENTA,
+    AnsiColor_NONE,
+    AnsiColor_WHITE
 };
 
 const static zstr FILETYPE_ICONS[] = {
@@ -48,14 +48,14 @@ i32 main(i32 argc, zstr argv[]) {
     bool no_icons = FALSE;
     bool show_hidden = FALSE;
     NamedArguments nargs = {
-        {"-C", "--no-color", &no_color, ARGBOOL},
-        {"-I", "--no-icons", &no_icons, ARGBOOL},
-        {"-a", "--all", &show_hidden,   ARGBOOL},
+        {"-C", "--no-color", &no_color, ArgumentType_BOOL},
+        {"-I", "--no-icons", &no_icons, ArgumentType_BOOL},
+        {"-a", "--all", &show_hidden,   ArgumentType_BOOL},
     };
 
     zstr path = ".";
     UnnamedArguments uargs = {
-        {&path, ARGSTRING},
+        {&path, ArgumentType_STRING},
     };
 
     u64 num_parsed = parse_arguments(argc-1, argv+1,
@@ -65,7 +65,7 @@ i32 main(i32 argc, zstr argv[]) {
     RESULT(u64) dirfd = opendir(path);
     if (!dirfd.success) {
         fwrite(STDERR, "%eFailed to open %z: %z%E\n", (fmts){
-            {.e = {.fg = CRED}},
+            {.e = {.fg = AnsiColor_RED}},
             {.z = path},
             {.z = ERROR_MESSAGES[dirfd.errno]}
         });
@@ -75,7 +75,7 @@ i32 main(i32 argc, zstr argv[]) {
     u64 fd = dirfd.value;
     DirectoryBuffer dirbuf;
 
-    RESULT(dirent) ent;
+    RESULT(Dirent) ent;
     Dirent* file;
 
     enum AnsiColor color;
@@ -89,7 +89,7 @@ i32 main(i32 argc, zstr argv[]) {
 
 
         if (no_color)
-            color = CNONE;
+            color = AnsiColor_NONE;
         else 
             color = FILETYPE_COLORS[file->type];
 

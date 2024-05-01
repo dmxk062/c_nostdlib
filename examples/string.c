@@ -11,31 +11,31 @@ i32 main(i32 argc, zstr argv[]) {
     bool got_string = FALSE;
     bool got_count  = FALSE;
     UnnamedArguments uargs = {
-        {&to_index, ARGSTRING, NULL, &got_string},
-        {&count,    ARGINT,    NULL, &got_count},
+        {&to_index, ArgumentType_STRING, NULL, &got_string},
+        {&count,    ArgumentType_INT,    NULL, &got_count},
     };
 
     u64 num_parsed = parse_arguments(argc-1, argv+1,
             NULL, NULL,
             ARRLEN(uargs), uargs);
 
-    String argument = string_new_from_zstr(to_index).value;
+    String argument = String_new_from_zstr(to_index).value;
 
-    RESULT(String) sliced = string_slice(argument, 0, count);
+    RESULT(String) sliced = String_slice(argument, 0, count);
     if (!sliced.success) {
         fwrite(STDERR, "`%s` is shorter than %d\n", (fmts){
             {.s = argument}, {.i = count}
         });
-        string_free(argument);
+        String_free(argument);
         return 1;
     }
 
-    string_free(argument);
+    String_free(argument);
     fprint("%s\n", (fmts){
         {.s = sliced.value}
     });
 
-    string_free(sliced.value);
+    String_free(sliced.value);
 
 
 
