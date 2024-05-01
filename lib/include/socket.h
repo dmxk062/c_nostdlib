@@ -15,33 +15,33 @@ struct SocketAddressUnix {
 };
 
 enum SocketFamily {
-    AF_UNIX = 1,
+    SocketFamily_UNIX = 1,
 };
 
-enum SocketDomain {
-    SOCK_STREAM = 1,
-    SOCK_DGRAM  = 2,
-    SOCK_RAW    = 3,
-    SOCK_RDM    = 4,
+enum SocketType {
+    SocketType_STREAM = 1,
+    SocketType_DGRAM  = 2,
+    SocketType_RAW    = 3,
+    SocketType_RDM    = 4,
 };
 
-RESULT(u64) socket_new(enum SocketFamily family, enum SocketDomain domain, i64 protocol);
-RESULT(u64) socket_recv(u64 fd, void* buffer, u64 count, u64 flags);
-RESULT(u64) socket_send(u64 fd, void* buffer, u64 count, u64 flags);
+RESULT(u64) Socket_new(enum SocketFamily family, enum SocketType domain, i64 protocol);
+RESULT(u64) Socket_recv(u64 fd, void* buffer, u64 count, u64 flags);
+RESULT(u64) Socket_send(u64 fd, void* buffer, u64 count, u64 flags);
 
-errno_t socket_bind(u64 fd, struct SocketAddress* peer, u64 peer_length);
-RESULT(u64) socket_accept(u64 fd, struct SocketAddress* addr, u64* addr_length);
+errno_t Socket_bind(u64 fd, struct SocketAddress* peer, u64 peer_length);
+RESULT(u64) Socket_accept(u64 fd, struct SocketAddress* addr, u64* addr_length);
 
 enum SocketShutdown {
-    SOCK_SHUTDOWN_RD   = 0,
-    SOCK_SHUTDOWN_WR   = 1,
-    SOCK_SHUTDOWN_RDWR = 2,
+    SocketShutdown_RD   = 0,
+    SocketShutdown_WR   = 1,
+    SocketShutdown_RDWR = 2,
 };
-errno_t socket_shutdown(u64 fd, enum SocketShutdown how);
-errno_t socket_connect(u64 fd, struct SocketAddress* addr, u64 addr_length);
-errno_t socket_listen(u64 fd, u64 backlog);
+errno_t Socket_shutdown(u64 fd, enum SocketShutdown how);
+errno_t Socket_connect(u64 fd, struct SocketAddress* addr, u64 addr_length);
+errno_t Socket_listen(u64 fd, u64 backlog);
 
-RESULT(u64) socket_new_unix(char* path, u64 path_length);
+RESULT(u64) Socket_new_Unix(char* path, u64 path_length);
 
 /*
  * Flags

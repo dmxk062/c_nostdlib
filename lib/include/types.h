@@ -55,30 +55,6 @@ typedef void*               untyped;
 // error number
 typedef u64                 errno_t;
 
-enum TYPES {
-    INT,
-    SINT,
-    UINT,
-    BOOL,
-    FLOAT,
-    CHAR,
-    STRING,
-    UNTYPED
-};
-
-typedef struct {
-    enum TYPES type;
-    union {
-        i64     i;
-        u64     u;
-        f64     f;
-        char    c;
-        char*   s;
-
-        untyped   any;
-    };
-} unitype;
-
 #ifndef RESULT
 /*
  * better option for type safety

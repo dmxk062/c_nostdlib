@@ -23,25 +23,25 @@ u64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct NamedArgument
                 if (parsing_named && (streq(argv[i], named[j].long_option) || streq(argv[i], named[j].short_option))) {
                     bool success = FALSE;
                     switch (named[j].type) {
-                    case ARGSTRING: {
+                    case ArgumentType_STRING: {
                         if (argv[i+1] != NULL) {
                             *(char**)named[j].target = argv[++i];
                             recognized_args+=2;
                             success = TRUE;
                         }
                         break;}
-                    case ARGBOOL: {
+                    case ArgumentType_BOOL: {
                         *(bool*)named[j].target = TRUE;
                         success = TRUE;
                         recognized_args++;
                         break;}
-                    case ARGTOGGLE: {
+                    case ArgumentType_TOGGLE: {
                         *(bool*)named[j].target = !*(bool*)named[j].target;
                         success = TRUE;
                         recognized_args++;
                         break;}
 
-                    case ARGINT: {
+                    case ArgumentType_INT: {
                         if (argv[i+1] != NULL) {
                             RESULT(i64) integer = str_to_int(argv[i+1], strlen(argv[i+1]), 10);
                             if (integer.success) {
@@ -53,7 +53,7 @@ u64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct NamedArgument
                         recognized_args++;
                         break;}
 
-                    case ARGFLOAT: {
+                    case ArgumentType_FLOAT: {
                         if (argv[i+1] != NULL) {
                             RESULT(f128) decimal = str_to_float(argv[i], strlen(argv[i]));
                             if (decimal.success) {
@@ -82,19 +82,19 @@ u64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct NamedArgument
             if (uindex < unnamed_count) {
                 bool success = FALSE;
                 switch (unnamed[uindex].type) {
-                case ARGSTRING: {
+                case ArgumentType_STRING: {
                     *(char**)unnamed[uindex].target = argv[i];
                     success = TRUE;
                     break;}
 
-                case ARGINT: {
+                case ArgumentType_INT: {
                     RESULT(i64) integer = str_to_int(argv[i], strlen(argv[i]), 10);
                     if (integer.success) {
                         *(i64*)unnamed[uindex].target = integer.value;
                         success = TRUE;
                     } 
                     break;}
-                case ARGFLOAT: {
+                case ArgumentType_FLOAT: {
                     RESULT(f128) decimal = str_to_float(argv[i], strlen(argv[i]));
                     if (decimal.success) {
                         *(f128*)unnamed[uindex].target = decimal.value;
