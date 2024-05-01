@@ -19,14 +19,14 @@ RESULT(u64) _getdents(u64 fd, Dirent* ent, u64 count) {
         return (RESULT(u64)){.success = TRUE, .value = ret};
 }
 
-RESULT(dirent) nextdir(u64 fd, DirectoryBuffer* buf) {
+RESULT(Dirent) nextdir(u64 fd, DirectoryBuffer* buf) {
     bool new_entries = FALSE;
     while (TRUE) {
         if (buf->len == 0 || buf->len < buf->offset || new_entries) {
             RESULT(u64) ret;
             ret = _getdents(fd, buf->buffer, DIRENT_BUF_SIZE);
             if (!ret.success || ret.value == 0) {
-                return (RESULT(dirent)){.success = FALSE, .errno = ret.errno};
+                return (RESULT(Dirent)){.success = FALSE, .errno = ret.errno};
             }
             buf->len = ret.value;
             buf->offset = 0;
@@ -38,7 +38,7 @@ RESULT(dirent) nextdir(u64 fd, DirectoryBuffer* buf) {
             d = (Dirent*)(buf->buffer + buf->offset);
             buf->offset += d->len;
             if (d->ino != 0)
-                return (RESULT(dirent)){.success = TRUE, .value = d};
+                return (RESULT(Dirent)){.success = TRUE, .value = d};
         }
         new_entries = TRUE;
     }

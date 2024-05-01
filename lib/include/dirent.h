@@ -34,6 +34,6 @@ RESULT(u64) opendir(const char* path);
 
 RESULT(u64) _getdents(u64 fd, Dirent* ent, u64 count);
 
-DEFRESULT(Dirent*, dirent);
-RESULT(dirent) nextdir(u64 fd, DirectoryBuffer* buf);
+DEFRESULT(Dirent*, Dirent);
+RESULT(Dirent) nextdir(u64 fd, DirectoryBuffer* buf);
 
