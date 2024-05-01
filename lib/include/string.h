@@ -23,10 +23,11 @@ DEFRESULT(StringList*, StringList);
 
 
 RESULT(String) String_new(u64 size);
-RESULT(String) String_new_from_zstr(zstr char_array);
+RESULT(String) String_new_from_zstr(const zstr char_array);
 errno_t String_free(String str);
 
 RESULT(zstr) String_to_zstr(String str);
+
 
 
 errno_t String_grow(String str, u64 size);
@@ -40,5 +41,8 @@ errno_t StringList_free(StringList* strings);
 u64 String_split_char(String str, StringList* buffer, char delim);
 
 RESULT(String) StringList_join(StringList* list, String delim);
+
+#include <format.h>
+RESULT(u64) String_format(const zstr format, String str, fmts values);
 
 #endif

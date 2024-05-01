@@ -4,6 +4,7 @@
 #include <cstring.h>
 #include <string.h>
 #include <errno.h>
+#include <format.h>
 
 RESULT(String) String_new(u64 size) {
     String str = malloc(sizeof(__string_t));
@@ -211,5 +212,12 @@ RESULT(String) StringList_join(StringList* list, String delim) {
 
     str->len=total_length;
     return (RESULT(String)){.success = TRUE, .value = str};
-    
+}
+
+RESULT(u64) String_format(zstr format, String str, fmt_value* values) {
+    RESULT(u64) ret = fmt(format, str->buffer, str->size, values);
+    if (ret.success){
+        str->len = ret.value;
+    }
+    return ret;
 }
