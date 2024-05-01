@@ -1,7 +1,7 @@
 #include <signal.h>
 #include <syscall.h>
 
-i64 sigaction(u64 signal, struct Sigaction* sa, struct Sigaction* oa) {
+i64 sigaction(enum Signal signal, struct Sigaction* sa, struct Sigaction* oa) {
     return (i64) 
     syscall4(SYS_SIGACTION,
             (void*)signal,
@@ -10,25 +10,10 @@ i64 sigaction(u64 signal, struct Sigaction* sa, struct Sigaction* oa) {
             (void*)8);
 }
 
-i64 sigprocmask(i64 how, sigset_t* newset, sigset_t* oldset) {
-    return (i64)
-    syscall4(SYS_SIGPROCMASC,
-            (void*)how,
-            newset,
-            oldset,
-            (void*)8);
-}
-
-void sigset_add(sigset_t* set, u64 signum) {
-    i64 index = (signum - 1) / (sizeof(u64) * 8);
-    i64 offset = (signum - 1) % (sizeof(u64) * 8);
-
-    
-    set->bits[index] |= (1UL << offset);
-}
 
 
-i64 setsigaction(u64 signal, sighandler_t handler, u64 flags, u64 mask, struct Sigaction* old_handler) {
+
+i64 Signal_action(enum Signal signal, SignalHandler handler, u64 flags, u64 mask, struct Sigaction* old_handler) {
     struct Sigaction action;
     action.mask = mask;
     action.flags = flags | SA_RESTORER;

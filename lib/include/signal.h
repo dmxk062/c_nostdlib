@@ -2,64 +2,65 @@
 
 #include <types.h>
 
-typedef void (*sighandler_t)(i64);
-typedef void (*sigrestore_t)(void);
+enum Signal {
+    Signal_HUP    = 1,
+    Signal_INT    = 2,
+    Signal_QUIT   = 3,
+    Signal_ILL    = 4,
+    Signal_TRAP   = 5,
+    Signal_ABRT   = 6,
+    Signal_IOT    = 6,
+    Signal_BUS    = 7,
+    Signal_FPE    = 8,
+    Signal_KILL   = 9,
+    Signal_USR1   = 10,
+    Signal_SEGV   = 11,
+    Signal_USR2   = 12,
+    Signal_PIPE   = 13,
+    Signal_ALRM   = 14,
+    Signal_TERM   = 15,
+    Signal_STKFLT = 16,
+    Signal_CHLD   = 17,
+    Signal_CONT   = 18,
+    Signal_STOP   = 19,
+    Signal_TSTP   = 20,
+    Signal_TTIN   = 21,
+    Signal_TTOU   = 22,
+    Signal_URG    = 23,
+    Signal_XCPU   = 24,
+    Signal_XFSZ   = 25,
+    Signal_VTALRM = 26,
+    Signal_PROF   = 27,
+    Signal_WINCH  = 28,
+    Signal_IO     = 29,
+    Signal_POLL   = Signal_IO,
+    Signal_PWR    = 30,
+    Signal_SYS    = 31,
+    Signal_UNUSED = 31,
+};
+
+typedef void (*SignalHandler)(i64);
+typedef void (*SignalRestorer)(void);
 
 typedef struct {
     u64     bits[2];
 } sigset_t;
 
 struct Sigaction {
-    sighandler_t handler;
+    SignalHandler handler;
     u64          flags;
-    sigrestore_t restorer;
+    SignalRestorer restorer;
     u64          mask;
 };
 
 
-i64 sigaction(u64 signal, struct Sigaction* sa, struct Sigaction* oa);
-i64 sigprocmask(i64 how, sigset_t* newset, sigset_t* oldset);
+i64 sigaction(enum Signal signal, struct Sigaction* sa, struct Sigaction* oa);
 
-i64 setsigaction(u64 signal, sighandler_t handler, u64 flags, u64 mask, struct Sigaction* old_handler);
+i64 Signal_action(enum Signal signal, SignalHandler handler, u64 flags, u64 mask, struct Sigaction* old_handler);
 
-void sigset_add(sigset_t* set, u64 signum);
 extern void sigaction_trampoline();
 
 
-#define SIGHUP		 1
-#define SIGINT		 2
-#define SIGQUIT		 3
-#define SIGILL		 4
-#define SIGTRAP		 5
-#define SIGABRT		 6
-#define SIGIOT		 6
-#define SIGBUS		 7
-#define SIGFPE		 8
-#define SIGKILL		 9
-#define SIGUSR1		10
-#define SIGSEGV		11
-#define SIGUSR2		12
-#define SIGPIPE		13
-#define SIGALRM		14
-#define SIGTERM		15
-#define SIGSTKFLT	16
-#define SIGCHLD		17
-#define SIGCONT		18
-#define SIGSTOP		19
-#define SIGTSTP		20
-#define SIGTTIN		21
-#define SIGTTOU		22
-#define SIGURG		23
-#define SIGXCPU		24
-#define SIGXFSZ		25
-#define SIGVTALRM	26
-#define SIGPROF		27
-#define SIGWINCH	28
-#define SIGIO		29
-#define SIGPOLL		SIGIO
-#define SIGPWR		30
-#define SIGSYS		31
-#define	SIGUNUSED	31
 
 #define SA_NOCLDSTOP 1
 #define SA_NOCLDWAIT 2
