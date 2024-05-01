@@ -24,27 +24,6 @@ errno_t Socket_connect(u64 fd, struct SocketAddress* addr, u64 addr_length) {
             (untyped)addr_length);
 }
 
-RESULT(u64) socket_new_Unix(char* path, u64 path_length) {
-    if (path_length > UNIX_PATH_MAX)
-        return (RESULT(u64)){.success = FALSE, .errno = ENAMETOOLONG};
-
-    RESULT(u64) new_sockfd = Socket_new(SocketFamily_UNIX, SocketType_STREAM, 0);
-    if (!new_sockfd.success)
-        return new_sockfd;
-
-
-    struct SocketAddressUnix addr;
-    addr.family = SocketFamily_UNIX;
-    memcpy(addr.path, path, path_length);
-
-    errno_t errno = Socket_connect(new_sockfd.value, (struct SocketAddress*)&addr, path_length + sizeof(socket_family_t));
-    if (errno) {
-        return (RESULT(u64)){.success = FALSE, .errno = errno};
-    }
-
-    return (RESULT(u64)){.success = TRUE, .value = new_sockfd.value};
-
-}
 
 RESULT(u64) Socket_recv(u64 fd, void* buffer, u64 count, u64 flags) {
     i64 ret = (i64)syscall4(SYS_RECVFROM,
@@ -104,3 +83,49 @@ RESULT(u64) Socket_accept(u64 fd, struct SocketAddress* peer, u64* peer_length) 
 }
 
 
+RESULT(u64) Socket_new_UnixClient(char* path, u64 path_length) {
+    if (path_length > UNIX_PATH_MAX)
+        return (RESULT(u64)){.success = FALSE, .errno = ENAMETOOLONG};
+
+    RESULT(u64) new_sockfd = Socket_new(SocketFamily_UNIX, SocketType_STREAM, 0);
+    if (!new_sockfd.success)
+        return new_sockfd;
+
+
+    struct SocketAddressUnix addr;
+    addr.family = SocketFamily_UNIX;
+    memcpy(addr.path, path, path_length);
+
+    errno_t errno = Socket_connect(new_sockfd.value, (struct SocketAddress*)&addr, path_length + sizeof(socket_family_t));
+    if (errno) {
+        return (RESULT(u64)){.success = FALSE, .errno = errno};
+    }
+
+    return (RESULT(u64)){.success = TRUE, .value = new_sockfd.value};
+
+}
+RESULT(u64) Socket_new_UnixServer(char* path, u64 path_length, u64 max_connections) {
+    if (path_length > UNIX_PATH_MAX)
+        return (RESULT(u64)){.success = FALSE, .errno = ENAMETOOLONG};
+
+    RESULT(u64) new_sockfd = Socket_new(SocketFamily_UNIX, SocketType_STREAM, 0);
+    if (!new_sockfd.success)
+        return new_sockfd;
+
+
+    struct SocketAddressUnix addr;
+    addr.family = SocketFamily_UNIX;
+    memcpy(addr.path, path, path_length);
+
+    errno_t err = Socket_bind(new_sockfd.value, (struct SocketAddress*)&addr, path_length + sizeof(socket_family_t));
+    if (err) 
+        return (RESULT(u64)){.success = FALSE, .errno = err};
+
+    err = Socket_listen(new_sockfd.value, max_connections);
+    if (err) 
+        return (RESULT(u64)){.success = FALSE, .errno = err};
+
+    return (RESULT(u64)){.success = TRUE, .value = new_sockfd.value};
+
+
+}

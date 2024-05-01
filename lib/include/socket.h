@@ -47,7 +47,8 @@ errno_t Socket_shutdown(u64 fd, enum SocketShutdown how);
 errno_t Socket_connect(u64 fd, struct SocketAddress* addr, u64 addr_length);
 errno_t Socket_listen(u64 fd, u64 backlog);
 
-RESULT(u64) Socket_new_Unix(char* path, u64 path_length);
+RESULT(u64) Socket_new_UnixClient(char* path, u64 path_length);
+RESULT(u64) Socket_new_UnixServer(char* path, u64 path_length, u64 max_connections);
 
 /*
  * Flags
