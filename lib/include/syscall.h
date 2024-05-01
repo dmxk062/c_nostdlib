@@ -58,6 +58,8 @@ SYS_EXECVE = 59,
 SYS_EXIT = 60,
 SYS_KILL = 62,
 
+SYS_FCNTL = 72,
+
 /*
  * Filesystem
  */
