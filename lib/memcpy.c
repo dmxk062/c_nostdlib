@@ -24,3 +24,13 @@ void memcpy (void* dst, const void* src, i64 size) {
         *cd++ = *cs ++;
     }
 }
+
+void* memset(void* dest, u64 val, u64 count) {
+    for (; count > 8; count -= 8)
+        *(u64*)++dest = val;
+
+    while (count > 0)
+        *(u8*)++dest = (u8)val;
+
+    return dest;
+}
