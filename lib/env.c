@@ -1,3 +1,4 @@
+#include "types.h"
 #include <env.h>
 #include <alloc.h>
 #include <cstring.h>
@@ -6,14 +7,14 @@
 /*
  * get an environment variable from the global environment vector
  */
-char* getenv(const char* name) {
+RESULT(zstr) getenv(const char* name) {
 
     // filter out invalid names
     if (name == NULL || *name == '\0') {
-        return NULL;
+        return (RESULT(zstr)){.success = FALSE, .errno = 2};
     }
 
-    char** env = environ;
+    zstr* env = environ;
     u64 len_name = strlen(name);
 
     // iterate over the vector
@@ -21,11 +22,11 @@ char* getenv(const char* name) {
         // if the name matches and is terminated with a '=', we found it
         if (strncmp(name, *env, len_name) == 0 && (*env)[len_name]== '=') {
             // just return a pointer to the value
-            return &((*env)[len_name + 1]);
+            return (RESULT(zstr)){.success = TRUE, .value = &((*env)[len_name + 1])};
         }
         env++;
     }
-    return NULL;
+    return (RESULT(zstr)){.success = FALSE, .errno = 1};
 }
 
 /*
@@ -36,11 +37,11 @@ char* getenv(const char* name) {
  * GLIBC copies all of environ into the heap AFAIK, that's too complicated for me right now
  */
 static inline
-i64 __chgenv(const char* name, u64 len_name, const char* value, u64 len_valu, char** target) {
+errno_t __chgenv(const char* name, u64 len_name, const char* value, u64 len_valu, char** target) {
         u64 total_len = len_valu + len_name + 2*(sizeof(char));
         char* buffer = malloc(total_len);
         if (buffer == NULL) {
-            return -1;
+            return 1;
         }
 
         memcpy(buffer, name, len_name);
@@ -58,11 +59,11 @@ i64 __chgenv(const char* name, u64 len_name, const char* value, u64 len_valu, ch
  * set a new value or replace existing one
  * this also leaks memory for the same reasons as __chgenv above
  */
-i64 setenv(const char* name, const char* value, bool replace) {
+errno_t setenv(const char* name, const char* value, bool replace) {
     if (name == NULL || *name == '\0') {
-        return -1;
+        return 1;
     }
-    char** env = environ;
+    zstr* env = environ;
 
     u64 len_name = strlen(name);
     u64 len_valu = strlen(value);
@@ -77,9 +78,9 @@ i64 setenv(const char* name, const char* value, bool replace) {
         }
         env++;
     }
-    return __chgenv(name, len_name, value, len_valu, env);
     // we're appending, so we need to zero the next one
     *(env++) = NULL;
+    return __chgenv(name, len_name, value, len_valu, env);
 
 }
 
@@ -87,13 +88,13 @@ i64 setenv(const char* name, const char* value, bool replace) {
  * FIXME: memory
  * remove an environment variable, leaks ram just like the two above
  */
-i64 unsetenv(const char* name) {
+errno_t unsetenv(const char* name) {
     if (name == NULL || *name == '\0') {
-        return -1;
+        return 1;
     }
     u64 len_name = strlen(name);
 
-    char** env = environ;
+    zstr* env = environ;
 
     while (*env != NULL) {
         if (strncmp(name, *env, len_name) == 0 && (*env)[len_name] == '=') {

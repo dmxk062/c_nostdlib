@@ -5,9 +5,9 @@
 
 #include <types.h>
 
-extern char** environ;
+extern zstr* environ;
 
-char* getenv(const char* name);
-i64   setenv(const char* name, const char* value, bool replace);
-i64   unsetenv(const char* name);
+RESULT(zstr) getenv(const char* name);
+errno_t setenv(const char* name, const char* value, bool replace);
+errno_t unsetenv(const char* name);
 #endif
