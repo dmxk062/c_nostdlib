@@ -54,6 +54,8 @@ i32 main(i32 argc, zstr argv[]) {
     char buffer[1024];
     WHILE_SUCCESS(new_bytes_read, Socket_recv(fd, buffer, 1024, NULL)) {
         num_read++;
+        if (new_bytes_read.value == 0)
+            break;
         write(STDOUT, buffer, new_bytes_read.value);
         if (got_num_to_read && (num_read == stop_after)) {
             break;
