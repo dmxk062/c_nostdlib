@@ -75,9 +75,7 @@ i32 main(i32 argc, zstr argv[]) {
         close(new_client_fd.value);
     }
 
+    close(server_fd);
     unlink(socket_path);
     return 0;
-
-    
-
 }
