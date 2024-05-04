@@ -9,6 +9,7 @@ CompileFlags:
     -Wno-builtin-declaration-mismatch,
     -xc, -Wno-builtin-requires-header,
     -Wno-incompatible-library-redeclaration,
+    -include lib/include/types.h,
     -Ilib/include/]
   Compiler: gcc
 

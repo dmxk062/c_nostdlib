@@ -4,11 +4,12 @@ AS = gcc
 CCFLAGS_REMOVE_BUILTINS = -nostdlib -nostdinc -fno-unwind-tables -fno-asynchronous-unwind-tables -Wno-builtin-declaration-mismatch -fno-stack-protector -Wall 
 
 CCFLAGS_LIBRARY = -fPIC 
-CCFLAGS = -Ilib/include/
+CCFLAGS = -Ilib/include/ -include lib/include/types.h
+CCFLAGS_EXE = -Wl,--gc-sections
 ASFLAGS = -s
 LDFLAGS = 
 
-SRC_C = $(wildcard lib/*.c) $(wildcard alloc/*.c)
+SRC_C = $(wildcard lib/*.c)
 OBJ_C = $(addprefix $(OBJDIR)/, $(SRC_C:.c=.o))
 
 SRC_S = asm/start.S asm/syscall.S asm/signal.S
@@ -18,19 +19,20 @@ OBJDIR = build
 
 EXEC = no_std
 
+
 SRC_EXAMPLES = $(wildcard examples/*.c)
 EXAMPLES = $(SRC_EXAMPLES:.c=)
+
 
 LIBRARY = libnostd.o
 
 exec: $(EXEC)
 
 $(EXEC): $(LIBRARY)
-	$(CC) $(CCFLAGS_REMOVE_BUILTINS) $(CCFLAGS) main.c $(LIBRARY) -o $(EXEC)
+	$(CC) $(CCFLAGS_REMOVE_BUILTINS) $(CCFLAGS) $(CCFLAGS_EXE) main.c $(LIBRARY) -o $(EXEC)
 
 $(EXAMPLES): $(LIBRARY)
-	$(CC) $(CCFLAGS_REMOVE_BUILTINS) $(CCFLAGS) $@.c $(LIBRARY) -o $@
-
+	$(CC) $(CCFLAGS_REMOVE_BUILTINS) $(CCFLAGS) $(CCFLAGS_EXE) $@.c $(LIBRARY) -o $@
 
 $(OBJDIR)/%.o: %.c
 	$(CC) $(CCFLAGS_LIBRARY) $(CCFLAGS) $(CCFLAGS_REMOVE_BUILTINS) -c $< -o $@
@@ -39,8 +41,6 @@ $(OBJDIR)/%.o: %.S
 	$(AS) $(ASFLAGS) -c $< -o $@
 
 
-clean:
-	rm -f $(OBJ_C) $(OBJ_S) $(EXEC) $(LIBRARY) $(EXAMPLES)
 
 
 $(LIBRARY): $(OBJ_C) $(OBJ_S)
@@ -50,6 +50,8 @@ lib: $(LIBRARY)
 
 examples: $(EXAMPLES)
 
-all: lib exec
 
+all: lib exec examples 
 
+clean:
+	rm -f $(OBJ_C) $(OBJ_S) $(EXEC) $(LIBRARY) $(EXAMPLES)
