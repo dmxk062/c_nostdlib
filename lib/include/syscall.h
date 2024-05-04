@@ -62,6 +62,8 @@ SYS_KILL = 62,
 
 SYS_FCNTL = 72,
 
+SYS_GETCWD = 79,
+SYS_CHDIR  = 80,
 /*
  * Filesystem
  */
