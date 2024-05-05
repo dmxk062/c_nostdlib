@@ -32,6 +32,8 @@ u64 Process_get_gid();
 u64 Process_get_euid();
 u64 Process_get_egid();
 
+errno_t Process_pause();
+
 errno_t Process_set_uid(u64 uid);
 errno_t Process_set_gid(u64 gid);
 #endif

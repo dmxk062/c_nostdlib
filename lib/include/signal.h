@@ -42,6 +42,8 @@ enum Signal {
     Signal_PWR    = 30,
     Signal_SYS    = 31,
     Signal_UNUSED = 31,
+    Signal_RT_MIN = 32,
+    Signal_RT_MAX = 64,
 };
 
 typedef void (*SignalHandler)(i64);

@@ -76,6 +76,10 @@ u64 Process_get_egid() {
     syscall0(SYS_GETEGID);
 }
 
+errno_t Process_pause() {
+    return (errno_t) -(i64)syscall0(SYS_PAUSE);
+}
+
 errno_t Process_set_uid(u64 uid) {
     return (errno_t)-(i64)
     syscall1(SYS_SETUID,
