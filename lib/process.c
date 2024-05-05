@@ -29,7 +29,7 @@ RESULT(u64) vfork(){
         return (RESULT(u64)){.success = TRUE, .value = ret};
 }
 
-errno_t send_signal(u64 pid, enum Signal sig) {
+errno_t Process_send_signal(u64 pid, enum Signal sig) {
     return (errno_t) -(i64)
     syscall2(SYS_KILL,
             (untyped)pid,
@@ -44,29 +44,44 @@ errno_t execve(const char *program, char *const *argv, char *const *envp) {
             (untyped)envp);
 }
 
-u64 getuid() {
+untyped prctl(enum PrctlOp op, untyped arg1, untyped arg2, untyped arg3) {
+    return syscall4(SYS_PRCTL,
+            (untyped)op, 
+            (untyped)arg1,
+            (untyped)arg2,
+            (untyped)arg3);
+}
+
+void Process_set_name(char name[16]) {
+    prctl(PrctlOp_SET_NAME, name, NULL, NULL);
+}
+void Process_get_name(char buffer[16]) {
+    prctl(PrctlOp_GET_NAME, buffer, NULL, NULL);
+}
+
+u64 Process_get_uid() {
     return (u64) 
     syscall0(SYS_GETUID);
 }
-u64 getgid() {
+u64 Process_get_gid() {
     return (u64) 
     syscall0(SYS_GETGID);
 }
-u64 geteuid() {
+u64 Process_get_euid() {
     return (u64) 
     syscall0(SYS_GETEUID);
 }
-u64 getegid() {
+u64 Process_get_egid() {
     return (u64) 
     syscall0(SYS_GETEGID);
 }
 
-errno_t setuid(u64 uid) {
+errno_t Process_set_uid(u64 uid) {
     return (errno_t)-(i64)
     syscall1(SYS_SETUID,
             (untyped)uid);
 }
-errno_t setgid(u64 gid) {
+errno_t Process_set_gid(u64 gid) {
     return (errno_t)-(i64)
     syscall1(SYS_SETGID,
             (untyped)gid);
