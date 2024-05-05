@@ -46,8 +46,8 @@ typedef float               f32;
 
 
 typedef _Bool               bool;
-#define TRUE                1
-#define FALSE               0
+#define TRUE                (bool)1
+#define FALSE               (bool)0
 
 // zero terminated string
 typedef char*               zstr;
