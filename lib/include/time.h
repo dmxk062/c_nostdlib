@@ -4,8 +4,7 @@
 
 #include <types.h>
 
-#define UNIX_EPOCH (i64)
-
+#define SECONDS_PER_DAY (60*60*24)
 
 struct Timespec {
     u64 secs;
@@ -30,17 +29,29 @@ struct Timezone {
 };
 
 typedef struct {
-    i64 years;
+    u64 years;
+    i64 months;
     i64 days;
+    i64 day_in_month;
     i64 hours;
     i64 minutes;
     i64 seconds;
 } Time;
 
+#define LEAPYEAR(year) (((year) % 4 == 0 && ((year) % 100 != 0 || (year) % 400 == 0)) ? TRUE : FALSE)
+#define DAYS_IN_YEAR(year) (LEAPYEAR(year) ? 366 : 365)
+
+
+static const i16 DAYS_IN_MONTH[2][12] = {
+    {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
+    {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31} 
+};
+
 errno_t sleep(u64 secs, u64 nanosecs, struct Timespec* remaining);
 
 errno_t Time_get(struct Timespec* time, struct Timezone* zone);
 
+errno_t Time_locatime(Time* time, struct Timespec* timestamp);
 
 
 
