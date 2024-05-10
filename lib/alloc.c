@@ -62,9 +62,9 @@ u64 get_page_size(u64 size) {
 
 static
 void mem_chunk_split(mem_chunk* ptr, u64 size) {
-    mem_chunk* new;
 
-    new = (ptr->end) + size;
+    char* _new = (ptr->end) + size;
+    mem_chunk* new = (mem_chunk*)_new;
 
     new->size = ptr->size - size - MEM_STRUCT_SIZE;
     new->free = TRUE;
@@ -84,7 +84,7 @@ void* malloc(u64 size) {
 
     // first run, allocate a page for our first object
     if (global_head == NULL) {
-        u64 new_size = size;
+        // u64 new_size = size;
         malloc_stats.pages  = 0;
         malloc_stats.in_use = 0;
         malloc_stats.total  = 0;
