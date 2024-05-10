@@ -25,7 +25,7 @@ u64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct NamedArgument
                     switch (named[j].type) {
                     case ArgumentType_STRING: {
                         if (argv[i+1] != NULL) {
-                            *(char**)named[j].target = argv[++i];
+                            *(char**)named[j].target = argv[+i];
                             recognized_args+=2;
                             success = TRUE;
                         }
@@ -48,6 +48,7 @@ u64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct NamedArgument
                                 *(i64*)named[j].target = integer.value;
                                 recognized_args++;
                                 success = TRUE;
+                                i++;
                             } 
                         }
                         recognized_args++;
@@ -55,14 +56,13 @@ u64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct NamedArgument
 
                     case ArgumentType_FLOAT: {
                         if (argv[i+1] != NULL) {
-                            RESULT(f128) decimal = str_to_float(argv[i], strlen(argv[i]));
+                            RESULT(f128) decimal = str_to_float(argv[i+1], strlen(argv[i+1]));
                             if (decimal.success) {
                                 *(f128*)named[j].target = decimal.value;
                                 recognized_args++;
                                 success = TRUE;
-                            } else {
-                                i--;
-                            }
+                                i++;
+                            } 
                         }
                         recognized_args++;
                         break;}
