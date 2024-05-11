@@ -26,12 +26,11 @@ i32 main(i32 argc, zstr argv[]) {
 
     if (show_help) {
         fwrite(STDERR, "%z: [OPTION]... [TIMESTAMP]\n\n"
-                "Options: \n"
-                "   -h/--help         : Show this message and exit\n"
-                "   -o/--offset HOURS : Add timezone offset\n\n"
-                "If TIMESTAMP is not supplied, the current time will be used.\n"
-
-                , (fmts){
+            "Options: \n"
+            "   -h/--help         : Show this message and exit\n"
+            "   -o/--offset HOURS : Add timezone offset\n\n"
+            "If TIMESTAMP is not supplied, the current time will be used.\n",
+            (fmts){
             {.z = argv[0]}
         });
         return 1;
