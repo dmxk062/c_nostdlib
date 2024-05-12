@@ -2,9 +2,8 @@
 #include <alloc.h>
 #include <mem.h>
 #include <cstring.h>
-#include "errno.h"
-#include "io.h"
-#include "types.h"
+#include <errno.h>
+#include <types.h>
 
 errno_t Environment_init(struct Environment* environ, zstr* envvec) {
     u64 count = 0;
