@@ -35,6 +35,7 @@ errno_t Environment_init(struct Environment* environ, zstr* envvec) {
             return ENOMEM;
 
         memcpy(newstr, new_env[i], len+1);
+        newstr[len] = '\0';
         new_env[i] = newstr;
     }
     return 0;
