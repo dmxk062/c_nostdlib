@@ -1,6 +1,6 @@
 #include <termcolor.h>
 #include <syscall.h>
-#include <memcpy.h>
+#include <mem.h>
 
 i64 ansi_format_escape(char* dest, u64 max_len, struct AnsiFormat format) {
     char buffer[64] = {'\e', '['};

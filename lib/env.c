@@ -2,7 +2,7 @@
 #include <env.h>
 #include <alloc.h>
 #include <cstring.h>
-#include <memcpy.h>
+#include <mem.h>
 
 /*
  * get an environment variable from the global environment vector
@@ -79,8 +79,8 @@ errno_t setenv(const char* name, const char* value, bool replace) {
         env++;
     }
     // we're appending, so we need to zero the next one
-    *(env++) = NULL;
     return __chgenv(name, len_name, value, len_valu, env);
+    *(env++) = NULL;
 
 }
 

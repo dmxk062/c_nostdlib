@@ -1,5 +1,5 @@
 #include <types.h>
-#include <memcpy.h>
+#include <mem.h>
 #include <alloc.h>
 #include <cstring.h>
 #include <string.h>
@@ -218,11 +218,6 @@ RESULT(String) StringList_join(StringList* list, String delim) {
 }
 
 
-bool String_eq(const String str1, const String str2) {
-    return String_buf_eq(str1->buffer, str1->len, str2->buffer, str2->len);
-}
-
-inline
 bool String_buf_eq(const char* char1array, u64 char1len, const char* char2array, u64 char2len) {
     if (char1len != char2len)
         return FALSE;
@@ -245,4 +240,8 @@ bool String_buf_eq(const char* char1array, u64 char1len, const char* char2array,
     }
 
     return TRUE;
+}
+
+bool String_eq(const String str1, const String str2) {
+    return String_buf_eq(str1->buffer, str1->len, str2->buffer, str2->len);
 }

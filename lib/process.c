@@ -36,7 +36,7 @@ errno_t Process_send_signal(u64 pid, enum Signal sig) {
             (untyped)sig);
 }
 
-errno_t execve(const char *program, char *const *argv, char *const *envp) {
+errno_t execve(const zstr program, const zstr argv[], const zstr envp[]) {
     return (errno_t) -(i64)
     syscall3(SYS_EXECVE,
             (untyped)program,

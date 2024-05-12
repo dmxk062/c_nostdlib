@@ -24,7 +24,7 @@ RESULT(Dirent) nextdir(u64 fd, DirectoryBuffer* buf) {
     while (TRUE) {
         if (buf->len == 0 || buf->len < buf->offset || new_entries) {
             RESULT(u64) ret;
-            ret = _getdents(fd, buf->buffer, DIRENT_BUF_SIZE);
+            ret = _getdents(fd, (Dirent*)buf->buffer, DIRENT_BUF_SIZE);
             if (!ret.success || ret.value == 0) {
                 return (RESULT(Dirent)){.success = FALSE, .errno = ret.errno};
             }

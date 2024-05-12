@@ -44,5 +44,4 @@ u64 String_split_char(String str, StringList* buffer, char delim);
 
 RESULT(String) StringList_join(StringList* list, String delim);
 
-
 #endif

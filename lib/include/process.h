@@ -15,7 +15,7 @@ RESULT(u64) vfork();
 
 errno_t Process_send_signal(u64 pid, enum Signal sig);
 
-errno_t execve(const char* program, char* const argv[], char* const envp[]);
+errno_t execve(const zstr program, const zstr argv[], const zstr envp[]);
 
 enum PrctlOp {
     PrctlOp_SET_NAME = 15,
