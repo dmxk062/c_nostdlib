@@ -21,7 +21,8 @@ typedef struct mem_chunk {
 void* malloc(u64 size);
 void free(void* ptr);
 
-u64 get_used_chunk_count(void);
-u64 get_used_page_count(void);
+u64 Malloc_get_used_count(void);
+u64 Malloc_get_page_count(void);
+u64 Malloc_get_allocated_count(void);
 
 #endif

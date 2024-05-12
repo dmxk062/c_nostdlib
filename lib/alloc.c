@@ -13,7 +13,7 @@ mem_chunk* global_last = NULL;
 
 struct {
     u64 pages;
-    u64 total;
+    u64 allocated;
     u64 in_use;
 
 } malloc_stats;
@@ -87,7 +87,7 @@ void* malloc(u64 size) {
         // u64 new_size = size;
         malloc_stats.pages  = 0;
         malloc_stats.in_use = 0;
-        malloc_stats.total  = 0;
+        malloc_stats.allocated  = 0;
         
         mem_chunk* new = alloc_new_page(get_page_size(size));
         // oops, either too big of a request or we are oom
@@ -99,6 +99,8 @@ void* malloc(u64 size) {
         // unlikely that the user asks for exactly 4096
         mem_chunk_split(new, size);
 
+        malloc_stats.allocated++;
+        malloc_stats.in_use++;
         return new->end;
     }
     
@@ -120,10 +122,15 @@ void* malloc(u64 size) {
         global_last->next = new;
         new->prev = global_last;
 
+        malloc_stats.allocated++;
+        malloc_stats.in_use++;
         return new->end;
     }
     // otherwise just return the segment we need
     mem_chunk_split(ptr, size);
+
+    malloc_stats.allocated++;
+    malloc_stats.in_use++;
     return ptr->end;
 }
 
@@ -186,17 +193,13 @@ void free(void* ptr) {
     malloc_stats.in_use--;
 }
 
-u64 get_used_chunk_count() {
-    u64 count = 0;
-    mem_chunk* ptr = global_head;
-    while (ptr != NULL) {
-        if (!ptr->free)
-            count++;
-        ptr = ptr->next;
-    }
-
-    return count;
+u64 Malloc_get_used_count() {
+    return malloc_stats.in_use;
 }
-u64 get_used_page_count() {
+u64 Malloc_get_page_count() {
     return malloc_stats.pages;
+}
+
+u64 Malloc_get_allocated_count() {
+    return malloc_stats.allocated;
 }
