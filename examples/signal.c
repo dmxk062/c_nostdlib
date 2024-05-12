@@ -13,10 +13,10 @@ void signal_handler(i64 sig) {
 i32 main(i32 argc, zstr argv[]) {
 
     for (u64 sig = 1; sig < Signal_RT_MAX; sig++) {
-        Signal_action(sig, signal_handler, 0, 0, NULL);;
+        Signal_action(sig, signal_handler, 0, 0, NULL);
     }
 
     Process_pause();
-    return received_sig;
 
+    return received_sig;
 }

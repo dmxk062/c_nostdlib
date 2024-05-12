@@ -20,7 +20,7 @@ i32 main(i32 argc, zstr argv[]) {
         {&positional, ArgumentType_STRING, NULL, &got_positional}
     };
 
-    i64 num_parsed = parse_arguments(argc-1, argv+1,
+    parse_arguments(argc-1, argv+1,
             ARRLEN(nargs), nargs,
             ARRLEN(uargs), uargs);
 

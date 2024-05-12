@@ -39,5 +39,5 @@ i32 main(i32 argc, zstr argv[]) {
 
 
 
-    return get_used_chunk_count();
+    return Malloc_get_used_count();
 }

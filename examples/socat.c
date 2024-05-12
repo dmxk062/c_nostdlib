@@ -17,8 +17,8 @@ i32 main(i32 argc, zstr argv[]) {
     bool got_path = FALSE;
     UnnamedArguments uargs = {
         {&path, ArgumentType_STRING, NULL, &got_path},
-
     };
+
     u64 num_parsed = parse_arguments(argc-1, argv+1,
             ARRLEN(nargs), nargs,
             ARRLEN(uargs), uargs);
