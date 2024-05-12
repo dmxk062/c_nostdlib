@@ -36,81 +36,75 @@ RESULT(zstr) getenv(const char* name) {
  * the only long term solution would be to add some identification field to our malloc structs
  * GLIBC copies all of environ into the heap AFAIK, that's too complicated for me right now
  */
-static inline
-errno_t __chgenv(const char* name, u64 len_name, const char* value, u64 len_valu, char** target) {
-        u64 total_len = len_valu + len_name + 2*(sizeof(char));
-        char* buffer = malloc(total_len);
-        if (buffer == NULL) {
-            return 1;
-        }
+// static inline
+// errno_t __chgenv(const char* name, u64 len_name, const char* value, u64 len_valu, char** target) {
+//         u64 total_len = len_valu + len_name + 2*(sizeof(char));
+//         char* buffer = malloc(total_len);
+//         if (buffer == NULL) {
+//             return 1;
+//         }
+//
+//         memcpy(buffer, name, len_name);
+//         buffer[len_name] = '=';
+//         memcpy(buffer + len_name + sizeof(char), value, len_valu);
+//         buffer[total_len] = '\0';
+//
+//         // replace the buffer in place, leaks ram if it was allocated on the heap
+//         *target = buffer;
+//         return 0;
+//
+// }
 
-        memcpy(buffer, name, len_name);
-        buffer[len_name] = '=';
-        memcpy(buffer + len_name + sizeof(char), value, len_valu);
-        buffer[total_len] = '\0';
+// DEPRECATED: for changing the environment use environ.h
+// errno_t setenv(const char* name, const char* value, bool replace) {
+//     if (name == NULL || *name == '\0') {
+//         return 1;
+//     }
+//     zstr* env = environ;
+//
+//     u64 len_name = strlen(name);
+//     u64 len_valu = strlen(value);
+//
+//     u64 total_len = len_name + len_valu + 2*(sizeof(char));
+//     while (*env != NULL) {
+//         if (strncmp(name, *env, len_name) == 0 && (*env)[len_name] == '=') {
+//             if (!replace) {
+//                 return 0;
+//             }
+//             return __chgenv(name, len_name, value, len_valu, env);
+//         }
+//         env++;
+//     }
+//     // we're appending, so we need to zero the next one
+//     return __chgenv(name, len_name, value, len_valu, env);
+//     *(env++) = NULL;
+//
+// }
 
-        // replace the buffer in place, leaks ram if it was allocated on the heap
-        *target = buffer;
-        return 0;
-
-}
-/*
- * FIXME: memory
- * set a new value or replace existing one
- * this also leaks memory for the same reasons as __chgenv above
- */
-errno_t setenv(const char* name, const char* value, bool replace) {
-    if (name == NULL || *name == '\0') {
-        return 1;
-    }
-    zstr* env = environ;
-
-    u64 len_name = strlen(name);
-    u64 len_valu = strlen(value);
-
-    u64 total_len = len_name + len_valu + 2*(sizeof(char));
-    while (*env != NULL) {
-        if (strncmp(name, *env, len_name) == 0 && (*env)[len_name] == '=') {
-            if (!replace) {
-                return 0;
-            }
-            return __chgenv(name, len_name, value, len_valu, env);
-        }
-        env++;
-    }
-    // we're appending, so we need to zero the next one
-    return __chgenv(name, len_name, value, len_valu, env);
-    *(env++) = NULL;
-
-}
-
-/*
- * FIXME: memory
- * remove an environment variable, leaks ram just like the two above
- */
-errno_t unsetenv(const char* name) {
-    if (name == NULL || *name == '\0') {
-        return 1;
-    }
-    u64 len_name = strlen(name);
-
-    zstr* env = environ;
-
-    while (*env != NULL) {
-        if (strncmp(name, *env, len_name) == 0 && (*env)[len_name] == '=') {
-            char** ep = env;
-            /*
-             * shift the *entire* vector backwards
-             * sounds dumb, GLIBC does it the same way
-             */
-            do {
-                ep[0] = ep[1];
-            } while (*ep++);
-        } else 
-        env++;
-
-    }
-    return 0;
-
-
-}
+// DEPRECATED: for changing the environment use environ.h
+// errno_t unsetenv(const char* name) {
+//     if (name == NULL || *name == '\0') {
+//         return 1;
+//     }
+//     u64 len_name = strlen(name);
+//
+//     zstr* env = environ;
+//
+//     while (*env != NULL) {
+//         if (strncmp(name, *env, len_name) == 0 && (*env)[len_name] == '=') {
+//             char** ep = env;
+//             /*
+//              * shift the *entire* vector backwards
+//              * sounds dumb, GLIBC does it the same way
+//              */
+//             do {
+//                 ep[0] = ep[1];
+//             } while (*ep++);
+//         } else 
+//         env++;
+//
+//     }
+//     return 0;
+//
+//
+// }
