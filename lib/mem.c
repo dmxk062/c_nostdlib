@@ -1,4 +1,5 @@
-#include <memcpy.h>
+#include "types.h"
+#include <mem.h>
 
 
 /*
@@ -33,4 +34,24 @@ void* memset(void* dest, u64 val, u64 count) {
         *(u8*)++dest = (u8)val;
 
     return dest;
+}
+
+bool memeq(const void* buf1, const void* buf2, u64 count) {
+    u64* u1 = (u64*) buf1;
+    u64* u2 = (u64*) buf2;
+
+    for (; count > 8; count -= 8) {
+        if (*u1++ != *u2++) 
+            return FALSE;
+    }
+
+    u8* b1 = (u8*)u1;
+    u8* b2 = (u8*)u2;
+
+    while (count-- > 0) {
+        if (*b1++ != *b2++)
+            return FALSE;
+    }
+
+    return TRUE;
 }
