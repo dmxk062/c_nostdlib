@@ -34,6 +34,10 @@ SYS_SIGRETURN   = 15,
 SYS_IOCTL = 16,
 
 SYS_ACCESS = 21,
+SYS_PIPE   = 22,
+
+SYS_DUP       = 32,
+SYS_DUP2      = 33,
 
 SYS_PAUSE     = 34,
 SYS_NANOSLEEP = 35,
