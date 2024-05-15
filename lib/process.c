@@ -14,14 +14,14 @@ u64 getpid() {
     syscall0(SYS_GETPID);
 }
 
-RESULT(u64) fork(){
+RESULT(u64) Process_fork(){
     i64 ret = (i64)syscall0(SYS_FORK);
     if (ret < 0) 
         return (RESULT(u64)){.success = FALSE, .errno = -ret};
     else
         return (RESULT(u64)){.success = TRUE, .value = ret};
 }
-RESULT(u64) vfork(){
+RESULT(u64) Process_vfork(){
     i64 ret = (i64)syscall0(SYS_VFORK);
     if (ret < 0) 
         return (RESULT(u64)){.success = FALSE, .errno = -ret};
@@ -36,12 +36,12 @@ errno_t Process_send_signal(u64 pid, enum Signal sig) {
             (untyped)sig);
 }
 
-errno_t execve(const zstr program, const zstr argv[], const zstr envp[]) {
+errno_t Process_exec(const zstr program, const zstr argv[], const zstr envv[]) {
     return (errno_t) -(i64)
     syscall3(SYS_EXECVE,
             (untyped)program,
             (untyped)argv,
-            (untyped)envp);
+            (untyped)envv);
 }
 
 untyped prctl(enum PrctlOp op, untyped arg1, untyped arg2, untyped arg3) {
@@ -90,4 +90,3 @@ errno_t Process_set_gid(u64 gid) {
     syscall1(SYS_SETGID,
             (untyped)gid);
 }
-
