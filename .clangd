@@ -13,7 +13,3 @@ CompileFlags:
     -Ilib/include/]
   Compiler: gcc
 
-Diagnostics:
-  # im not using cpp... 
-  Suppress: []
-  
