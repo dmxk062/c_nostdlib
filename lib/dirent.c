@@ -40,6 +40,6 @@ Result(Dirent) nextdir(u64 fd, DirectoryBuffer* buf) {
             if (d->ino != 0)
                 return Ok(Dirent, d);
         }
-        new_entries = false;
+        new_entries = true;
     }
 }
