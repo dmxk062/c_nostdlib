@@ -24,9 +24,9 @@ errno_t Environment_init(struct Environment* environ, zstr* envvec);
 errno_t Environment_free(struct Environment* environ);
 
 /* Find the *whole* entry of an environment variable */
-RESULT(u64) Environment_find(struct Environment* env, const zstr name);
+Result(u64) Environment_find(struct Environment* env, const zstr name);
 /* get the value associated with **name** */
-RESULT(zstr) Environment_get(struct Environment* env, const zstr name);
+Result(zstr) Environment_get(struct Environment* env, const zstr name);
 /* create or modify a variable */
 errno_t Environment_set(struct Environment* env, const zstr name, const zstr value, bool replace);
 /* delete one */

@@ -35,11 +35,11 @@ typedef struct directory_buffer {
     char    buffer[DIRENT_BUF_SIZE];
 } DirectoryBuffer;
 
-RESULT(u64) opendir(const char* path);
+Result(u64) opendir(const char* path);
 
-RESULT(u64) _getdents(u64 fd, Dirent* ent, u64 count);
+Result(u64) _getdents(u64 fd, Dirent* ent, u64 count);
 
-DEFRESULT(Dirent*, Dirent);
-RESULT(Dirent) nextdir(u64 fd, DirectoryBuffer* buf);
+DefineResult(Dirent*, Dirent);
+Result(Dirent) nextdir(u64 fd, DirectoryBuffer* buf);
 
 #endif

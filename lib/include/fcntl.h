@@ -17,6 +17,6 @@ enum FcntlOp {
     FcntlOp_GETOWN = 9,
 };
 
-RESULT(u64) fcntl(u64 fd, enum FcntlOp op, u64 arg);
+Result(u64) fcntl(u64 fd, enum FcntlOp op, u64 arg);
 
 #endif

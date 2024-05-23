@@ -7,11 +7,11 @@
 /*
  * get an environment variable from the global environment vector
  */
-RESULT(zstr) getenv(const char* name) {
+Result(zstr) getenv(const char* name) {
 
     // filter out invalid names
     if (name == NULL || *name == '\0') {
-        return (RESULT(zstr)){.success = FALSE, .errno = 2};
+        return Err(zstr, 2);
     }
 
     zstr* env = environ;
@@ -22,11 +22,11 @@ RESULT(zstr) getenv(const char* name) {
         // if the name matches and is terminated with a '=', we found it
         if (strncmp(name, *env, len_name) == 0 && (*env)[len_name]== '=') {
             // just return a pointer to the value
-            return (RESULT(zstr)){.success = TRUE, .value = &((*env)[len_name + 1])};
+            return Ok(zstr, &((*env)[len_name + 1]));
         }
         env++;
     }
-    return (RESULT(zstr)){.success = FALSE, .errno = 1};
+    return Err(zstr, 1);
 }
 
 /*

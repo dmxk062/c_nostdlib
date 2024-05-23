@@ -14,19 +14,19 @@ u64 getpid() {
     syscall0(SYS_GETPID);
 }
 
-RESULT(u64) Process_fork(){
+Result(u64) Process_fork(){
     i64 ret = (i64)syscall0(SYS_FORK);
     if (ret < 0) 
-        return (RESULT(u64)){.success = FALSE, .errno = -ret};
+        return Err(u64, -ret);
     else
-        return (RESULT(u64)){.success = TRUE, .value = ret};
+        return Ok(u64, ret);
 }
-RESULT(u64) Process_vfork(){
+Result(u64) Process_vfork(){
     i64 ret = (i64)syscall0(SYS_VFORK);
     if (ret < 0) 
-        return (RESULT(u64)){.success = FALSE, .errno = -ret};
+        return Err(u64, -ret);
     else
-        return (RESULT(u64)){.success = TRUE, .value = ret};
+        return Ok(u64, ret);
 }
 
 errno_t Process_send_signal(u64 pid, enum Signal sig) {

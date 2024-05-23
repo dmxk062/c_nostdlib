@@ -13,8 +13,8 @@
 #define STDOUT 1
 #define STDERR 2
 
-RESULT(u64) read(u64 fd, void* buffer, u64 count);
-RESULT(u64) write(u64 fd, void const* data, u64 count);
+Result(u64) read(u64 fd, void* buffer, u64 count);
+Result(u64) write(u64 fd, void const* data, u64 count);
 
 #define O_RDONLY    00000000
 #define O_WRONLY    00000001
@@ -37,13 +37,13 @@ RESULT(u64) write(u64 fd, void const* data, u64 count);
 
 
     
-RESULT(u64) open(const char* path, i64 flags, i64 mode);
-RESULT(u64) close(u64 fd);
-RESULT(u64) seek(u64 fd, i64 offset, u64 origin);
+Result(u64) open(const char* path, i64 flags, i64 mode);
+Result(u64) close(u64 fd);
+Result(u64) seek(u64 fd, i64 offset, u64 origin);
 
 void print(const char* string);
 
-RESULT(u64) fwrite(u64 fd, const char* format, fmts values);
-RESULT(u64) fprint(const char* format, fmts values);
+Result(u64) fwrite(u64 fd, const char* format, fmts values);
+Result(u64) fprint(const char* format, fmts values);
 
 #endif

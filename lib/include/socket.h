@@ -31,12 +31,12 @@ enum SocketType {
     SocketType_RDM    = 4,
 };
 
-RESULT(u64) Socket_new(enum SocketFamily family, enum SocketType domain, i64 protocol);
-RESULT(u64) Socket_recv(u64 fd, void* buffer, u64 count, u64 flags);
-RESULT(u64) Socket_send(u64 fd, void* buffer, u64 count, u64 flags);
+Result(u64) Socket_new(enum SocketFamily family, enum SocketType domain, i64 protocol);
+Result(u64) Socket_recv(u64 fd, void* buffer, u64 count, u64 flags);
+Result(u64) Socket_send(u64 fd, void* buffer, u64 count, u64 flags);
 
 errno_t Socket_bind(u64 fd, struct SocketAddress* peer, u64 peer_length);
-RESULT(u64) Socket_accept(u64 fd, struct SocketAddress* addr, u64* addr_length);
+Result(u64) Socket_accept(u64 fd, struct SocketAddress* addr, u64* addr_length);
 
 enum SocketShutdown {
     SocketShutdown_RD   = 0,
@@ -47,8 +47,8 @@ errno_t Socket_shutdown(u64 fd, enum SocketShutdown how);
 errno_t Socket_connect(u64 fd, struct SocketAddress* addr, u64 addr_length);
 errno_t Socket_listen(u64 fd, u64 backlog);
 
-RESULT(u64) Socket_new_UnixClient(char* path, u64 path_length);
-RESULT(u64) Socket_new_UnixServer(char* path, u64 path_length, u64 max_connections);
+Result(u64) Socket_new_UnixClient(char* path, u64 path_length);
+Result(u64) Socket_new_UnixServer(char* path, u64 path_length, u64 max_connections);
 
 /*
  * Flags

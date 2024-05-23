@@ -30,7 +30,7 @@ f128 root(f128 number, u64 exponent) {
     // maximum difference
     f128 epsilon = 0.000001L;
 
-    while (TRUE) {
+    while (true) {
         f128 next_guess = (
                 (exponent - 1) * guess 
                 + number / pow(guess, exponent - 1)

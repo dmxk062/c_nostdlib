@@ -24,7 +24,7 @@ u64 strcmp(const char* string1, const char* string2) {
 bool streq(const char* string1, const char* string2) {
     while(*string1 && *string2) {
         if (*string1 != *string2) {
-            return FALSE;
+            return false;
         }
         string1++;
         string2++;

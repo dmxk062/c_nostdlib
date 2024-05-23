@@ -38,7 +38,7 @@ typedef struct {
     i64 seconds;
 } Time;
 
-#define LEAPYEAR(year) (((year) % 4 == 0 && ((year) % 100 != 0 || (year) % 400 == 0)) ? TRUE : FALSE)
+#define LEAPYEAR(year) (((year) % 4 == 0 && ((year) % 100 != 0 || (year) % 400 == 0)) ? true : false)
 #define DAYS_IN_YEAR(year) (LEAPYEAR(year) ? 366 : 365)
 
 

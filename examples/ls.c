@@ -44,9 +44,9 @@ const static zstr FILETYPE_ICONS[] = {
 
 i32 main(i32 argc, zstr argv[]) {
 
-    bool no_color = FALSE;
-    bool no_icons = FALSE;
-    bool show_hidden = FALSE;
+    bool no_color = false;
+    bool no_icons = false;
+    bool show_hidden = false;
     NamedArguments nargs = {
         {"-C", "--no-color", &no_color, ArgumentType_BOOL},
         {"-I", "--no-icons", &no_icons, ArgumentType_BOOL},
@@ -62,8 +62,8 @@ i32 main(i32 argc, zstr argv[]) {
             ARRLEN(nargs), nargs,
             ARRLEN(uargs), uargs);
 
-    RESULT(u64) dirfd = opendir(path);
-    if (!dirfd.success) {
+    Result(u64) dirfd = opendir(path);
+    if (!dirfd.ok) {
         fwrite(STDERR, "%eFailed to open %z: %z%E\n", (fmts){
             {.e = {.fg = AnsiColor_RED}},
             {.z = path},
@@ -75,7 +75,7 @@ i32 main(i32 argc, zstr argv[]) {
     u64 fd = dirfd.value;
     DirectoryBuffer dirbuf;
 
-    RESULT(Dirent) ent;
+    Result(Dirent) ent;
     Dirent* file;
 
     enum AnsiColor color;

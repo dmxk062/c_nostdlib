@@ -65,7 +65,7 @@ typedef fmt_value fmts[];
 
 
 
-RESULT(u64) fmt(const char* format, char* out, u64 outlen, fmts values);
-RESULT(u64) String_format(const zstr format, String str, fmt_value values[]);
+Result(u64) fmt(const char* format, char* out, u64 outlen, fmts values);
+Result(u64) String_format(const zstr format, String str, fmt_value values[]);
 
 #endif

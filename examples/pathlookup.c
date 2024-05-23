@@ -10,16 +10,16 @@
 #define PATH_MAX_LEN 64
 
 i32 main(i32 argc, zstr argv[]) {
-    RESULT(zstr) new_execpath = getenv("PATH");
-    if (!new_execpath.success) {
+    Result(zstr) new_execpath = getenv("PATH");
+    if (!new_execpath.ok) {
         print("$PATH is not set\n");
         return 1;
     }
 
-    RESULT(String) new_path_string = String_new_from_zstr(new_execpath.value);
-    RESULT(String) new_result_path = String_new(PATH_MAX);
-    RESULT(StringList) new_path_list = StringList_new(PATH_MAX_LEN);
-    if (!new_path_string.success || !new_path_list.success || !new_result_path.success) {
+    Result(String) new_path_string = String_new_from_zstr(new_execpath.value);
+    Result(String) new_result_path = String_new(PATH_MAX);
+    Result(StringList) new_path_list = StringList_new(PATH_MAX_LEN);
+    if (!new_path_string.ok || !new_path_list.ok || !new_result_path.ok) {
         print("Failed to allocate ram\n");
         return 2;
     }

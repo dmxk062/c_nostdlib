@@ -6,7 +6,7 @@
 
 i64 char_to_int(const char c);
 
-RESULT(i64) str_to_int(const char* string, u64 n, u64 base);
+Result(i64) str_to_int(const char* string, u64 n, u64 base);
 
-RESULT(f128) str_to_float(const char* string, u64 n);
+Result(f128) str_to_float(const char* string, u64 n);
 #endif 

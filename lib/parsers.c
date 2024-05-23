@@ -1,3 +1,4 @@
+#include "types.h"
 #include <parsers.h>
 #include <cstring.h>
 
@@ -16,13 +17,13 @@ inline i64 char_to_int(char c) {
 /*
  * parse a string into an integer, zero error tolerance
  */
-RESULT(i64) str_to_int(const char* string, u64 lenth, u64 base) {
+Result(i64) str_to_int(const char* string, u64 lenth, u64 base) {
     i64 parsed = 0;
 
-    bool is_negative = FALSE;
+    bool is_negative = false;
 
     if (string[0] == '-') {
-        is_negative = TRUE;
+        is_negative = true;
         string++;
         lenth--;
     }
@@ -31,7 +32,7 @@ RESULT(i64) str_to_int(const char* string, u64 lenth, u64 base) {
         i64 digit = char_to_int(string[i]);
         // we got smth we can't really handle, tell the caller at which index
         if (digit == -1 || digit >= base) {
-            return (RESULT(i64)){.success = FALSE, .errno = i};
+            return Err(i64, i);
         }
         // calculate the positional value
         i64 pwr = 1;
@@ -45,7 +46,7 @@ RESULT(i64) str_to_int(const char* string, u64 lenth, u64 base) {
 
     if (is_negative) parsed = -parsed;
 
-    return (RESULT(i64)){.success = TRUE, .value = parsed};
+    return Ok(i64, parsed);
 }
 
 /*
@@ -53,7 +54,7 @@ RESULT(i64) str_to_int(const char* string, u64 lenth, u64 base) {
  * accepted format:
  * (-)[0-9].[0-9]
  */
-RESULT(f128) str_to_float(const char* string, u64 length) {
+Result(f128) str_to_float(const char* string, u64 length) {
     f128 result;
 
     bool is_negative;
@@ -64,7 +65,7 @@ RESULT(f128) str_to_float(const char* string, u64 length) {
     f128 rational = 0.0;
 
     if (string[0] == '-') {
-        is_negative = TRUE;
+        is_negative = true;
         string++;
         length--;
     }
@@ -75,10 +76,10 @@ RESULT(f128) str_to_float(const char* string, u64 length) {
     */
     i64 decimal_position = strfind(string, length, '.');
     if (decimal_position < 0) {
-        has_decimals = FALSE;
+        has_decimals = false;
         target = length;
     }  else {
-        has_decimals = TRUE;
+        has_decimals = true;
         target = decimal_position;
     }
 
@@ -86,7 +87,7 @@ RESULT(f128) str_to_float(const char* string, u64 length) {
         i64 digit = char_to_int(string[i]);
         // only base 10 for now
         if (digit == -1 || digit >= 10) {
-            return (RESULT(f128)){.success = FALSE, .errno = i};
+            return Err(f128, i);
         }
 
         i64 pwr = 1;
@@ -102,14 +103,14 @@ RESULT(f128) str_to_float(const char* string, u64 length) {
      */
     if (!has_decimals) {
         if (is_negative) integer = -integer;
-        return (RESULT(f128)){.success = TRUE, .value = integer};
+        return Ok(f128, integer);
     }
 
     // iterate over the rest of the string
     for (i64 i = decimal_position + 1; i < length; i++) {
         i64 digit = char_to_int(string[i]);
         if (digit == -1 || digit >= 10) {
-            return (RESULT(f128)){.success = FALSE, .errno = i};
+            return Err(f128, i);
         }
         // continuously divide, values get smaller as we go right
         f128 pwr = 0.1L;
@@ -122,5 +123,5 @@ RESULT(f128) str_to_float(const char* string, u64 length) {
     result = integer + rational;
     if (is_negative) result = -result;
 
-    return (RESULT(f128)){.success = TRUE, .value = result};
+    return Ok(f128, result);
 }

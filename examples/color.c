@@ -6,8 +6,8 @@
 
 i32 main(i32 argc, zstr argv[]) {
 
-    bool color_red  = FALSE;
-    bool color_blue = FALSE;
+    bool color_red  = false;
+    bool color_blue = false;
 
     NamedArguments nargs = {
         {"-r", "--red", &color_red,   ArgumentType_BOOL},
@@ -15,7 +15,7 @@ i32 main(i32 argc, zstr argv[]) {
     };
 
     zstr positional = NULL;
-    bool got_positional = FALSE;
+    bool got_positional = false;
     UnnamedArguments uargs = {
         {&positional, ArgumentType_STRING, NULL, &got_positional}
     };

@@ -6,10 +6,10 @@
 #include <errno.h>
 #include <format.h>
 
-RESULT(String) String_new(u64 size) {
+Result(String) String_new(u64 size) {
     String str = malloc(sizeof(__string_t));
     if (str == NULL)
-        return (RESULT(String)){.success = FALSE, .errno = ENOMEM};
+        return Err(String, ENOMEM);
 
     str->len = 0;
     if (size == 0) {
@@ -19,12 +19,12 @@ RESULT(String) String_new(u64 size) {
         char* buffer = malloc(size * sizeof(char));
         if (buffer == NULL) {
             free(str);
-            return (RESULT(String)){.success = FALSE, .errno = ENOMEM};
+            return Err(String, ENOMEM);
         }
         str->buffer = buffer;
         str->size = size;
     }
-    return (RESULT(String)){.success = TRUE, .value = str};
+    return Ok(String, str);
 }
 
 errno_t String_free(String str) {
@@ -33,30 +33,30 @@ errno_t String_free(String str) {
     return SUCCESS;
 }
 
-RESULT(String) String_new_from_zstr(zstr char_array) {
+Result(String) String_new_from_zstr(zstr char_array) {
     u64 length = strlen(char_array);
 
-    RESULT(String) new_string = String_new(length);
-    if (!new_string.success) {
+    Result(String) new_string = String_new(length);
+    if (!new_string.ok) {
         return new_string;
     }
     String str = new_string.value;
     memcpy(str->buffer, char_array, length);
     str->len  = length;
 
-    return (RESULT(String)){.success = TRUE, .value = str};
+    return Ok(String, str);
 }
 
-RESULT(zstr) String_to_zstr(String str) {
+Result(zstr) String_to_zstr(String str) {
     u64 new_length = str->len + sizeof(char);
 
     zstr new_str = malloc(new_length);
     if (new_str == NULL)
-        return (RESULT(zstr)){.success = FALSE, .errno = ENOMEM};
+        return Err(zstr, ENOMEM);
 
     memcpy(new_str, str->buffer, str->len);
     new_str[new_length - sizeof(char)] = '\0';
-    return (RESULT(zstr)){.success = TRUE, .value = new_str};
+    return Ok(zstr, new_str);
 }
 
 
@@ -93,17 +93,17 @@ errno_t String_append(String dst, const String src) {
     return String_append_buf(dst, src->buffer, src->len);
 }
 
-RESULT(String) String_slice(const String str, u64 start, u64 end) {
+Result(String) String_slice(const String str, u64 start, u64 end) {
     u64 new_len = end - start;
     if (new_len == 0) {
         new_len = 1;
     }
     if (end > str->len || new_len > str->len) {
-        return (RESULT(String)){.success = FALSE, .errno = 1};
+        return Err(String, 1);
     }
 
-    RESULT(String) new_string = String_new(new_len);
-    if (!new_string.success) {
+    Result(String) new_string = String_new(new_len);
+    if (!new_string.ok) {
         return new_string;
     }
 
@@ -111,14 +111,14 @@ RESULT(String) String_slice(const String str, u64 start, u64 end) {
     ret->len = new_len;
     memcpy(ret->buffer, str->buffer + start, new_len);
 
-    return (RESULT(String)){.success = TRUE, .value = ret};
+    return Ok(String, ret);
 }
 
 
-RESULT(StringList) StringList_new(u64 size) {
+Result(StringList) StringList_new(u64 size) {
     StringList* new_list = malloc(sizeof(StringList));
     if (new_list == NULL) 
-        return (RESULT(StringList)){.success = FALSE, .errno = ENOMEM};
+        return Err(StringList, ENOMEM);
 
     new_list->len = 0;
     if (size == 0) {
@@ -128,13 +128,13 @@ RESULT(StringList) StringList_new(u64 size) {
         String* strings = malloc(size * sizeof(__string_t));
         if (strings == NULL) {
             free(new_list);
-            return (RESULT(StringList)){.success = FALSE, .errno = ENOMEM};
+            return Err(StringList, ENOMEM);
         }
         new_list->size = size;
         new_list->strings = strings;
 
     }
-    return (RESULT(StringList)){.success = TRUE, .value = new_list};
+    return Ok(StringList, new_list);
 }
 
 errno_t StringList_free(StringList* strings) {
@@ -158,8 +158,8 @@ u64 String_split_char(String str, StringList* buffer, char delim) {
         if (str->buffer[i] == delim) {
             end = i;
             if (index < buffer->size) {
-                RESULT(String) new_str = String_slice(str, start, end);
-                if (!new_str.success) 
+                Result(String) new_str = String_slice(str, start, end);
+                if (!new_str.ok) 
                     return index - start_at;
 
                 buffer->strings[index++] = new_str.value;
@@ -172,8 +172,8 @@ u64 String_split_char(String str, StringList* buffer, char delim) {
     }
 
     if (end < str->len && index < buffer->size) {
-        RESULT(String) new_str = String_slice(str, start, str->len);
-        if (!new_str.success) {
+        Result(String) new_str = String_slice(str, start, str->len);
+        if (!new_str.ok) {
             return index - start_at;
         }
         buffer->strings[index++] = new_str.value;
@@ -184,7 +184,7 @@ u64 String_split_char(String str, StringList* buffer, char delim) {
 }
 
 
-RESULT(String) StringList_join(StringList* list, String delim) {
+Result(String) StringList_join(StringList* list, String delim) {
     u64 total_length = 0;
     for (u64 i = 0; i < list->len; i++) {
         total_length += list->strings[i]->len;
@@ -192,8 +192,8 @@ RESULT(String) StringList_join(StringList* list, String delim) {
             total_length += delim->len;
     }
 
-    RESULT(String) new_string = String_new(total_length);
-    if (!new_string.success) 
+    Result(String) new_string = String_new(total_length);
+    if (!new_string.ok) 
         return new_string;
 
     String str = new_string.value;
@@ -214,13 +214,13 @@ RESULT(String) StringList_join(StringList* list, String delim) {
     }
 
     str->len=total_length;
-    return (RESULT(String)){.success = TRUE, .value = str};
+    return Ok(String, str);
 }
 
 
 bool String_buf_eq(const char* char1array, u64 char1len, const char* char2array, u64 char2len) {
     if (char1len != char2len)
-        return FALSE;
+        return false;
 
     u64 size = char1len;
     u64* l1 = (u64*)char1array;
@@ -228,7 +228,7 @@ bool String_buf_eq(const char* char1array, u64 char1len, const char* char2array,
 
     for (; size > 8; size -= 8) {
         if (*l1++ != *l2++) 
-            return FALSE;
+            return false;
     }
 
     u8* s1 = (u8*)l1;
@@ -236,10 +236,10 @@ bool String_buf_eq(const char* char1array, u64 char1len, const char* char2array,
 
     while (size-- > 0) {
         if (*s1++ != *s2++) 
-            return FALSE;
+            return false;
     }
 
-    return TRUE;
+    return true;
 }
 
 bool String_eq(const String str1, const String str2) {

@@ -8,14 +8,14 @@ i32 main(i32 argc, zstr argv[]) {
 
     struct Timespec tstamp = {0,0};
 
-    bool show_help = FALSE;
+    bool show_help = false;
     i64 timezone_offset = 0;
     NamedArguments nargs = {
         {"-h", "--help", &show_help, ArgumentType_BOOL},
         {"-o", "--offset", &timezone_offset, ArgumentType_INT},
     };
 
-    bool got_timestamp = FALSE;
+    bool got_timestamp = false;
     UnnamedArguments uargs = {
         {&tstamp.secs, ArgumentType_INT, NULL, &got_timestamp},
     };

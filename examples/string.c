@@ -8,8 +8,8 @@ i32 main(i32 argc, zstr argv[]) {
 
     zstr to_index = "This is some example text";
     i64  count  = 0;
-    bool got_string = FALSE;
-    bool got_count  = FALSE;
+    bool got_string = false;
+    bool got_count  = false;
     UnnamedArguments uargs = {
         {&to_index, ArgumentType_STRING, NULL, &got_string},
         {&count,    ArgumentType_INT,    NULL, &got_count},
@@ -21,8 +21,8 @@ i32 main(i32 argc, zstr argv[]) {
 
     String argument = String_new_from_zstr(to_index).value;
 
-    RESULT(String) sliced = String_slice(argument, 0, count);
-    if (!sliced.success) {
+    Result(String) sliced = String_slice(argument, 0, count);
+    if (!sliced.ok) {
         fwrite(STDERR, "`%s` is shorter than %d\n", (fmts){
             {.s = argument}, {.i = count}
         });

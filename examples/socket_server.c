@@ -9,18 +9,18 @@
 #include <io.h>
 
 
-bool received_interrupt = FALSE;
+volatile bool received_interrupt = false;
 
 
 void handle_interrupt(i64 interrupt) {
-    received_interrupt = TRUE;
+    received_interrupt = true;
     return;
 }
 
 i32 main(i32 argc, zstr argv[]) {
 
     zstr socket_path = "/tmp/nostd.sock";
-    bool delete_old = FALSE;
+    bool delete_old = false;
     NamedArguments nargs = {
         {"-p", "--path", &socket_path, ArgumentType_STRING},
         {"-d", "--delete", &delete_old, ArgumentType_BOOL},
@@ -41,8 +41,8 @@ i32 main(i32 argc, zstr argv[]) {
             unlink(socket_path);
     }
 
-    RESULT(u64) new_server_fd = Socket_new_UnixServer(socket_path, strlen(socket_path), 20);
-    if (!new_server_fd.success) {
+    Result(u64) new_server_fd = Socket_new_UnixServer(socket_path, strlen(socket_path), 20);
+    if (!new_server_fd.ok) {
         zstr err_msg = ERROR_MESSAGES[new_server_fd.errno];
         if (err_msg == NULL)
             err_msg = "Unknown error";
@@ -57,7 +57,7 @@ i32 main(i32 argc, zstr argv[]) {
 
     u64 server_fd = new_server_fd.value;
 
-    RESULT(u64) new_client_fd;
+    Result(u64) new_client_fd;
     struct SocketAddress client_addr;
     u64 client_addr_length = 0;
 
@@ -66,7 +66,7 @@ i32 main(i32 argc, zstr argv[]) {
     u64 num_connections = 0;
     while (!received_interrupt) {
         new_client_fd = Socket_accept(server_fd, &client_addr, &client_addr_length);
-        if (!new_client_fd.success)
+        if (!new_client_fd.ok)
             continue;
 
         fprint("New connection on fd %d\n", (fmts){{.i = new_client_fd.value}});

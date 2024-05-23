@@ -17,9 +17,9 @@ i64 i_to_base(i64 num, i8 base, char* out, i64 maxlen, u16 padd) {
 
     char buffer[buffsize];
     i64 index = buffsize - 1;
-    bool is_negative = FALSE;
+    bool is_negative = false;
     if (num < 0) {
-        is_negative = TRUE;
+        is_negative = false;
         num = -num;
     }
 
@@ -68,7 +68,7 @@ i64 i_to_base(i64 num, i8 base, char* out, i64 maxlen, u16 padd) {
  */
 i64 f_to_decimal(f128 num, char* out, i64 maxlen, u16 padd, u16 num_frac) {
     static const char digits[] = "0123456789";
-    bool is_negative = FALSE;
+    bool is_negative = false;
 
     // use two separate stack local buffers for integer and fraction 
     static const i64 buffsize = 128;
@@ -79,7 +79,7 @@ i64 f_to_decimal(f128 num, char* out, i64 maxlen, u16 padd, u16 num_frac) {
     i64 iindex = buffsize - 1;
 
     if (num < 0) {
-        is_negative = TRUE;
+        is_negative = true;
         num = -num;
     }
 
@@ -173,13 +173,13 @@ i64 f_to_decimal(f128 num, char* out, i64 maxlen, u16 padd, u16 num_frac) {
  *
  *
  */
-RESULT(u64) fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
+Result(u64) fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
     u64 fmtlen = strlen(format);
     u64 outind = 0;
 
     // we already couldn't fit the format string into the target, just return
     if (outlen < fmtlen) {
-        return (RESULT(u64)){.success = FALSE, .errno = 1};
+        return Err(u64, 1);
     }
 
     // loop iterator
@@ -187,7 +187,7 @@ RESULT(u64) fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
 
     // for %d, %x, %b, %o
     u8 base = 0;
-    bool was_num = FALSE;
+    bool was_num = false;
     while (i < fmtlen && outind < outlen) {
         if (format[i] == '%') {
             i++;
@@ -220,7 +220,7 @@ RESULT(u64) fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                     i64 padding_left = padding - len;
                     // check if we have space for that
                     if (padding + outind > outlen ){
-                        return (RESULT(u64)){.success = FALSE, .errno = 2};
+                        return Err(u64, 2);
                     }
 
                     // pad with spaces
@@ -229,7 +229,7 @@ RESULT(u64) fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                         padding_left--;
                     }
                 } else if (len + outind > outlen) {
-                    return (RESULT(u64)){.success = FALSE, .errno = 2};
+                    return Err(u64, 2);
                 }
                 // copy the string into place if we have space
                 memcpy(out + outind, str_val, len);
@@ -253,7 +253,7 @@ RESULT(u64) fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                     i64 padding_left = padding - len;
                     // check if we have space for that
                     if (padding + outind > outlen ){
-                        return (RESULT(u64)){.success = FALSE, .errno = 2};
+                        return Err(u64, 2);
                     }
 
                     // pad with spaces
@@ -262,7 +262,7 @@ RESULT(u64) fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                         padding_left--;
                     }
                 } else if (len + outind > outlen) {
-                    return (RESULT(u64)){.success = FALSE, .errno = 2};
+                    return Err(u64, 2);
                 }
                 // copy the string into place if we have space
                 memcpy(out + outind, str_val->buffer, len);
@@ -274,13 +274,13 @@ RESULT(u64) fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                 values++;
                 i64 length = ansi_format_escape(out + outind, outlen - outind, format);
                 if (length < 0) {
-                    return (RESULT(u64)){.success = FALSE, .errno = 2};
+                    return Err(u64, 2);
                 }
                 outind += length;
             // reset ansi color escapes
             } else if (format[i] == 'E') {
                 if (outlen - outind < sizeof(ANSI_RESET)) {
-                    return (RESULT(u64)){.success = FALSE, .errno = 2};
+                    return Err(u64, 2);
                 }
                 memcpy(out + outind, ANSI_RESET, sizeof(ANSI_RESET));
                 outind += sizeof(ANSI_RESET);
@@ -302,23 +302,23 @@ RESULT(u64) fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                 }
                 i64 length = f_to_decimal(float_val, out + outind, outlen - outind, padding, decimals);
                 if (length < 0) {
-                    return (RESULT(u64)){.success = FALSE, .errno = 2};
+                    return Err(u64, 2);
                 }
                 outind += length;
 
             // all the integer formats, just set the base and then do that in the next step
             } else if (format[i] == 'x' || format[i] == 'X') {
                 base = 16;
-                was_num = TRUE;
+                was_num = true;
             } else if (format[i] == 'd' || format[i] == 'D') {
                 base = 10;
-                was_num = TRUE;
+                was_num = true;
             } else if (format[i] == 'o' || format[i] == 'O') {
                 base = 8;
-                was_num = TRUE;
+                was_num = true;
             } else if (format[i] == 'b' || format[i] == 'B') {
                 base = 2;
-                was_num = TRUE;
+                was_num = true;
             }
             // actually format the number
             if (was_num) {
@@ -335,10 +335,10 @@ RESULT(u64) fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
                 }
                 i64 length = i_to_base(int_val, base, out + outind, outlen - outind, padding);
                 if (length < 0) {
-                    return (RESULT(u64)){.success = FALSE, .errno = 2};
+                    return Err(u64, 2);
                 }
                 outind += length;
-                was_num = FALSE;
+                was_num = false;
 
             }
         // otherwise just copy from the format string
@@ -347,12 +347,12 @@ RESULT(u64) fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
         }
         i++;
     }
-    return (RESULT(u64)){.success = TRUE, .value = outind};
+    return Ok(u64, outind);
 }
 
-RESULT(u64) String_format(zstr format, String str, fmt_value* values) {
-    RESULT(u64) ret = fmt(format, str->buffer, str->size, values);
-    if (ret.success){
+Result(u64) String_format(zstr format, String str, fmt_value* values) {
+    Result(u64) ret = fmt(format, str->buffer, str->size, values);
+    if (ret.ok){
         str->len = ret.value;
     }
     return ret;

@@ -46,8 +46,8 @@ typedef float               f32;
 
 
 typedef _Bool               bool;
-#define TRUE                (bool)1
-#define FALSE               (bool)0
+#define true                (bool)1
+#define false               (bool)0
 
 // zero terminated string
 typedef char*               zstr;
@@ -58,13 +58,13 @@ typedef void*               untyped;
 // error number
 typedef u64                 errno_t;
 
-#ifndef RESULT
+#ifndef Result
 /*
  * better option for type safety
  */
-#define DEFRESULT(type, name) \
+#define DefineResult(type, name) \
     typedef struct __result_struct_##name { \
-    bool    success; \
+    bool    ok; \
     union { \
         u64 errno; \
         type value; \
@@ -76,19 +76,25 @@ typedef u64                 errno_t;
  * for regular scalar types or typedef'd structs/unions: just the type name
  * for pointers <type>ptr
  */
-#define RESULT(name) \
+#define Result(name) \
     __result_t_##name
 
+#define Ok(type, val) \
+    ((Result(type)){true, .value = (val)})
 
-#endif /* RESULT */
+#define Err(type, err) \
+    ((Result(type)){false, .errno = (err)})
+
+
+#endif /* Result */
 
 #ifndef WHILE_SUCCESS
 
 /*
- * Perform an action until the RESULT() returned is not successful
+ * Perform an action until the Result() returned is not successful
  */
 #define WHILE_SUCCESS(var, funct) \
-    for(var = funct; var.success; var = funct)
+    for(var = funct; var.ok; var = funct)
 
 #endif /* WHILE_SUCCESS */
 
@@ -112,11 +118,11 @@ typedef u64                 errno_t;
 
 #endif /* COUNTED_ARRAY */
 
-DEFRESULT(i64, i64);
-DEFRESULT(u64, u64);
-DEFRESULT(f64, f64);
-DEFRESULT(f128, f128);
-DEFRESULT(untyped, untyped);
-DEFRESULT(zstr,  zstr);
+DefineResult(i64, i64);
+DefineResult(u64, u64);
+DefineResult(f64, f64);
+DefineResult(f128, f128);
+DefineResult(untyped, untyped);
+DefineResult(zstr,  zstr);
 
 #endif

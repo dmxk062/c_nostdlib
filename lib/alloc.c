@@ -23,7 +23,7 @@ static
 mem_chunk* mem_chunk_find(mem_chunk* head, u64 size) {
     mem_chunk* ptr = head;
     while (ptr != NULL) {
-        if (ptr->free == TRUE && ptr->size >= (size + MEM_STRUCT_SIZE)) {
+        if (ptr->free == true && ptr->size >= (size + MEM_STRUCT_SIZE)) {
             return ptr;
         }
         global_last = ptr;
@@ -36,19 +36,19 @@ mem_chunk* mem_chunk_find(mem_chunk* head, u64 size) {
 // get a new page from linux
 static
 mem_chunk* alloc_new_page(u64 size) {
-    RESULT(untyped) memspace = mmap(0,
+    Result(untyped) memspace = mmap(0,
             size,
             PROT_READ|PROT_WRITE,
             MAP_ANONYMOUS|MAP_PRIVATE,
             0, 0);
-    if (!memspace.success) {
+    if (!memspace.ok) {
         return NULL;
     }
     mem_chunk* ptr = memspace.value;
     ptr->size = MEM_PAGE_SIZE - MEM_STRUCT_SIZE;
     ptr->prev = NULL;
     ptr->next = NULL;
-    ptr->free = TRUE;
+    ptr->free = true;
     malloc_stats.pages++;
 
     return ptr;
@@ -67,7 +67,7 @@ void mem_chunk_split(mem_chunk* ptr, u64 size) {
     mem_chunk* new = (mem_chunk*)_new;
 
     new->size = ptr->size - size - MEM_STRUCT_SIZE;
-    new->free = TRUE;
+    new->free = true;
     new->next = ptr->next;
     new->prev = ptr;
 
@@ -76,7 +76,7 @@ void mem_chunk_split(mem_chunk* ptr, u64 size) {
     }
 
     ptr->size = size;
-    ptr->free = FALSE;
+    ptr->free = false;
     ptr->next = new;
 }
 
@@ -140,7 +140,7 @@ void merge_prev(mem_chunk* freed) {
     mem_chunk* prev;
     prev = freed->prev;
 
-    if (prev != NULL && prev->free == TRUE) {
+    if (prev != NULL && prev->free == true) {
         prev->size = prev->size + freed->size + MEM_STRUCT_SIZE;
         prev->next = freed->next;
         if ((freed->next) != NULL) {
@@ -155,7 +155,7 @@ void merge_next(mem_chunk* freed) {
     next = freed->next;
 
 
-    if (next != NULL && next->free == TRUE) {
+    if (next != NULL && next->free == true) {
         freed->size = freed->size + MEM_STRUCT_SIZE + next->size;
         freed->next = next->next;
 
@@ -176,7 +176,7 @@ void free(void* ptr) {
      */
     mem_chunk* target;
     target = ptr - MEM_STRUCT_SIZE + sizeof(char*);
-    target->free = TRUE;
+    target->free = true;
 
     /*
      * This is a bit hacky

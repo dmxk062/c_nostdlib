@@ -5,16 +5,16 @@
 #include <socket.h>
 #include <errno.h>
 
-RESULT(u64) Socket_new(enum SocketFamily family, enum SocketType domain, i64 protocol) {
+Result(u64) Socket_new(enum SocketFamily family, enum SocketType domain, i64 protocol) {
     i64 ret = (i64)syscall3(SYS_SOCKET,
             (untyped)family,
             (untyped)domain,
             (untyped)protocol);
 
     if (ret < 0) 
-        return (RESULT(u64)){.success = FALSE, .errno = -ret};
+        return Err(u64, -ret);
     else
-        return (RESULT(u64)){.success = TRUE, .value = ret};
+        return Ok(u64, ret);
 }
 
 errno_t Socket_connect(u64 fd, struct SocketAddress* addr, u64 addr_length) {
@@ -25,28 +25,28 @@ errno_t Socket_connect(u64 fd, struct SocketAddress* addr, u64 addr_length) {
 }
 
 
-RESULT(u64) Socket_recv(u64 fd, void* buffer, u64 count, u64 flags) {
+Result(u64) Socket_recv(u64 fd, void* buffer, u64 count, u64 flags) {
     i64 ret = (i64)syscall4(SYS_RECVFROM,
             (untyped)fd,
             buffer,
             (untyped)count,
             (untyped)flags);
     if (ret < 0) 
-        return (RESULT(u64)){.success = FALSE, .errno = -ret};
+        return Err(u64, -ret);
     else
-        return (RESULT(u64)){.success = TRUE, .value = ret};
+        return Ok(u64, ret);
 }
 
-RESULT(u64) Socket_send(u64 fd, void* buffer, u64 count, u64 flags) {
+Result(u64) Socket_send(u64 fd, void* buffer, u64 count, u64 flags) {
     i64 ret = (i64)syscall4(SYS_SENDTO,
             (untyped)fd,
             buffer,
             (untyped)count,
             (untyped)flags);
     if (ret < 0) 
-        return (RESULT(u64)){.success = FALSE, .errno = -ret};
+        return Err(u64, -ret);
     else
-        return (RESULT(u64)){.success = TRUE, .value = ret};
+        return Ok(u64, ret);
 }
 
 errno_t Socket_shutdown(u64 fd, enum SocketShutdown how) {
@@ -71,24 +71,24 @@ errno_t Socket_bind(u64 fd, struct SocketAddress* addr, u64 addr_length) {
 }
 
 
-RESULT(u64) Socket_accept(u64 fd, struct SocketAddress* peer, u64* peer_length) {
+Result(u64) Socket_accept(u64 fd, struct SocketAddress* peer, u64* peer_length) {
     i64 ret = (i64)syscall3(SYS_ACCEPT,
             (untyped)fd,
             peer,
             peer_length);
     if (ret < 0) 
-        return (RESULT(u64)){.success = FALSE, .errno = -ret};
+        return Err(u64, -ret);
     else
-        return (RESULT(u64)){.success = TRUE, .value = ret};
+        return Ok(u64, ret);
 }
 
 
-RESULT(u64) Socket_new_UnixClient(char* path, u64 path_length) {
+Result(u64) Socket_new_UnixClient(char* path, u64 path_length) {
     if (path_length > UNIX_PATH_MAX)
-        return (RESULT(u64)){.success = FALSE, .errno = ENAMETOOLONG};
+        return Err(u64, ENAMETOOLONG);
 
-    RESULT(u64) new_sockfd = Socket_new(SocketFamily_UNIX, SocketType_STREAM, 0);
-    if (!new_sockfd.success)
+    Result(u64) new_sockfd = Socket_new(SocketFamily_UNIX, SocketType_STREAM, 0);
+    if (!new_sockfd.ok)
         return new_sockfd;
 
 
@@ -98,18 +98,18 @@ RESULT(u64) Socket_new_UnixClient(char* path, u64 path_length) {
 
     errno_t errno = Socket_connect(new_sockfd.value, (struct SocketAddress*)&addr, path_length + sizeof(socket_family_t));
     if (errno) {
-        return (RESULT(u64)){.success = FALSE, .errno = errno};
+        return Err(u64, errno);
     }
 
-    return (RESULT(u64)){.success = TRUE, .value = new_sockfd.value};
+    return Ok(u64, new_sockfd.value);
 
 }
-RESULT(u64) Socket_new_UnixServer(char* path, u64 path_length, u64 max_connections) {
+Result(u64) Socket_new_UnixServer(char* path, u64 path_length, u64 max_connections) {
     if (path_length > UNIX_PATH_MAX)
-        return (RESULT(u64)){.success = FALSE, .errno = ENAMETOOLONG};
+        return Err(u64, ENAMETOOLONG);
 
-    RESULT(u64) new_sockfd = Socket_new(SocketFamily_UNIX, SocketType_STREAM, 0);
-    if (!new_sockfd.success)
+    Result(u64) new_sockfd = Socket_new(SocketFamily_UNIX, SocketType_STREAM, 0);
+    if (!new_sockfd.ok)
         return new_sockfd;
 
 
@@ -119,13 +119,13 @@ RESULT(u64) Socket_new_UnixServer(char* path, u64 path_length, u64 max_connectio
 
     errno_t err = Socket_bind(new_sockfd.value, (struct SocketAddress*)&addr, path_length + sizeof(socket_family_t));
     if (err) 
-        return (RESULT(u64)){.success = FALSE, .errno = err};
+        return Err(u64, err);
 
     err = Socket_listen(new_sockfd.value, max_connections);
     if (err) 
-        return (RESULT(u64)){.success = FALSE, .errno = err};
+        return Err(u64, err);
 
-    return (RESULT(u64)){.success = TRUE, .value = new_sockfd.value};
+    return Ok(u64, new_sockfd.value);
 
 
 }

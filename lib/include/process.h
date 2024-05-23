@@ -10,8 +10,8 @@ void exit(u8 exitcode);
 
 u64 getpid();
 
-RESULT(u64) Process_fork();
-RESULT(u64) Process_vfork();
+Result(u64) Process_fork();
+Result(u64) Process_vfork();
 
 errno_t Process_send_signal(u64 pid, enum Signal sig);
 

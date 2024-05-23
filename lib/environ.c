@@ -50,7 +50,7 @@ errno_t Environment_free(struct Environment* env) {
     return 0;
 }
 
-RESULT(u64) Environment_find(struct Environment* env, const zstr name) {
+Result(u64) Environment_find(struct Environment* env, const zstr name) {
     u64 name_len = strlen(name);
     for (u64 i = 0; i < env->env_count; i++) {
         u64 ent_len = strlen(env->env[i]);
@@ -58,19 +58,19 @@ RESULT(u64) Environment_find(struct Environment* env, const zstr name) {
             continue;
 
         if (memeq(name, env->env[i], name_len) && *(env->env[i] + name_len) == '=') 
-            return (RESULT(u64)){.success = TRUE, .value = i};
+            return Ok(u64, i);
     }
 
-    return (RESULT(u64)){.success = FALSE, .value = 0};
+    return Err(u64, 0);
 
 }
 
-RESULT(zstr) Environment_get(struct Environment* env, const zstr name) {
-    RESULT(u64) index = Environment_find(env, name);
-    if (!index.success)
-        return (RESULT(zstr)){.success = FALSE, .value = NULL};
+Result(zstr) Environment_get(struct Environment* env, const zstr name) {
+    Result(u64) index = Environment_find(env, name);
+    if (!index.ok)
+        return Err(zstr, NULL);
 
-    return (RESULT(zstr)){.success = TRUE, .value = env->env[index.value] + strlen(name) + 1};
+    return Ok(zstr, env->env[index.value] + strlen(name) + 1);
 
 }
 
@@ -78,11 +78,11 @@ errno_t Environment_set(struct Environment* env, const zstr name, const zstr val
     u64 name_len  = strlen(name);
     u64 value_len = strlen(value);
 
-    RESULT(u64) index = Environment_find(env, name);
+    Result(u64) index = Environment_find(env, name);
     zstr* target = NULL;
-    bool append = FALSE;
+    bool append = false;
     // variable already exists, create it
-    if (index.success) {
+    if (index.ok) {
         if (!replace)
             return 1;
 
@@ -95,7 +95,7 @@ errno_t Environment_set(struct Environment* env, const zstr name, const zstr val
             return ENOMEM;
 
         target=env->env + env->env_count;
-        append = TRUE;
+        append = false;
     }
 
     zstr buffer = malloc(name_len + value_len + 2*sizeof(char)); /* + '=' + '\0' */
@@ -118,8 +118,8 @@ errno_t Environment_set(struct Environment* env, const zstr name, const zstr val
 }
 
 errno_t Environment_unset(struct Environment* env, const zstr name) {
-    RESULT(u64) index = Environment_find(env, name);
-    if (!index.success)
+    Result(u64) index = Environment_find(env, name);
+    if (!index.ok)
         return 1;
 
     free(env->env[index.value]);

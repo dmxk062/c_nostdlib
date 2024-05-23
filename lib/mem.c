@@ -42,7 +42,7 @@ bool memeq(const void* buf1, const void* buf2, u64 count) {
 
     for (; count > 8; count -= 8) {
         if (*u1++ != *u2++) 
-            return FALSE;
+            return false;
     }
 
     u8* b1 = (u8*)u1;
@@ -50,8 +50,8 @@ bool memeq(const void* buf1, const void* buf2, u64 count) {
 
     while (count-- > 0) {
         if (*b1++ != *b2++)
-            return FALSE;
+            return false;
     }
 
-    return TRUE;
+    return true;
 }
