@@ -24,6 +24,8 @@ SYS_POLL  = 7,
 SYS_SEEK  = 8,
 SYS_MMAP  = 9,
 
+SYS_MUNMAP = 11,
+
 /*
  * Signals
  */
@@ -99,37 +101,39 @@ SYS_PRCTL = 157,
  * Use the one that fits best for your function
  * using fewer registers saves a couple of movqs
  */
-extern void* syscall0(
+extern untyped syscall0(
         enum Syscalls call
 );
-extern void* syscall1(
+extern untyped syscall1(
         enum Syscalls call,
-        void* arg1
+        untyped arg1
 );
-extern void* syscall2(
+extern untyped syscall2(
         enum Syscalls call,
-        void* arg1,
-        void* arg2
+        untyped arg1,
+        untyped arg2
 );
-extern void* syscall3(
+extern untyped syscall3(
         enum Syscalls call,
-        void* arg1,
-        void* arg2,
-        void* arg3
+        untyped arg1,
+        untyped arg2,
+        untyped arg3
 );
-extern void* syscall4(
+extern untyped syscall4(
         enum Syscalls call,
-        void* arg1,
-        void* arg2,
-        void* arg3,
-        void* arg4
+        untyped arg1,
+        untyped arg2,
+        untyped arg3,
+        untyped arg4
 );
-extern void* syscall5(
+extern untyped syscall5(
         enum Syscalls call,
-        void* arg1,
-        void* arg2,
-        void* arg3,
-        void* arg4,
-        void* arg5
+        untyped arg1,
+        untyped arg2,
+        untyped arg3,
+        untyped arg4,
+        untyped arg5
 );
+untyped syscall6(enum Syscalls call, untyped arg1, untyped arg2, untyped arg3, untyped arg4, untyped arg5, untyped arg6);
+
 #endif

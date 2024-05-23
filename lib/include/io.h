@@ -9,9 +9,11 @@
 
 
 
-#define STDIN  0
-#define STDOUT 1
-#define STDERR 2
+enum StandardStreams {
+    STDIN  = 0,
+    STDOUT = 1,
+    STDERR = 2,
+};
 
 Result(u64) read(u64 fd, void* buffer, u64 count);
 Result(u64) write(u64 fd, void const* data, u64 count);
