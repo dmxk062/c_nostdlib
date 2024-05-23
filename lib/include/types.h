@@ -88,15 +88,15 @@ typedef u64                 errno_t;
 
 #endif /* Result */
 
-#ifndef WHILE_SUCCESS
+#ifndef DoWhileSuccessful
 
 /*
  * Perform an action until the Result() returned is not successful
  */
-#define WHILE_SUCCESS(var, funct) \
+#define DoWhileSuccessful(var, funct) \
     for(var = funct; var.ok; var = funct)
 
-#endif /* WHILE_SUCCESS */
+#endif 
 
 #ifndef ARRLEN
 /*

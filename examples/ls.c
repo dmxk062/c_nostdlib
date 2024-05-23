@@ -80,7 +80,7 @@ i32 main(i32 argc, zstr argv[]) {
 
     enum AnsiColor color;
     zstr icon;
-    WHILE_SUCCESS(ent, nextdir(fd, &dirbuf)) {
+    DoWhileSuccessful(ent, nextdir(fd, &dirbuf)) {
 
         file = ent.value;
         if (!show_hidden && file->name[0] == '.') {

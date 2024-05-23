@@ -84,7 +84,7 @@ u64 parse_arguments(i64 argc, zstr argv[], u64 named_count, struct NamedArgument
                 switch (unnamed[uindex].type) {
                 case ArgumentType_STRING: {
                     *(char**)unnamed[uindex].target = argv[i];
-                    success = false;
+                    success = true;
                     break;}
 
                 case ArgumentType_INT: {
