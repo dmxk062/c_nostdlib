@@ -31,17 +31,19 @@ Result(u64) write(u64 fd, void const* data, u64 count);
 #define O_NOATIME   01000000
 #define O_CLOEXEC   02000000
 
-#define SEEK_SET   0
-#define SEEK_CUR   1
-#define SEEK_END   2
-#define SEEK_DATA  3
-#define SEEK_HOLE  4
+enum SeekFlag {
+    SeekFlag_SET  = 0,
+    SeekFlag_CUR  = 1,
+    SeekFlag_END  = 2,
+    SeekFlag_DATA = 3,
+    SeekFlag_HOLE = 4,
+};
 
 
     
 Result(u64) open(const char* path, i64 flags, i64 mode);
 Result(u64) close(u64 fd);
-Result(u64) seek(u64 fd, i64 offset, u64 origin);
+Result(u64) seek(u64 fd, i64 offset, enum SeekFlag origin);
 
 void print(const char* string);
 

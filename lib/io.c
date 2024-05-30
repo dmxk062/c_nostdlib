@@ -47,7 +47,7 @@ Result(u64) close(u64 fd) {
 }
 
 
-Result(u64) seek(u64 fd, i64 offset, u64 origin) {
+Result(u64) seek(u64 fd, i64 offset, enum SeekFlag origin) {
     i64 ret = (i64)syscall3(SYS_SEEK, 
             (void*)fd,
             (void*)offset,

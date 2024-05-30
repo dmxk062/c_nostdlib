@@ -55,3 +55,14 @@ bool memeq(const void* buf1, const void* buf2, u64 count) {
 
     return true;
 }
+
+u64 count_byte(const char* buf, u64 len, char byte) {
+    u64 count = 0;
+    for (; len > 0; len--) {
+        if (buf[len] == byte) {
+            count++;
+        }
+    }
+
+    return count;
+}

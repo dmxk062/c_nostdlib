@@ -44,6 +44,7 @@ typedef struct {
  * The capital versions offer additional formatting options 
  */
 typedef union  {
+        untyped     any;
         // null terminated char*
         zstr        z;
         zstr_fmt    Z;
@@ -52,7 +53,7 @@ typedef union  {
         String      s;
         string_fmt  S;
 
-        // **escape**code
+        // ansi color escape code
         struct AnsiFormat e;
         i64         i;
         int_fmt     I;
@@ -65,7 +66,7 @@ typedef fmt_value fmts[];
 
 
 
-Result(u64) fmt(const char* format, char* out, u64 outlen, fmts values);
+Result(u64) fmt(const zstr format, char* out, u64 outlen, fmts values);
 Result(u64) String_format(const zstr format, String str, fmt_value values[]);
 
 #endif
