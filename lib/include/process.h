@@ -8,7 +8,7 @@
 
 void exit(u8 exitcode);
 
-u64 getpid();
+u64 Process_get_pid();
 
 Result(u64) Process_fork();
 Result(u64) Process_vfork();

@@ -9,7 +9,7 @@ void exit(u8 exitcode) {
             (untyped) exitcode);
 }
 
-u64 getpid() {
+u64 Process_get_pid() {
     return (u64)
     syscall0(SYS_GETPID);
 }
