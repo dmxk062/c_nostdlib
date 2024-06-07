@@ -5,7 +5,12 @@
 #include <types.h>
 
 
-typedef COUNTED_ARRAY(char*, buffer) __string_t;
+typedef struct {
+    u64     size;
+    u64     len;
+    bool    alloc;
+    char*   buffer;
+} __string_t;
 typedef __string_t* String;
 
 DefineResult(String, String);
@@ -15,10 +20,10 @@ DefineResult(StringList*, StringList);
 
 
 /*
- * Create a string object from a static c string
+ * Create a string object from a static c string, mark it as static so it wont be freed
  */
 #define STRING(cstring) \
-    &(__string_t){.size = sizeof(cstring), .len = sizeof(cstring) - sizeof(char), .buffer = cstring}
+    &(__string_t){.size = sizeof(cstring), .len = sizeof(cstring) - sizeof(char), .buffer = cstring, .alloc = false}
 
 
 

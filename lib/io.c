@@ -70,7 +70,7 @@ void print(const char* string) {
  * write formatted text to fd
  * maximum size: FMT_OUTPUT_SIZE
  */
-Result(u64) fwrite(u64 fd, const char* format, fmts values) {
+Result(u64) fwrite(u64 fd, const zstr format, fmts values) {
     char buffer[FMT_OUTPUT_SIZE];
 
     Result(u64) ret = fmt(format, buffer, FMT_OUTPUT_SIZE, values);
@@ -85,7 +85,7 @@ Result(u64) fwrite(u64 fd, const char* format, fmts values) {
  * print formatted text
  * maximum size: FMT_OUTPUT_SIZE
  */
-Result(u64) fprint(const char* format, fmts values) {
+Result(u64) fprint(const zstr format, fmts values) {
     return
     fwrite(STDOUT, format, values);
 }

@@ -173,7 +173,7 @@ i64 f_to_decimal(f128 num, char* out, i64 maxlen, u16 padd, u16 num_frac) {
  *
  *
  */
-Result(u64) fmt(const char* format, char* out, u64 outlen, fmt_value* values) {
+Result(u64) fmt(const zstr format, char* out, u64 outlen, fmt_value* values) {
     u64 fmtlen = strlen(format);
     u64 outind = 0;
 
@@ -357,4 +357,3 @@ Result(u64) String_format(zstr format, String str, fmt_value* values) {
     }
     return ret;
 }
-

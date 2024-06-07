@@ -24,10 +24,14 @@ Result(String) String_new(u64 size) {
         str->buffer = buffer;
         str->size = size;
     }
+    str->alloc = true;
     return Ok(String, str);
 }
 
 errno_t String_free(String str) {
+    if (!str->alloc)
+        return SUCCESS;
+
     free(str->buffer);
     free(str);
     return SUCCESS;

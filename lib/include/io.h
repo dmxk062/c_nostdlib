@@ -47,7 +47,7 @@ Result(u64) seek(u64 fd, i64 offset, enum SeekFlag origin);
 
 void print(const char* string);
 
-Result(u64) fwrite(u64 fd, const char* format, fmts values);
-Result(u64) fprint(const char* format, fmts values);
+Result(u64) fwrite(u64 fd, const zstr format, fmts values);
+Result(u64) fprint(const zstr format, fmts values);
 
 #endif
