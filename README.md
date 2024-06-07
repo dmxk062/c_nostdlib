@@ -50,16 +50,28 @@ if (err) {
 }
 ```
 
-Return some structure containing a success flag and a value/errno union. This is what I settled one for most things. Generally these end up being custom types of some kind. I decided to use the macros `DEFRESULT` and `RESULT` for nicer syntax:
+Return some structure containing a success flag and a value/errno union. This is what I settled one for most things. Generally these end up being custom types of some kind. I decided to use the macros `DefineResult` and `Result` for nicer syntax:
 ```c
-RESULT(i64) new_value = function(void);
-if (!new_value.success) {
+Result(i64) new_value = function(void);
+if (!new_value.ok) {
     handle_error(new_value.errno)
 } else {
     do_thing(new_value.value)
 }
 ```
 
+This also makes returning errors easier:
+
+```c
+Result(u64) do_thing(i64 num) {
+    if (num == 2) {
+        return Err(i64, 1);
+    } else {
+        return Ok(i64, num);
+    }
+}
+```
+
+
 This is not that bad syntactically and also communicates the return type quite well. It also makes it as easy to return an error from
 a function if an error occured in a function it cast as with the other way
-
