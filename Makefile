@@ -9,7 +9,7 @@ CCFLAGS_EXE = -Wl,--gc-sections
 ASFLAGS = -s
 LDFLAGS = 
 
-SRC_C = $(wildcard lib/*.c)
+SRC_C = $(wildcard lib/*.c) $(wildcard lib/structs/*.c) $(wildcard lib/linux/*.c)
 OBJ_C = $(addprefix $(OBJDIR)/, $(SRC_C:.c=.o))
 
 SRC_S = asm/start.S asm/syscall.S asm/signal.S
