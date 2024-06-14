@@ -23,15 +23,20 @@ EXEC = no_std
 SRC_EXAMPLES = $(wildcard examples/*.c)
 EXAMPLES = $(SRC_EXAMPLES:.c=)
 
+BUILDDIRS = build build/lib/linux build/lib/structs build/asm
+
 
 LIBRARY = libnostd.o
 
+$(BUILDDIRS):
+	mkdir -p $(BUILDDIRS)
+
 exec: $(EXEC)
 
-$(EXEC): $(LIBRARY)
+$(EXEC): $(BUILDDIRS) $(LIBRARY)
 	$(CC) $(CCFLAGS_REMOVE_BUILTINS) $(CCFLAGS) $(CCFLAGS_EXE) main.c $(LIBRARY) -o $(EXEC)
 
-$(EXAMPLES): $(LIBRARY)
+$(EXAMPLES): $(BUILDDIRS) $(LIBRARY) 
 	$(CC) $(CCFLAGS_REMOVE_BUILTINS) $(CCFLAGS) $(CCFLAGS_EXE) $@.c $(LIBRARY) -o $@
 
 $(OBJDIR)/%.o: %.c
@@ -43,7 +48,7 @@ $(OBJDIR)/%.o: %.S
 
 
 
-$(LIBRARY): $(OBJ_C) $(OBJ_S)
+$(LIBRARY): $(OBJ_C) $(OBJ_S) $(BUILDDIRS)
 	ld -r $(LDFLAGS) -o $(LIBRARY) $(OBJ_S) $(OBJ_C)
 
 lib: $(LIBRARY)
@@ -54,4 +59,5 @@ examples: $(EXAMPLES)
 all: lib exec examples 
 
 clean:
-	rm -f $(OBJ_C) $(OBJ_S) $(EXEC) $(LIBRARY) $(EXAMPLES)
+	rm -rf $(OBJ_C) $(OBJ_S) $(EXEC) $(LIBRARY) $(EXAMPLES) $(BUILDDIRS)
+
