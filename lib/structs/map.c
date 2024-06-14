@@ -125,14 +125,15 @@ errno_t Map_zdel(Map* map, zstr key) {
 
 
 errno_t Map_free(Map* map) {
-    struct MapEntry* entry = map->first;
+    struct MapEntry *entry = map->first, *last = entry;
 
     while (entry) {
         if (entry->destroy) {
             entry->destroy(entry->value);
         }
-        free(entry);
+        last  = entry;
         entry = entry->next;
+        free(last);
     }
 
     free(map);
