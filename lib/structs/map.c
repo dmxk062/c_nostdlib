@@ -20,7 +20,7 @@ Map* Map_new(void) {
     if (!map) return NULL;
 
     map->first = NULL;
-    map->default_destroy = NULL;
+    map->on_destroy = NULL;
 
     return map;
 }
@@ -40,7 +40,7 @@ errno_t Map_set(Map* map, char* key, u64 key_len, untyped value) {
         new_entry->value = value;
         new_entry->hash  = hash;
         new_entry->next  = NULL;
-        new_entry->destroy = map->default_destroy;
+        new_entry->destroy = map->on_destroy;
         map->first = new_entry;
 
         return 0;
@@ -69,7 +69,7 @@ errno_t Map_set(Map* map, char* key, u64 key_len, untyped value) {
     new_entry->value = value;
     new_entry->hash  = hash;
     new_entry->next  = NULL;
-    new_entry->destroy = map->default_destroy;
+    new_entry->destroy = map->on_destroy;
 
     last->next = new_entry;
 
