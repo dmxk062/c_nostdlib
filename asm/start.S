@@ -1,5 +1,4 @@
 # vim: commentstring=#\ %s
-
 .global _start, environ
 
 # this won't be linked in the same compilation unit as main
@@ -18,7 +17,7 @@
 # therefore for main(int argc, char* argv[], char* environ[]) to work, 
 # we need to move the addresses/values from the stack into these registers
 
-# upon start a program's stack looks something like this:
+# upon start, a program's stack looks something like this:
 # argc                  (32 bits)
 # argv[0]               
 # argv[1]               
@@ -48,9 +47,11 @@ _start:
     # there are two ways environ is commonly accessed, I just support both
 
     # int main(int argc, char* argv[], char* environ[]);
-    imul    $8,%rdi,%rdx 
-    add     %rsp,   %rdx
-    add     $8,     %rdx
+    mov     $8,     %rax
+    mul     %rdi
+    mov     %rax,   %rdi
+    add     %rsp,   %rdx # environ += argv
+    add     $8,     %rdx # environ += sizeof(i64)
 
     # extern char** environ
     lea     environ(%rip),%r8
