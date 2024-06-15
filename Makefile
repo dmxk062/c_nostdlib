@@ -12,7 +12,7 @@ LDFLAGS =
 SRC_C = $(wildcard lib/*.c) $(wildcard lib/structs/*.c) $(wildcard lib/linux/*.c)
 OBJ_C = $(addprefix $(OBJDIR)/, $(SRC_C:.c=.o))
 
-SRC_S = asm/start.S asm/syscall.S asm/signal.S
+SRC_S = $(wildcard asm/*.S)
 OBJ_S = $(addprefix $(OBJDIR)/, $(SRC_S:.S=.o))
 
 OBJDIR = build
@@ -60,4 +60,3 @@ all: lib exec examples
 
 clean:
 	rm -rf $(OBJ_C) $(OBJ_S) $(EXEC) $(LIBRARY) $(EXAMPLES) $(BUILDDIRS)
-
