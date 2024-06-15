@@ -28,6 +28,7 @@ DefineResult(StringList*, StringList);
 
 
 Result(String) String_new(u64 size);
+Result(String) String_new_from_buffer(const char* char_array, u64 len);
 Result(String) String_new_from_zstr(const zstr char_array);
 errno_t String_free(String str);
 

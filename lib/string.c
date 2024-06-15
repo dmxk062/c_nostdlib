@@ -37,19 +37,24 @@ errno_t String_free(String str) {
     return SUCCESS;
 }
 
-Result(String) String_new_from_zstr(zstr char_array) {
-    u64 length = strlen(char_array);
-
+Result(String) String_new_from_buffer(const char* char_array, u64 length) {
     Result(String) new_string = String_new(length);
     if (!new_string.ok) {
         return new_string;
     }
     String str = new_string.value;
     memcpy(str->buffer, char_array, length);
-    str->len  = length;
+    str->len = length;
 
     return Ok(String, str);
 }
+
+Result(String) String_new_from_zstr(zstr char_array) {
+    u64 length = strlen(char_array);
+
+    return String_new_from_buffer(char_array, length);
+}
+
 
 Result(zstr) String_to_zstr(String str) {
     u64 new_length = str->len + sizeof(char);
