@@ -2,13 +2,12 @@
 #ifndef _STRUCTS_MAP_H
 #define _STRUCTS_MAP_H
 #include "types.h"
+#include "structs/destructor.h"
 
 /*
  * Provides a simple hashmap structure
  */
 
-// will be called when an entry from the array is replaced or deleted
-typedef void (*MapEntryDestructor)(untyped);
 
 struct MapEntry {
     struct MapEntry* next;
@@ -21,7 +20,7 @@ typedef struct {
     struct MapEntry* first;
 
     // function that will be called when an entry in the Map is deleted or the map is destroyed
-    MapEntryDestructor on_destroy;
+    EntryDestructor on_destroy;
 } Map;
 
 
