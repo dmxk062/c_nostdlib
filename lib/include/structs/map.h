@@ -15,12 +15,12 @@ struct MapEntry {
 
     u64     hash;
     untyped value;
-
-    MapEntryDestructor destroy;
 };
 
 typedef struct {
     struct MapEntry* first;
+
+    // function that will be called when an entry in the Map is deleted or the map is destroyed
     MapEntryDestructor on_destroy;
 } Map;
 

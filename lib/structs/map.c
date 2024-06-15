@@ -1,5 +1,4 @@
 #include "structs/map.h"
-#include "process.h"
 #include "types.h"
 #include "cstring.h"
 #include <io.h>
@@ -40,7 +39,7 @@ errno_t Map_set(Map* map, char* key, u64 key_len, untyped value) {
         new_entry->value = value;
         new_entry->hash  = hash;
         new_entry->next  = NULL;
-        new_entry->destroy = map->on_destroy;
+        map->on_destroy = map->on_destroy;
         map->first = new_entry;
 
         return 0;
@@ -49,8 +48,8 @@ errno_t Map_set(Map* map, char* key, u64 key_len, untyped value) {
 
     while (entry) {
         if (entry->hash == hash) {
-            if (entry->destroy) {
-                entry->destroy(entry->value);
+            if (map->on_destroy) {
+                map->on_destroy(entry->value);
             }
             entry->value = value;
             return 0;
@@ -69,7 +68,6 @@ errno_t Map_set(Map* map, char* key, u64 key_len, untyped value) {
     new_entry->value = value;
     new_entry->hash  = hash;
     new_entry->next  = NULL;
-    new_entry->destroy = map->on_destroy;
 
     last->next = new_entry;
 
@@ -97,10 +95,14 @@ errno_t Map_del(Map* map, char* key, u64 key_len) {
 
     while (entry) {
         if (entry->hash == hash) {
-            if (entry->destroy) {
-                entry->destroy(entry);
+            if (map->on_destroy) {
+                map->on_destroy(entry->value);
             }
-            last->next = entry->next;
+            if (last == map->first) {
+                map->first = entry->next;
+            } else {
+                last->next = entry->next;
+            }
             free(entry);
             return 0;
         }
@@ -128,8 +130,8 @@ errno_t Map_free(Map* map) {
     struct MapEntry *entry = map->first, *last = entry;
 
     while (entry) {
-        if (entry->destroy) {
-            entry->destroy(entry->value);
+        if (map->on_destroy) {
+            map->on_destroy(entry->value);
         }
         last  = entry;
         entry = entry->next;
