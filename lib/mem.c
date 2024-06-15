@@ -4,22 +4,22 @@
 
 /*
  * TODO: rewrite using SSE
- * slightly faster than a naive implementation that just copies chars
+ * slightly faster than a naive implementation that just copies u8s
  * for faster performance, this should be rewritten in asm to take advantage of vector instructions
  */ 
 void memcpy (void* dst, const void* src, i64 size) {
     u64* td = (u64*)dst;
     u64* ts = (u64*)src;
-    char *cd, *cs;
+    u8 *cd, *cs;
 
     // copy 8 bytes at once
     for (;size > 8; size -= 8) {
         *td++ = *ts++;
     }
 
-    // we have less than 1 u64 left, copy chars now
-    cd = (char*)td;
-    cs = (char*)ts;
+    // we have less than 1 u64 left, copy u8s now
+    cd = (u8*)td;
+    cs = (u8*)ts;
     
     while(size-- > 0) {
         *cd++ = *cs ++;
@@ -56,7 +56,7 @@ bool memeq(const void* buf1, const void* buf2, u64 count) {
     return true;
 }
 
-u64 count_byte(const char* buf, u64 len, char byte) {
+u64 count_byte(const u8* buf, u64 len, u8 byte) {
     u64 count = 0;
     for (; len > 0; len--) {
         if (buf[len] == byte) {
@@ -65,4 +65,13 @@ u64 count_byte(const char* buf, u64 len, char byte) {
     }
 
     return count;
+}
+
+Result(u64) find_byte(const u8* buf, u64 len, u8 byte) {
+    for (u64 i = 0; i < len; i++) {
+        if (buf[i] == byte) 
+            return Ok(u64, i);
+    }
+
+    return Err(u64, NULL);
 }
