@@ -76,18 +76,18 @@ errno_t Map_set(Map* map, char* key, u64 key_len, untyped value) {
     return 0;
 }
 
-untyped Map_get(Map* map, char* key, u64 key_len) {
+Result(untyped) Map_get(Map* map, char* key, u64 key_len) {
     struct MapEntry* entry = map->first;
     u64 hash = hash_key(key, key_len);
 
     while (entry) {
         if (entry->hash == hash) {
-            return entry->value;
+            return Ok(untyped, entry->value);
         }
         entry = entry->next;
     }
 
-    return NULL;
+    return Err(untyped, NULL);
 
 }
 
@@ -115,7 +115,7 @@ errno_t Map_zset(Map* map, zstr key, untyped value) {
     return Map_set(map, key, strlen(key), value);
 }
 
-untyped Map_zget(Map* map, zstr key) {
+Result(untyped) Map_zget(Map* map, zstr key) {
     return Map_get(map, key, strlen(key));
 }
 
