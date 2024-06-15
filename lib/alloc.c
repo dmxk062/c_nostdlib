@@ -7,11 +7,11 @@
  */
 
 // the start of our linked list
-mem_chunk* global_head = NULL;
+static mem_chunk* global_head = NULL;
 // whatever element is at the end
-mem_chunk* global_last = NULL;
+static mem_chunk* global_last = NULL;
 
-struct {
+static struct {
     u64 pages;
     u64 allocated;
     u64 in_use;
