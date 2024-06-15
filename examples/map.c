@@ -12,7 +12,7 @@ i32 main(i32 argc, zstr argv[]) {
     if (!map) return 1;
     
     // automatically free a string when replacing or deleting a value
-    map->on_destroy = (MapEntryDestructor)&String_free;
+    map->on_destroy = (EntryDestructor)&String_free;
 
     char input_buffer[INPUT_BUFFER_SIZE];
 
