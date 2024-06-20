@@ -47,11 +47,9 @@ _start:
     # there are two ways environ is commonly accessed, I just support both
 
     # int main(int argc, char* argv[], char* environ[]);
-    mov     $8,     %rax
-    mul     %rdi
-    mov     %rax,   %rdi
-    add     %rsp,   %rdx # environ += argv
-    add     $8,     %rdx # environ += sizeof(i64)
+    imul    $8,%rdi,%rdx 
+    add     %rsp,   %rdx
+    add     $8,     %rdx
 
     # extern char** environ
     lea     environ(%rip),%r8
