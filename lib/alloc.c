@@ -1,3 +1,4 @@
+#include "types.h"
 #include <alloc.h>
 #include <mmap.h>
 
@@ -7,9 +8,9 @@
  */
 
 // the start of our linked list
-static mem_chunk* global_head = NULL;
+static MallocChunk* Malloc_global_head = NULL;
 // whatever element is at the end
-static mem_chunk* global_last = NULL;
+static MallocChunk* Malloc_global_last = NULL;
 
 static struct {
     u64 pages;
@@ -20,13 +21,13 @@ static struct {
 
 // return the first chunk that is large enough
 static
-mem_chunk* mem_chunk_find(mem_chunk* head, u64 size) {
-    mem_chunk* ptr = head;
+MallocChunk* mem_chunk_find(MallocChunk* head, u64 size) {
+    MallocChunk* ptr = head;
     while (ptr != NULL) {
         if (ptr->free == true && ptr->size >= (size + MEM_STRUCT_SIZE)) {
             return ptr;
         }
-        global_last = ptr;
+        Malloc_global_last = ptr;
         ptr = ptr->next;
     }
     return ptr;
@@ -35,7 +36,7 @@ mem_chunk* mem_chunk_find(mem_chunk* head, u64 size) {
 
 // get a new page from linux
 static
-mem_chunk* alloc_new_page(u64 size) {
+MallocChunk* alloc_new_page(u64 size) {
     Result(untyped) memspace = mmap(0,
             size,
             PROT_READ|PROT_WRITE,
@@ -44,7 +45,7 @@ mem_chunk* alloc_new_page(u64 size) {
     if (!memspace.ok) {
         return NULL;
     }
-    mem_chunk* ptr = memspace.value;
+    MallocChunk* ptr = memspace.value;
     ptr->size = MEM_PAGE_SIZE - MEM_STRUCT_SIZE;
     ptr->prev = NULL;
     ptr->next = NULL;
@@ -55,16 +56,16 @@ mem_chunk* alloc_new_page(u64 size) {
 }
 
 // get the next fitting page size that is larger than what we are given
-static
+static inline
 u64 get_page_size(u64 size) {
     return ((size + MEM_PAGE_SIZE - 1) / MEM_PAGE_SIZE) * MEM_PAGE_SIZE;
 }
 
 static
-void mem_chunk_split(mem_chunk* ptr, u64 size) {
+void mem_chunk_split(MallocChunk* ptr, u64 size) {
 
     char* _new = (ptr->end) + size;
-    mem_chunk* new = (mem_chunk*)_new;
+    MallocChunk* new = (MallocChunk*)_new;
 
     new->size = ptr->size - size - MEM_STRUCT_SIZE;
     new->free = true;
@@ -83,19 +84,19 @@ void mem_chunk_split(mem_chunk* ptr, u64 size) {
 void* malloc(u64 size) {
 
     // first run, allocate a page for our first object
-    if (global_head == NULL) {
+    if (Malloc_global_head == NULL) {
         // u64 new_size = size;
         malloc_stats.pages  = 0;
         malloc_stats.in_use = 0;
         malloc_stats.allocated  = 0;
         
-        mem_chunk* new = alloc_new_page(get_page_size(size));
+        MallocChunk* new = alloc_new_page(get_page_size(size));
         // oops, either too big of a request or we are oom
         if (new == NULL) {
             return NULL;
         }
         // new head
-        global_head = new;
+        Malloc_global_head = new;
         // unlikely that the user asks for exactly 4096
         mem_chunk_split(new, size);
 
@@ -104,23 +105,23 @@ void* malloc(u64 size) {
         return new->end;
     }
     
-    mem_chunk* ptr;
+    MallocChunk* ptr;
     // try to find a block in the area we already mapped
-    ptr = mem_chunk_find(global_head, size);
+    ptr = mem_chunk_find(Malloc_global_head, size);
 
     // we didnt find a large enough segment
     if (ptr == NULL) {
 
         // get a new page
-        mem_chunk* new = alloc_new_page(get_page_size(size));
+        MallocChunk* new = alloc_new_page(get_page_size(size));
         if (new == NULL) {
             return NULL;
         }
 
         // same as in the initial setup
         mem_chunk_split(new, size);
-        global_last->next = new;
-        new->prev = global_last;
+        Malloc_global_last->next = new;
+        new->prev = Malloc_global_last;
 
         malloc_stats.allocated++;
         malloc_stats.in_use++;
@@ -136,8 +137,8 @@ void* malloc(u64 size) {
 
 
 static
-void merge_prev(mem_chunk* freed) {
-    mem_chunk* prev;
+void merge_prev(MallocChunk* freed) {
+    MallocChunk* prev;
     prev = freed->prev;
 
     if (prev != NULL && prev->free == true) {
@@ -150,8 +151,8 @@ void merge_prev(mem_chunk* freed) {
 }
 
 static
-void merge_next(mem_chunk* freed) {
-    mem_chunk* next;
+void merge_next(MallocChunk* freed) {
+    MallocChunk* next;
     next = freed->next;
 
 
@@ -174,7 +175,7 @@ void free(void* ptr) {
     /*
      * FIXME: find some way to check if it was really a page we allocated
      */
-    mem_chunk* target;
+    MallocChunk* target;
     target = ptr - MEM_STRUCT_SIZE + sizeof(char*);
     target->free = true;
 

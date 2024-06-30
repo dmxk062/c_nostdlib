@@ -12,13 +12,13 @@ typedef struct mem_chunk {
     struct mem_chunk* prev;
 
     char end[1];
-} mem_chunk;
+} MallocChunk;
 
-#define MEM_STRUCT_SIZE sizeof(mem_chunk)
+#define MEM_STRUCT_SIZE sizeof(MallocChunk)
 
 #define MEM_PAGE_SIZE 1024 * 2
 
-void* malloc(u64 size);
+void*   malloc(u64 size);
 void free(void* ptr);
 
 u64 Malloc_get_used_count(void);
