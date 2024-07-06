@@ -26,7 +26,7 @@ EXAMPLES = $(SRC_EXAMPLES:.c=)
 BUILDDIRS = build build/lib/linux build/lib/structs build/asm
 
 
-LIBRARY = libnostd.o
+LIBRARY = build/libnostd.o
 
 $(BUILDDIRS):
 	mkdir -p $(BUILDDIRS)
