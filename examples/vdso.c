@@ -11,7 +11,7 @@ i32 main(i32 argc, zstr argv[], zstr envv[]) {
 
     address vdsoaddr = (address)Auxval_get_value(auxv, AuxvalType_VDSO_ADDRESS)->value;
 
-    address addr = VDSO_find_symbol(vdsoaddr, "gettimeofday");
+    address addr = VDSO_find_symbol(vdsoaddr, "__vdso_gettimeofday");
     if (!addr) {
         fwrite(STDERR, "Failed to find symbol", NULL);
         return 1;
