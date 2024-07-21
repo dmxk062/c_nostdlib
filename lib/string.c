@@ -6,10 +6,10 @@
 #include <errno.h>
 #include <format.h>
 
-Result(String) String_new(u64 size) {
-    String str = malloc(sizeof(__string_t));
+PResult(String) String_new(u64 size) {
+    String* str = malloc(sizeof(String));
     if (str == NULL)
-        return Err(String, ENOMEM);
+        return PErr(String, ENOMEM);
 
     str->len = 0;
     if (size == 0) {
@@ -19,16 +19,16 @@ Result(String) String_new(u64 size) {
         char* buffer = malloc(size * sizeof(char));
         if (buffer == NULL) {
             free(str);
-            return Err(String, ENOMEM);
+            return PErr(String, ENOMEM);
         }
         str->buffer = buffer;
         str->size = size;
     }
     str->alloc = true;
-    return Ok(String, str);
+    return POk(String, str);
 }
 
-errno_t String_free(String str) {
+errno_t String_free(String* str) {
     if (!str->alloc)
         return SUCCESS;
 
@@ -37,26 +37,26 @@ errno_t String_free(String str) {
     return SUCCESS;
 }
 
-Result(String) String_new_from_buffer(const char* char_array, u64 length) {
-    Result(String) new_string = String_new(length);
+PResult(String) String_new_from_buffer(const char* char_array, u64 length) {
+    PResult(String) new_string = String_new(length);
     if (!new_string.ok) {
         return new_string;
     }
-    String str = new_string.value;
+    String* str = new_string.value;
     memcpy(str->buffer, char_array, length);
     str->len = length;
 
-    return Ok(String, str);
+    return POk(String, str);
 }
 
-Result(String) String_new_from_zstr(zstr char_array) {
+PResult(String) String_new_from_zstr(zstr char_array) {
     u64 length = strlen(char_array);
 
     return String_new_from_buffer(char_array, length);
 }
 
 
-Result(zstr) String_to_zstr(String str) {
+Result(zstr) String_to_zstr(String* str) {
     u64 new_length = str->len + sizeof(char);
 
     zstr new_str = malloc(new_length);
@@ -69,7 +69,7 @@ Result(zstr) String_to_zstr(String str) {
 }
 
 
-errno_t String_grow(String str, u64 size) {
+errno_t String_grow(String* str, u64 size) {
     if (size <= str->size) {
         return SUCCESS;
     }
@@ -86,7 +86,7 @@ errno_t String_grow(String str, u64 size) {
     return SUCCESS;
 }
 
-errno_t String_append_buf(String dst, zstr char_array, u64 charlen) {
+errno_t String_append_buf(String* dst, zstr char_array, u64 charlen) {
     u64 new_size = dst->len + charlen;
     if (new_size > dst->size) {
         errno_t ret = String_grow(dst, new_size);
@@ -98,52 +98,52 @@ errno_t String_append_buf(String dst, zstr char_array, u64 charlen) {
     dst->len += charlen;
     return SUCCESS;
 }
-errno_t String_append(String dst, const String src) {
+errno_t String_append(String* dst, const String* src) {
     return String_append_buf(dst, src->buffer, src->len);
 }
 
-Result(String) String_slice(const String str, u64 start, u64 end) {
+PResult(String) String_slice(const String* str, u64 start, u64 end) {
     u64 new_len = end - start;
     if (new_len == 0) {
         new_len = 1;
     }
     if (end > str->len || new_len > str->len) {
-        return Err(String, 1);
+        return PErr(String, 1);
     }
 
-    Result(String) new_string = String_new(new_len);
+    PResult(String) new_string = String_new(new_len);
     if (!new_string.ok) {
         return new_string;
     }
 
-    String ret = new_string.value;
+    String* ret = new_string.value;
     ret->len = new_len;
     memcpy(ret->buffer, str->buffer + start, new_len);
 
-    return Ok(String, ret);
+    return POk(String, ret);
 }
 
 
-Result(StringList) StringList_new(u64 size) {
+PResult(StringList) StringList_new(u64 size) {
     StringList* new_list = malloc(sizeof(StringList));
     if (new_list == NULL) 
-        return Err(StringList, ENOMEM);
+        return PErr(StringList, ENOMEM);
 
     new_list->len = 0;
     if (size == 0) {
         new_list->size = 0;
         new_list->strings = NULL;
     } else {
-        String* strings = malloc(size * sizeof(__string_t));
+        String** strings = malloc(size * sizeof(String));
         if (strings == NULL) {
             free(new_list);
-            return Err(StringList, ENOMEM);
+            return PErr(StringList, ENOMEM);
         }
         new_list->size = size;
         new_list->strings = strings;
 
     }
-    return Ok(StringList, new_list);
+    return POk(StringList, new_list);
 }
 
 errno_t StringList_free(StringList* strings) {
@@ -156,7 +156,7 @@ errno_t StringList_free(StringList* strings) {
     return SUCCESS;
 }
 
-u64 String_split_char(String str, StringList* buffer, char delim) {
+u64 String_split_char(String* str, StringList* buffer, char delim) {
     u64 start_at = buffer->len;
     u64 index = start_at;
 
@@ -167,7 +167,7 @@ u64 String_split_char(String str, StringList* buffer, char delim) {
         if (str->buffer[i] == delim) {
             end = i;
             if (index < buffer->size) {
-                Result(String) new_str = String_slice(str, start, end);
+                PResult(String) new_str = String_slice(str, start, end);
                 if (!new_str.ok) 
                     return index - start_at;
 
@@ -181,7 +181,7 @@ u64 String_split_char(String str, StringList* buffer, char delim) {
     }
 
     if (end < str->len && index < buffer->size) {
-        Result(String) new_str = String_slice(str, start, str->len);
+        PResult(String) new_str = String_slice(str, start, str->len);
         if (!new_str.ok) {
             return index - start_at;
         }
@@ -193,7 +193,7 @@ u64 String_split_char(String str, StringList* buffer, char delim) {
 }
 
 
-Result(String) StringList_join(StringList* list, String delim) {
+PResult(String) StringList_join(StringList* list, String* delim) {
     u64 total_length = 0;
     for (u64 i = 0; i < list->len; i++) {
         total_length += list->strings[i]->len;
@@ -201,11 +201,11 @@ Result(String) StringList_join(StringList* list, String delim) {
             total_length += delim->len;
     }
 
-    Result(String) new_string = String_new(total_length);
+    PResult(String) new_string = String_new(total_length);
     if (!new_string.ok) 
         return new_string;
 
-    String str = new_string.value;
+    String* str = new_string.value;
 
     u64 outindex = 0;
 
@@ -223,7 +223,7 @@ Result(String) StringList_join(StringList* list, String delim) {
     }
 
     str->len=total_length;
-    return Ok(String, str);
+    return POk(String, str);
 }
 
 
@@ -251,6 +251,6 @@ bool String_buf_eq(const char* char1array, u64 char1len, const char* char2array,
     return true;
 }
 
-bool String_eq(const String str1, const String str2) {
+bool String_eq(const String* str1, const String* str2) {
     return String_buf_eq(str1->buffer, str1->len, str2->buffer, str2->len);
 }

@@ -61,7 +61,7 @@ Result(u64) seek(u64 fd, i64 offset, enum SeekFlag origin) {
 /*
  * write NULL terminated string to stdout
  */
-void print(const char* string) {
+void print(const zstr string) {
     u64 len = strlen(string);
     write(STDOUT, string, len);
 }

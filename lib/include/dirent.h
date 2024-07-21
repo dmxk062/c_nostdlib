@@ -39,7 +39,7 @@ Result(u64) opendir(const char* path);
 
 Result(u64) _getdents(u64 fd, Dirent* ent, u64 count);
 
-DefineResult(Dirent*, Dirent);
-Result(Dirent) nextdir(u64 fd, DirectoryBuffer* buf);
+DefinePResult(Dirent);
+PResult(Dirent) nextdir(u64 fd, DirectoryBuffer* buf);
 
 #endif

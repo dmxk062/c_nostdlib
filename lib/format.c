@@ -236,7 +236,7 @@ Result(u64) fmt(const zstr format, char* out, u64 outlen, fmt_value* values) {
                 outind += len;
 
             } else if (format[i] == 's' || format[i] == 'S') {
-                String str_val;
+                String* str_val;
                 u16 padding;
                 if (format[i] == 'S') {
                     str_val = values->S.val;
@@ -350,7 +350,7 @@ Result(u64) fmt(const zstr format, char* out, u64 outlen, fmt_value* values) {
     return Ok(u64, outind);
 }
 
-Result(u64) String_format(zstr format, String str, fmt_value* values) {
+Result(u64) String_format(String* str, const zstr format, fmt_value* values) {
     Result(u64) ret = fmt(format, str->buffer, str->size, values);
     if (ret.ok){
         str->len = ret.value;

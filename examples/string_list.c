@@ -13,11 +13,11 @@ i32 main(i32 argc, zstr argv[]) {
 
     parse_arguments(argc-1, argv+1, NULL, NULL, ARRLEN(uargs), uargs);
 
-    String str = String_new_from_zstr(list).value;
+    String* str = String_new_from_zstr(list).value;
     StringList* strlist = StringList_new(10).value;
 
     u64 num = String_split_char(str, strlist, ',');
-    String new = StringList_join(strlist, STRING(" <=> ")).value;
+    String* new = StringList_join(strlist, &STRING(" <=> ")).value;
     fprint("%s\n", (fmts){
         {.s = new},
     });

@@ -75,7 +75,7 @@ i32 main(i32 argc, zstr argv[]) {
     u64 fd = dirfd.value;
     DirectoryBuffer dirbuf;
 
-    Result(Dirent) ent;
+    PResult(Dirent) ent;
     Dirent* file;
 
     enum AnsiColor color;

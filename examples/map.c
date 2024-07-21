@@ -4,6 +4,7 @@
 #include "string.h"
 #include "io.h"
 #include "mem.h"
+#include "termcolor.h"
 
 #define INPUT_BUFFER_SIZE 1024*8
 
@@ -38,7 +39,11 @@ i32 main(i32 argc, zstr argv[]) {
                     {.s = value.value}
                 });
             } else {
-                print("not set\n");
+                fprint("%enull%E\n", (fmts) {
+                    {.e = (struct AnsiFormat){
+                        .italic = true
+                    }}
+                });
             }
             continue;
         }
@@ -48,7 +53,7 @@ i32 main(i32 argc, zstr argv[]) {
             continue;
         }
 
-        Result(String) new_value = String_new_from_buffer(input_buffer + eq_pos.value + 1, num_read.value - eq_pos.value - 1);
+        PResult(String) new_value = String_new_from_buffer(input_buffer + eq_pos.value + 1, num_read.value - eq_pos.value - 1);
         if (!new_value.ok) {
             print("Failed to alloc memory\n");
             return 1;

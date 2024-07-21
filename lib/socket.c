@@ -96,9 +96,9 @@ Result(u64) Socket_new_UnixClient(char* path, u64 path_length) {
     addr.family = SocketFamily_UNIX;
     memcpy(addr.path, path, path_length);
 
-    errno_t errno = Socket_connect(new_sockfd.value, (struct SocketAddress*)&addr, path_length + sizeof(socket_family_t));
-    if (errno) {
-        return Err(u64, errno);
+    errno_t err = Socket_connect(new_sockfd.value, (struct SocketAddress*)&addr, path_length + sizeof(socket_family_t));
+    if (err) {
+        return Err(u64, err);
     }
 
     return Ok(u64, new_sockfd.value);

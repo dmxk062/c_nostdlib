@@ -45,7 +45,7 @@ Result(u64) open(const char* path, i64 flags, i64 mode);
 Result(u64) close(u64 fd);
 Result(u64) seek(u64 fd, i64 offset, enum SeekFlag origin);
 
-void print(const char* string);
+void print(const zstr string);
 
 Result(u64) fwrite(u64 fd, const zstr format, fmts values);
 Result(u64) fprint(const zstr format, fmts values);

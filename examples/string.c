@@ -19,9 +19,9 @@ i32 main(i32 argc, zstr argv[]) {
             NULL, NULL,
             ARRLEN(uargs), uargs);
 
-    String argument = String_new_from_zstr(to_index).value;
+    String* argument = String_new_from_zstr(to_index).value;
 
-    Result(String) sliced = String_slice(argument, 0, count);
+    PResult(String) sliced = String_slice(argument, 0, count);
     if (!sliced.ok) {
         fwrite(STDERR, "`%s` is shorter than %d\n", (fmts){
             {.s = argument}, {.i = count}

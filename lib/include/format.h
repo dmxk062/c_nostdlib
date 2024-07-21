@@ -36,7 +36,7 @@ typedef struct {
 
 // a formatted string
 typedef struct {
-    String val;
+    String* val;
     u16 padd;
 } string_fmt;
 
@@ -50,7 +50,7 @@ typedef union  {
         zstr_fmt    Z;
 
         // string object
-        String      s;
+        String*     s;
         string_fmt  S;
 
         // ansi color escape code
@@ -67,6 +67,6 @@ typedef fmt_value fmts[];
 
 
 Result(u64) fmt(const zstr format, char* out, u64 outlen, fmts values);
-Result(u64) String_format(const zstr format, String str, fmt_value values[]);
+Result(u64) String_format(String* str, const zstr format, fmt_value values[]);
 
 #endif
