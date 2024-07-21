@@ -1,6 +1,6 @@
 #include "types.h"
 #include <linux/auxv.h>
-#include <env.h>
+#include <environ.h>
 
 Elf64Auxval* Auxval_find_auxv() {
     zstr* envp = environ;
