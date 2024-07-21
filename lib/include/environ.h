@@ -10,6 +10,10 @@
  * This allos this to free allocated environment variables
  */
 
+extern zstr* environ;
+
+Result(zstr) getenv(const char* name);
+
 #define ENV_PAGE_SIZE 4096
 
 struct Environment {
