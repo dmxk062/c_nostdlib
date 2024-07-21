@@ -26,6 +26,9 @@ enum AuxvalType {
     AuxvalType_PLATFORM  = 15,
     AuxvalType_HWCAP     = 16,
     AuxvalType_FPUCW     = 18,
+
+    AuxvalType_EXECFN    = 31, /* Filename of executable */
+    AuxvalType_VDSO_ADDRESS = 33,
 };
 
 typedef struct {
