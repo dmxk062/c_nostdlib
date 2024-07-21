@@ -1,4 +1,3 @@
-#include "io.h"
 #include "linux/elf.h"
 #include "types.h"
 #include <linux/vdso.h>
