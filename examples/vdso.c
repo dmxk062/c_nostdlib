@@ -4,22 +4,22 @@
 #include <linux/auxv.h>
 #include <linux/vdso.h>
 
-typedef int (*gettimeofday_t)(struct Timespec* t, struct Timespec* z);
+#define SYMBOL "__vdso_gettimeofday"
 
 i32 main(i32 argc, zstr argv[], zstr envv[]) {
     Elf64Auxval* auxv = Auxval_find_auxv(envv);
 
-    address vdsoaddr = (address)Auxval_get_value(auxv, AuxvalType_VDSO_ADDRESS)->value;
+    address vdsoaddr = Auxval_get_value(auxv, AuxvalType_VDSO_ADDRESS)->value;
 
-    address addr = VDSO_find_symbol(vdsoaddr, "__vdso_gettimeofday");
-    if (!addr) {
-        fwrite(STDERR, "Failed to find symbol", NULL);
+    i32 (*gettimeofday)(struct Timespec* t, struct Timespec* z) = VDSO_find_symbol(vdsoaddr, SYMBOL);
+    if (!gettimeofday) {
+        print("Failed to find "SYMBOL" in the vDSO\n");
         return 1;
-    };
+    }
 
-    gettimeofday_t gettimeofday = (gettimeofday_t)addr;
-    struct Timespec sp;
+
+    struct Timespec sp = {0};
     gettimeofday(&sp, NULL);
-    fprint("Seconds from VDSO gettimeofday: %d\n", (fmts){{.i = sp.secs}});
+    fprint(SYMBOL"()={ secs = %d, nano = %d}\n", (fmts){{.i = sp.secs}, {.i = sp.nano}});
     return 0;
 }

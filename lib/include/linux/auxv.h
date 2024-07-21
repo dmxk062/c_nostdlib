@@ -34,7 +34,7 @@ enum AuxvalType {
 typedef struct {
     enum AuxvalType type;
     union {
-        u64 value;
+        untyped value;
     };
 } Elf64Auxval;
 
