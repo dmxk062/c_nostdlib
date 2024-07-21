@@ -1,9 +1,7 @@
 #include "types.h"
 #include <linux/auxv.h>
-#include <environ.h>
 
-Elf64Auxval* Auxval_find_auxv() {
-    zstr* envp = environ;
+Elf64Auxval* Auxval_find_auxv(zstr* envp) {
     while(*envp++ != NULL){}
 
     return (Elf64Auxval*)envp;

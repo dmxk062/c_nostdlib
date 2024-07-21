@@ -35,7 +35,7 @@ typedef struct {
     };
 } Elf64Auxval;
 
-Elf64Auxval* Auxval_find_auxv();
+Elf64Auxval* Auxval_find_auxv(zstr* envp);
 Elf64Auxval* Auxval_get_value(Elf64Auxval* auxvector, enum AuxvalType type);
 
 
