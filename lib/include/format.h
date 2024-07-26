@@ -69,4 +69,6 @@ typedef fmt_value fmts[];
 Result(u64) fmt(const zstr format, char* out, u64 outlen, fmts values);
 Result(u64) String_format(String* str, const zstr format, fmt_value values[]);
 
+#define Fmt(...) (fmt_value[]){__VA_ARGS__}
+
 #endif
