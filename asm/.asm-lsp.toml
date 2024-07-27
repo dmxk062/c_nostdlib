@@ -1,0 +1,7 @@
+version = "0.1"
+
+[assemblers]
+gas = true
+
+[instruction_sets]
+x86_64 = true
