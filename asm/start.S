@@ -1,4 +1,3 @@
-# vim: commentstring=#\ %s
 .global _start, environ
 
 # this won't be linked in the same compilation unit as main
