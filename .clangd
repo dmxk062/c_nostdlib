@@ -1,5 +1,10 @@
 Index:
-  StandardLibrary: No
+  StandardLibrary: false
+
+
+Diagnostics:
+  Includes:
+    AnalyzeAngledIncludes: true
 
 CompileFlags:
   Add: [-nostdlib,
@@ -13,3 +18,11 @@ CompileFlags:
     -Ilib/include/]
   Compiler: gcc
 
+InlayHints:
+  Enabled: true
+  Designators: false
+  DeducedTypes: true
+  BlockEnd: false
+
+Hover:
+  ShowAKA: false
