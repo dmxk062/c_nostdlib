@@ -1,31 +1,10 @@
-#include <environ.h>
+#include <private/environ.h>
 #include <alloc.h>
 #include <mem.h>
 #include <cstring.h>
 #include <errno.h>
 #include <types.h>
-
-Result(zstr) getenv(const char* name) {
-
-    // filter out invalid names
-    if (name == NULL || *name == '\0') {
-        return Err(zstr, 2);
-    }
-
-    zstr* env = environ;
-    u64 len_name = strlen(name);
-
-    // iterate over the vector
-    while (*env != NULL) {
-        // if the name matches and is terminated with a '=', we found it
-        if (strncmp(name, *env, len_name) == 0 && (*env)[len_name]== '=') {
-            // just return a pointer to the value
-            return Ok(zstr, &((*env)[len_name + 1]));
-        }
-        env++;
-    }
-    return Err(zstr, 1);
-}
+#include <private/libc_start.h>
 
 errno_t Environment_init(struct Environment* environ, zstr* envvec) {
     u64 count = 0;
@@ -151,4 +130,14 @@ errno_t Environment_unset(struct Environment* env, const zstr name) {
     }
     env->env_count--;
 
+}
+
+Result(zstr) getenv(const zstr name) {
+    return Environment_get(g_nolibc_global_STATE.environ, name);
+}
+errno_t setenv(const zstr name, const zstr value, bool replace) {
+    return Environment_set(g_nolibc_global_STATE.environ, name, value, replace);
+}
+errno_t unsetenv(const zstr name) {
+    return Environment_unset(g_nolibc_global_STATE.environ, name);
 }
