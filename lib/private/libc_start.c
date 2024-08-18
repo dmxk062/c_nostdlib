@@ -50,7 +50,5 @@ i32 __no_libc_start(i32 argc, zstr argv[]) {
     VDSO_init(vdso_addr);
     
     i32 return_code = main(argc, argv, envv);
-
-    Environment_free(&global_env);
     return return_code;
 }

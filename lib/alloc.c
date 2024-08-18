@@ -1,5 +1,4 @@
 #include "io.h"
-#include "process.h"
 #include "types.h"
 #include <alloc.h>
 #include <private/alloc.h>
@@ -28,6 +27,7 @@ static AllocPage* p_AllocPage_new(u64 size) {
     AllocPage* new_page = mapped_page.value;
     new_page->size = size;
     new_page->usable_size = (size - sizeof(AllocPage));
+    new_page->avail_size = new_page->usable_size;
     new_page->start = (address)new_page + sizeof(AllocPage);
     new_page->end   = (address)new_page->start + new_page->usable_size;
 
@@ -72,6 +72,10 @@ static u64 p_AllocPage_get_max_avail_size(AllocPage* page) {
 static AllocPage* p_AllocPage_get_first_large_enough(u64 min_size) {
     AllocPage* page = pg_Head.first;
     while(page) {
+        if (page->avail_size < min_size) {
+            page = page->next;
+            continue;
+        }
         u64 size = p_AllocPage_get_max_avail_size(page);
         if (size >= min_size) {
             return page;
@@ -122,6 +126,7 @@ static address p_AllocPage_alloc_Chunk(AllocPage* page, u64 size) {
 
     AllocChunk* new_chunk = p_AllocChunk_split(page, chunk, size);
 
+    page->avail_size -= size + sizeof(AllocChunk);
     new_chunk->free = false;
     return new_chunk;
 }
@@ -214,6 +219,7 @@ static errno_t p_free(address ptr) {
 
     chunk->free = true;
     chunk->tag = 0;
+    page->avail_size -= chunk->usable_size + sizeof(AllocChunk);
 
     /*
      * Try to merge with adjacent ones
@@ -227,6 +233,7 @@ static errno_t p_free(address ptr) {
         if (chunk->next) {
             (chunk->next)->prev = prev;
         }
+        page->num_chunks--;
     }
 
     if (chunk->next && (chunk->next)->free) {
@@ -236,6 +243,7 @@ static errno_t p_free(address ptr) {
         if(next->next) {
             (next->next)->prev = chunk;
         }
+        page->num_chunks--;
     }
 
     pg_Head.num_allocs--;

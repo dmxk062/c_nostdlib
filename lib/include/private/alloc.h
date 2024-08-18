@@ -29,6 +29,8 @@ typedef struct AllocPage {
     u64 size;
     /* Size of usable space */
     u64 usable_size;
+    /* Amount of memory free on that page */
+    u64 avail_size;
     /* Number of allocations in page */
     u64 num_chunks;
 
