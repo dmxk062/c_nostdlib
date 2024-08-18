@@ -13,8 +13,8 @@
 /*
  * Simply crash if we cannot initialize the libc
  */
-// #define SEGFAULT *((volatile u8*)0)
-#define SEGFAULT
+#define SEGFAULT *((volatile u8*)0)
+// #define SEGFAULT
 
 
 struct __libc_state g_nolibc_global_STATE = {0};
