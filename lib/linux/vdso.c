@@ -1,23 +1,21 @@
-#include "io.h"
 #include "linux/elf.h"
-#include "process.h"
 #include "types.h"
-#include <private/vdso.h>
-#include <private/libc_start.h>
 #include <cstring.h>
+#include <private/libc_start.h>
+#include <private/vdso.h>
 
-struct VDSO vDSO = {
-    .initialized = false,
-    .vdso_header = NULL,
-    .funcs = {
-        .time = NULL,
-        .getcpu = NULL,
-        .clock_gettime = NULL,
-        .clock_gettimeofday = NULL,
-    }
-};
+struct VDSO vDSO = {.initialized = false,
+                    .vdso_header = NULL,
+                    .funcs = {
+                        .clock_gettime = NULL,
+                        .clock_gettimeofday = NULL,
+                        .time = NULL,
+                        .getcpu = NULL,
+                    }};
 
-
+/*
+ * The order of these matters and **has** to be the same as in the struct
+ */
 static zstr VDSO_required_symbols[] = {
     "__vdso_clock_gettime",
     "__vdso_clock_gettimeofday",
@@ -27,11 +25,11 @@ static zstr VDSO_required_symbols[] = {
 
 void VDSO_init(address vdso_addr) {
     Elf64_Header* ehdr = (Elf64_Header*)vdso_addr;
-    Elf64_ProgramHeader* phdr = (Elf64_ProgramHeader*)((u8*)ehdr + ehdr->program_header_offset);
+    Elf64_ProgramHeader* phdr =
+        (Elf64_ProgramHeader*)((u8*)ehdr + ehdr->program_header_offset);
     g_nolibc_global_STATE.vdso.vdso_header = ehdr;
 
     Elf64_Dynamic* dyn = NULL;
-    
 
     for (u64 i = 0; i < ehdr->program_header_count; i++) {
         if (phdr[i].type == Elf64_Tag_DYNAMIC) {
@@ -40,7 +38,8 @@ void VDSO_init(address vdso_addr) {
         }
     }
 
-    if (!dyn) return;
+    if (!dyn)
+        return;
 
     Elf64_Symbol* symbol_table = NULL;
     char* string_table = NULL;
@@ -54,28 +53,27 @@ void VDSO_init(address vdso_addr) {
         ++dyn;
     }
 
-    if (!symbol_table||!string_table) return;
+    if (!symbol_table || !string_table)
+        return;
 
     /*
      * The headers on my system say that .other is always 0
      * lets hope it stays that way
      */
-    for (;symbol_table->other == 0; ++symbol_table) {
+    for (; symbol_table->other == 0; ++symbol_table) {
         zstr symbol_name = string_table + symbol_table->name;
         for (u64 i = 0; i < ARRLEN(VDSO_required_symbols); i++) {
             if (streq(symbol_name, VDSO_required_symbols[i])) {
-                g_nolibc_global_STATE.vdso.funcs.funcs[i] =  (address)(vdso_addr + symbol_table->value);
+                g_nolibc_global_STATE.vdso.funcs.funcs[i] =
+                    (address)(vdso_addr + symbol_table->value);
                 break;
             }
         }
     }
-    if (
-            g_nolibc_global_STATE.vdso.funcs.clock_gettime &&
-            g_nolibc_global_STATE.vdso.funcs.clock_gettimeofday &&
-            g_nolibc_global_STATE.vdso.funcs.time &&
-            g_nolibc_global_STATE.vdso.funcs.getcpu 
-            ) {
+    if (g_nolibc_global_STATE.vdso.funcs.clock_gettime &&
+        g_nolibc_global_STATE.vdso.funcs.clock_gettimeofday &&
+        g_nolibc_global_STATE.vdso.funcs.time &&
+        g_nolibc_global_STATE.vdso.funcs.getcpu) {
         g_nolibc_global_STATE.vdso.initialized = true;
     }
-
 }
