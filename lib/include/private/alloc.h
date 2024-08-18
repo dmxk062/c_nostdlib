@@ -3,7 +3,7 @@
 #define _ALLOC_PRIVATE_H
 #include <types.h>
 
-#define ALLOC_PAGE_MIN_SIZE (1024 * 1024 * 8) // allocate at least 4mb
+#define ALLOC_PAGE_MIN_SIZE (1024 * 1024 * 8) // allocate at least 8mb
 #define ALLOC_SPLIT_THRESHOLD 16
 
 /*
