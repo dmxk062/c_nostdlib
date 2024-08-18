@@ -1,4 +1,3 @@
-#include "io.h"
 #include "types.h"
 #include <alloc.h>
 #include <errno.h>
@@ -17,10 +16,6 @@ static AllocHead pg_Head = {
 static AllocPage* p_AllocPage_new(u64 size) {
     Result(address) mapped_page = mmap(NULL, size, PROT_READ | PROT_WRITE,
                                        MAP_ANONYMOUS | MAP_PRIVATE, 0, 0);
-    /*
-     * TODO: pass on error number
-     * pretty much an unhandleable error anyways
-     */
     if (!mapped_page.ok) {
         return NULL;
     }
@@ -42,20 +37,6 @@ static AllocPage* p_AllocPage_new(u64 size) {
     new_page->num_chunks = 1;
 
     return new_page;
-}
-
-static errno_t p_init(u64 first_page_size) {
-    AllocPage* initial_page = p_AllocPage_new(first_page_size);
-    if (!initial_page) {
-        return ENOMEM;
-    }
-
-    pg_Head.first = initial_page;
-    pg_Head.last = initial_page;
-    pg_Head.num_pages++;
-
-    pg_Head.initialized = true;
-    return 0;
 }
 
 static u64 p_AllocPage_get_max_avail_size(AllocPage* page) {
@@ -94,11 +75,10 @@ static inline u64 p_get_alloc_page_size(u64 size) {
 
 static AllocChunk* p_AllocChunk_split(AllocPage* page, AllocChunk* chunk,
                                       u64 _size) {
-    /*
-     * padd to be a multiple of 8(align)
-     */
+     // padd to be a multiple of 8(align)
     u64 size = (_size + 7) & ~7;
-    /* Can't fit another allocation anyways */
+
+    // Can't fit another allocation anyways 
     if (chunk->usable_size == size ||
         chunk->usable_size == size + sizeof(AllocChunk) ||
         chunk->usable_size < size + ALLOC_SPLIT_THRESHOLD) {
@@ -121,6 +101,21 @@ static AllocChunk* p_AllocChunk_split(AllocPage* page, AllocChunk* chunk,
     page->num_chunks++;
     return chunk;
 }
+
+static errno_t p_init(u64 first_page_size) {
+    AllocPage* initial_page = p_AllocPage_new(first_page_size);
+    if (!initial_page) {
+        return ENOMEM;
+    }
+
+    pg_Head.first = initial_page;
+    pg_Head.last = initial_page;
+    pg_Head.num_pages++;
+
+    pg_Head.initialized = true;
+    return 0;
+}
+
 
 static address p_AllocPage_alloc_Chunk(AllocPage* page, u64 size) {
     AllocChunk* chunk = page->start;
@@ -218,6 +213,9 @@ static errno_t p_Allocation_find(address ptr, AllocPage** page_dest,
     return 0;
 }
 
+/*
+ * Collect all empty pages that aren't the first page
+ */
 void p_collect_garbage() {
     AllocPage *page = pg_Head.first, *next = pg_Head.first;
 
