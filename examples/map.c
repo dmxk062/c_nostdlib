@@ -22,7 +22,7 @@ i32 main(i32 argc, zstr argv[]) {
     DoWhileSuccessful(num_read, read(STDIN, input_buffer, INPUT_BUFFER_SIZE)) {
         if (num_read.value == 0) {
             Map_free(map);
-            return Malloc_get_used_count();
+            return Alloc_get_in_use();
         }
         // just the newline
         if (num_read.value == 1) {

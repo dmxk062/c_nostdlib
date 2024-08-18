@@ -39,5 +39,5 @@ i32 main(i32 argc, zstr argv[]) {
 
 
 
-    return Malloc_get_used_count();
+    return Alloc_get_in_use();
 }
