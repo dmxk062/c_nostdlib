@@ -16,6 +16,6 @@
 
 
 
-Result(untyped) mmap(untyped addr, u64 len, u64 prot, u64 flags, u64 fd, u64 offset);
+Result(address) mmap(untyped addr, u64 len, u64 prot, u64 flags, u64 fd, u64 offset);
 errno_t mmunmap(void* addr, u64 len);
 #endif

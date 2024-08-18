@@ -2,7 +2,7 @@
 #include <mmap.h>
 #include <syscall.h>
 
-Result(untyped) mmap(untyped addr, u64 len, u64 prot, u64 flags, u64 fd, u64 offset) {
+Result(address) mmap(untyped addr, u64 len, u64 prot, u64 flags, u64 fd, u64 offset) {
     i64 ret = (i64)syscall6(SYS_MMAP, 
             (untyped)addr,
             (untyped)len,
@@ -11,9 +11,9 @@ Result(untyped) mmap(untyped addr, u64 len, u64 prot, u64 flags, u64 fd, u64 off
             (untyped)fd,
             (untyped)offset);
     if (ret < 0) 
-        return Err(untyped, -ret);
+        return Err(address, -ret);
     else
-        return Ok(untyped, (untyped)ret);
+        return Ok(address, (untyped)ret);
 }
 
 
