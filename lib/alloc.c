@@ -1,13 +1,14 @@
 #include "io.h"
 #include "types.h"
 #include <alloc.h>
-#include <private/alloc.h>
-#include <mmap.h>
 #include <errno.h>
+#include <mmap.h>
+#include <private/alloc.h>
 
 static AllocHead pg_Head = {
     .initialized = false,
     .num_pages = 0,
+    .num_empty = 0,
     .num_allocs = 0,
     .first = NULL,
     .last = NULL,
@@ -29,14 +30,14 @@ static AllocPage* p_AllocPage_new(u64 size) {
     new_page->usable_size = (size - sizeof(AllocPage));
     new_page->avail_size = new_page->usable_size;
     new_page->start = (address)new_page + sizeof(AllocPage);
-    new_page->end   = (address)new_page->start + new_page->usable_size;
+    new_page->end = (address)new_page->start + new_page->usable_size;
 
     AllocChunk* initial_chunk = new_page->start;
     initial_chunk->free = true;
     initial_chunk->usable_size = new_page->usable_size - sizeof(AllocChunk);
     initial_chunk->next = NULL;
     initial_chunk->prev = NULL;
-    initial_chunk->tag  = 0;
+    initial_chunk->tag = 0;
 
     new_page->num_chunks = 1;
 
@@ -50,7 +51,7 @@ static errno_t p_init(u64 first_page_size) {
     }
 
     pg_Head.first = initial_page;
-    pg_Head.last  = initial_page;
+    pg_Head.last = initial_page;
     pg_Head.num_pages++;
 
     pg_Head.initialized = true;
@@ -65,13 +66,13 @@ static u64 p_AllocPage_get_max_avail_size(AllocPage* page) {
             size = chunk->usable_size;
         }
         chunk = chunk->next;
-    } 
+    }
     return size;
 }
 
 static AllocPage* p_AllocPage_get_first_large_enough(u64 min_size) {
     AllocPage* page = pg_Head.first;
-    while(page) {
+    while (page) {
         if (page->avail_size >= min_size) {
             u64 size = p_AllocPage_get_max_avail_size(page);
             if (size >= min_size) {
@@ -84,21 +85,25 @@ static AllocPage* p_AllocPage_get_first_large_enough(u64 min_size) {
 }
 
 static inline u64 p_get_alloc_page_size(u64 size) {
-    u64 val =  ((size + sizeof(AllocPage) + sizeof(AllocChunk) + ALLOC_PAGE_MIN_SIZE - 1) / ALLOC_PAGE_MIN_SIZE) * ALLOC_PAGE_MIN_SIZE;
+    u64 val = ((size + sizeof(AllocPage) + sizeof(AllocChunk) +
+                ALLOC_PAGE_MIN_SIZE - 1) /
+               ALLOC_PAGE_MIN_SIZE) *
+              ALLOC_PAGE_MIN_SIZE;
     return val;
 }
 
-static AllocChunk* p_AllocChunk_split(AllocPage* page, AllocChunk* chunk, u64 _size) {
+static AllocChunk* p_AllocChunk_split(AllocPage* page, AllocChunk* chunk,
+                                      u64 _size) {
     /*
      * padd to be a multiple of 8(align)
      */
     u64 size = (_size + 7) & ~7;
     /* Can't fit another allocation anyways */
-    if (chunk->usable_size == size 
-            || chunk->usable_size == size + sizeof(AllocChunk) 
-            || chunk->usable_size < size + ALLOC_SPLIT_THRESHOLD) {
+    if (chunk->usable_size == size ||
+        chunk->usable_size == size + sizeof(AllocChunk) ||
+        chunk->usable_size < size + ALLOC_SPLIT_THRESHOLD) {
         return chunk;
-    } 
+    }
 
     u64 alloc_size = size + sizeof(AllocChunk);
     AllocChunk* new_chunk = (address)chunk + alloc_size;
@@ -129,10 +134,13 @@ static address p_AllocPage_alloc_Chunk(AllocPage* page, u64 size) {
     AllocChunk* new_chunk = p_AllocChunk_split(page, chunk, size);
 
     page->avail_size -= (size + sizeof(AllocChunk));
+    if (page->empty) {
+        pg_Head.num_empty--;
+    }
+    page->empty = false;
     new_chunk->free = false;
     return new_chunk;
 }
-
 
 static AllocChunk* p_AllocChunk_new(u64 size) {
     if (!pg_Head.initialized) {
@@ -176,7 +184,8 @@ address malloc(u64 size) {
 /*
  * Walk the tree to determine the location of a pointer
  */
-static errno_t p_Allocation_find(address ptr, AllocPage** page_dest, AllocChunk** chunk_dest) {
+static errno_t p_Allocation_find(address ptr, AllocPage** page_dest,
+                                 AllocChunk** chunk_dest) {
     AllocPage* page = pg_Head.first;
     while (page) {
         if (page->start < ptr && page->end > ptr) {
@@ -207,10 +216,30 @@ static errno_t p_Allocation_find(address ptr, AllocPage** page_dest, AllocChunk*
     }
 
     return 0;
-
 }
+
+void p_collect_garbage() {
+    AllocPage *page = pg_Head.first, *next = pg_Head.first;
+
+    while (page) {
+        // Skip the first page
+        next = page->next;
+        if (page->empty && page != pg_Head.first) {
+
+            (page->prev)->next = page->next;
+            if (page->next) {
+                (page->next)->prev = page->prev;
+            }
+            mmunmap(page, page->size);
+            pg_Head.num_pages--;
+            pg_Head.num_empty--;
+        }
+        page = next;
+    }
+}
+
 static errno_t p_free(address ptr) {
-    AllocPage*  page = NULL;
+    AllocPage* page = NULL;
     AllocChunk* chunk = NULL;
 
     errno_t err = p_Allocation_find(ptr, &page, &chunk);
@@ -226,7 +255,7 @@ static errno_t p_free(address ptr) {
      * Try to merge with adjacent ones
      * first prev then next
      */
-    
+
     if (chunk->prev && (chunk->prev)->free) {
         AllocChunk* prev = chunk->prev;
         prev->usable_size += chunk->usable_size + sizeof(AllocChunk);
@@ -241,27 +270,31 @@ static errno_t p_free(address ptr) {
         AllocChunk* next = chunk->next;
         chunk->usable_size += next->usable_size + sizeof(AllocChunk);
         chunk->next = next->next;
-        if(next->next) {
+        if (next->next) {
             (next->next)->prev = chunk;
         }
         page->num_chunks--;
+    }
+
+    if (page->num_chunks == 1 && ((AllocChunk*)page->start)->free) {
+        pg_Head.num_empty++;
+        page->empty = true;
+    }
+
+    if (pg_Head.num_empty > ALLOC_EMPTY_PAGE_THRESHOLD) {
+        p_collect_garbage();
     }
 
     pg_Head.num_allocs--;
     return 0;
 }
 
-void free(address ptr) {
-    p_free(ptr);
-}
+void free(address ptr) { p_free(ptr); }
 
-u64 Alloc_get_in_use() {
-    return pg_Head.num_allocs;
-}
+u64 Alloc_get_in_use() { return pg_Head.num_allocs; }
 
-u64 Alloc_get_num_pages() {
-    return pg_Head.num_pages;
-}
+u64 Alloc_get_empty_pages() { return pg_Head.num_empty; }
+u64 Alloc_get_num_pages() { return pg_Head.num_pages; }
 
 bool Alloc_is_Allocation(address ptr) {
     if (!p_Allocation_find(ptr, NULL, NULL)) {

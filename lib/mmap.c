@@ -21,6 +21,4 @@ errno_t mmunmap(untyped addr, u64 len) {
     return (errno_t) -(i64)syscall2(SYS_MUNMAP,
             addr,
             (untyped)len);
-
-
 }
