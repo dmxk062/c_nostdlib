@@ -9,7 +9,7 @@ CCFLAGS_EXE = -Wl,--gc-sections
 ASFLAGS = -s
 LDFLAGS = 
 
-SRC_C = $(wildcard lib/*.c) $(wildcard lib/structs/*.c) $(wildcard lib/linux/*.c)
+SRC_C = $(wildcard lib/*.c) $(wildcard lib/structs/*.c) $(wildcard lib/linux/*.c) $(wildcard lib/private/*.c)
 OBJ_C = $(addprefix $(OBJDIR)/, $(SRC_C:.c=.o))
 
 SRC_S = $(wildcard asm/*.S)
@@ -23,7 +23,7 @@ EXEC = no_std
 SRC_EXAMPLES = $(wildcard examples/*.c)
 EXAMPLES = $(SRC_EXAMPLES:.c=)
 
-BUILDDIRS = build build/lib/linux build/lib/structs build/asm
+BUILDDIRS = build build/lib/term build/lib/linux build/lib/structs build/lib/private build/asm
 
 
 LIBRARY = build/libnostd.o

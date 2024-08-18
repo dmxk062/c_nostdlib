@@ -1,7 +1,7 @@
 .global _start, environ
 
 # this won't be linked in the same compilation unit as main
-.extern main
+.extern __no_libc_start
 
 .section .data
     # store a pointer to the first element of environ
@@ -57,8 +57,8 @@ _start:
     # align stack to 16 bits since we popped 32 bit argc
     and $0xFFFFFFFFFFFFFFF0,%rsp
 
-    # call the main function
-    call    main
+    # call the libc entrypoint
+    call    __no_libc_start
 
     # exit from the program with the code returned by main
     mov     %rax,   %rdi
