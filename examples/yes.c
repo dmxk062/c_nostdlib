@@ -9,7 +9,6 @@ volatile bool received_interrupt = false;
 
 void handler(i64 signum) {
     received_interrupt = true;
-    fprint("%d\n", (fmts){{.i = signum}});
     return;
 }
 
@@ -48,5 +47,5 @@ i32 main(i32 argc, zstr argv[]) {
     }
 
     String_free(output);
-    return Malloc_get_used_count();
+    return Alloc_get_in_use();
 }
