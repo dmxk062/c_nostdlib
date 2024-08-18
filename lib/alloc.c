@@ -1,7 +1,7 @@
-#include "io.h"
+#include "process.h"
 #include "types.h"
 #include <alloc.h>
-#include <alloc_private.h>
+#include <private/alloc.h>
 #include <mmap.h>
 #include <errno.h>
 
@@ -35,6 +35,7 @@ static AllocPage* p_AllocPage_new(u64 size) {
     initial_chunk->usable_size = new_page->usable_size - sizeof(AllocChunk);
     initial_chunk->next = NULL;
     initial_chunk->prev = NULL;
+    initial_chunk->tag  = 0;
 
     new_page->num_chunks = 1;
 
@@ -103,12 +104,13 @@ static AllocChunk* p_AllocChunk_split(AllocPage* page, AllocChunk* chunk, u64 si
     new_chunk->usable_size = chunk->usable_size - alloc_size;
     chunk->usable_size = size;
     new_chunk->free = true;
+    new_chunk->tag = 0;
 
     page->num_chunks++;
     return chunk;
 }
 
-static address p_AllocPage_alloc(AllocPage* page, u64 size) {
+static address p_AllocPage_alloc_Chunk(AllocPage* page, u64 size) {
     AllocChunk* chunk = page->start;
     while (chunk) {
         if (chunk->free && chunk->usable_size >= size) {
@@ -120,10 +122,11 @@ static address p_AllocPage_alloc(AllocPage* page, u64 size) {
     AllocChunk* new_chunk = p_AllocChunk_split(page, chunk, size);
 
     new_chunk->free = false;
-    return (u8*)new_chunk + sizeof(AllocChunk);
+    return new_chunk;
 }
 
-address malloc(u64 size) {
+
+static AllocChunk* p_AllocChunk_new(u64 size) {
     if (!pg_Head.initialized) {
         u64 target_size = p_get_alloc_page_size(size);
         errno_t err = p_init(target_size);
@@ -149,21 +152,23 @@ address malloc(u64 size) {
 
         page = new_page;
     }
-
     pg_Head.num_allocs++;
-    return p_AllocPage_alloc(page, size);
+    return p_AllocPage_alloc_Chunk(page, size);
+}
+
+address malloc(u64 size) {
+    AllocChunk* chunk = p_AllocChunk_new(size);
+    if (!chunk) {
+        return NULL;
+    }
+
+    return (u8*)chunk + sizeof(AllocChunk);
 };
 
 /*
- * Internal free representation
- * Return value:
- * 1: outside of any known page
- * 2: not directly on chunk
+ * Walk the tree to determine the location of a pointer
  */
-static errno_t __free(address ptr) {
-    /*
-     * Walk all the pages we have to actually find the allocation and see if its within our range
-     */ 
+static errno_t p_Allocation_find(address ptr, AllocPage** page_dest, AllocChunk** chunk_dest) {
     AllocPage* page = pg_Head.first;
     while (page) {
         if (page->start < ptr && page->end > ptr) {
@@ -173,6 +178,9 @@ static errno_t __free(address ptr) {
     }
     if (!page) {
         return 1;
+    }
+    if (page_dest) {
+        *page_dest = page;
     }
 
     AllocChunk* chunk = page->start;
@@ -186,9 +194,25 @@ static errno_t __free(address ptr) {
     if (!chunk) {
         return 2;
     }
+    if (chunk_dest) {
+        *chunk_dest = chunk;
+    }
 
-    // free xD
+    return 0;
+
+}
+static errno_t p_free(address ptr) {
+
+    AllocPage*  page = NULL;
+    AllocChunk* chunk = NULL;
+
+    errno_t err = p_Allocation_find(ptr, &page, &chunk);
+    if (err) {
+        return err;
+    }
+
     chunk->free = true;
+    chunk->tag = 0;
 
     /*
      * Try to merge with adjacent ones
@@ -218,7 +242,7 @@ static errno_t __free(address ptr) {
 }
 
 void free(address ptr) {
-    __free(ptr);
+    p_free(ptr);
 }
 
 u64 Alloc_get_in_use() {
@@ -227,4 +251,23 @@ u64 Alloc_get_in_use() {
 
 u64 Alloc_get_num_pages() {
     return pg_Head.num_pages;
+}
+
+bool Alloc_is_Allocation(address ptr) {
+    if (!p_Allocation_find(ptr, NULL, NULL)) {
+        return true;
+    }
+    return false;
+}
+
+Result(u64) Alloc_Allocation_get_size(address ptr) {
+    AllocPage* page;
+    AllocChunk* chunk;
+
+    errno_t err = p_Allocation_find(ptr, &page, &chunk);
+    if (err) {
+        return Err(u64, err);
+    }
+
+    return Ok(u64, chunk->usable_size);
 }
