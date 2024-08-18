@@ -2,7 +2,7 @@
 #include <args.h>
 #include <io.h>
 
-i32 main(i32 argc, zstr argv[]) {
+i32 main(i32 argc, zstr argv[], zstr envv[]) {
 
     bool show_help    = false;
     NamedArguments nargs = {

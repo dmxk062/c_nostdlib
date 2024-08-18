@@ -38,7 +38,7 @@ i32 main(i32 argc, zstr argv[]) {
 
 
     if (!got_timestamp) {
-        Time_get(&tstamp, NULL);
+        Time_gettimeofday(&tstamp, NULL);
     }
     tstamp.secs += (60*60) * timezone_offset;
 

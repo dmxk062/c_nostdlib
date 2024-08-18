@@ -39,7 +39,7 @@ i32 main(i32 argc, zstr argv[]) {
                 AccessMode_X|AccessMode_F
         );
         if (err) {
-            fprint("Failed to find %z in $PATH\n", (fmts){{.z = argv[i]}});
+            fprint("Failed to find %z in $PATH\n", Fmt({.z = argv[i]}));
             continue;
         }
         fprint("%s\n", (fmts){{.s = output_path}});

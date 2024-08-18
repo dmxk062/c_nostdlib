@@ -32,7 +32,8 @@ i32 main(i32 argc, zstr argv[]) {
     };
 
     u64 num_args_parsed = parse_arguments(argc-1, argv+1,
-            ARRLEN(nargs), nargs, ARRLEN(uargs), uargs);
+            ARRLEN(nargs), nargs,
+            ARRLEN(uargs), uargs);
 
     if (delete_old) {
         struct Stat st;
@@ -46,9 +47,9 @@ i32 main(i32 argc, zstr argv[]) {
         zstr err_msg = ERROR_MESSAGES[new_server_fd.errno];
         if (err_msg == NULL)
             err_msg = "Unknown error";
-        fwrite(STDERR, "Failed to create server socket %z: %z (errno %d)\n", (fmts){
-            {.z = socket_path}, {.z = err_msg}, {.i = new_server_fd.errno} 
-        });
+        fwrite(STDERR, "Failed to create server socket %z: %z (errno %d)\n",
+            Fmt({.z = socket_path}, {.z = err_msg}, {.i = new_server_fd.errno})
+        );
         return 1;
     }
 
