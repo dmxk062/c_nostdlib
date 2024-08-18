@@ -72,13 +72,11 @@ static u64 p_AllocPage_get_max_avail_size(AllocPage* page) {
 static AllocPage* p_AllocPage_get_first_large_enough(u64 min_size) {
     AllocPage* page = pg_Head.first;
     while(page) {
-        if (page->avail_size < min_size) {
-            page = page->next;
-            continue;
-        }
-        u64 size = p_AllocPage_get_max_avail_size(page);
-        if (size >= min_size) {
-            return page;
+        if (page->avail_size >= min_size) {
+            u64 size = p_AllocPage_get_max_avail_size(page);
+            if (size >= min_size) {
+                return page;
+            }
         }
         page = page->next;
     }
@@ -90,7 +88,11 @@ static inline u64 p_get_alloc_page_size(u64 size) {
     return val;
 }
 
-static AllocChunk* p_AllocChunk_split(AllocPage* page, AllocChunk* chunk, u64 size) {
+static AllocChunk* p_AllocChunk_split(AllocPage* page, AllocChunk* chunk, u64 _size) {
+    /*
+     * padd to be a multiple of 8(align)
+     */
+    u64 size = (_size + 7) & ~7;
     /* Can't fit another allocation anyways */
     if (chunk->usable_size == size 
             || chunk->usable_size == size + sizeof(AllocChunk) 
@@ -101,12 +103,12 @@ static AllocChunk* p_AllocChunk_split(AllocPage* page, AllocChunk* chunk, u64 si
     u64 alloc_size = size + sizeof(AllocChunk);
     AllocChunk* new_chunk = (address)chunk + alloc_size;
     new_chunk->prev = chunk;
+    new_chunk->next = chunk->next;
     if (chunk->next) {
         (chunk->next)->prev = new_chunk;
     }
-    new_chunk->next = chunk->next;
     chunk->next = new_chunk;
-    new_chunk->usable_size = chunk->usable_size - alloc_size;
+    new_chunk->usable_size = (chunk->usable_size - alloc_size);
     chunk->usable_size = size;
     new_chunk->free = true;
     new_chunk->tag = 0;
@@ -126,7 +128,7 @@ static address p_AllocPage_alloc_Chunk(AllocPage* page, u64 size) {
 
     AllocChunk* new_chunk = p_AllocChunk_split(page, chunk, size);
 
-    page->avail_size -= size + sizeof(AllocChunk);
+    page->avail_size -= (size + sizeof(AllocChunk));
     new_chunk->free = false;
     return new_chunk;
 }
@@ -208,7 +210,6 @@ static errno_t p_Allocation_find(address ptr, AllocPage** page_dest, AllocChunk*
 
 }
 static errno_t p_free(address ptr) {
-
     AllocPage*  page = NULL;
     AllocChunk* chunk = NULL;
 
