@@ -2,7 +2,7 @@
 #ifndef _PRIVATE_ENVIRON_H
 #define _PRIVATE_ENVIRON_H
 #include <environ.h>
-#define ENV_PAGE_SIZE 4194304  // allocate 4mb just for the environment
+#define ENV_PAGE_SIZE (4 * 1024 * 1024) // allocate 4mb just for the environment
 
 struct Environment {
     zstr*   env;

@@ -3,6 +3,7 @@
  * right now it:
  *     - initializes and parses the vdso
  */
+#include "alloc.h"
 #include "linux/auxv.h"
 #include "private/vdso.h"
 #include "types.h"
@@ -48,5 +49,8 @@ i32 __no_libc_start(i32 argc, zstr argv[]) {
 
     VDSO_init(vdso_addr);
     
-    return main(argc, argv, envv);
+    i32 return_code = main(argc, argv, envv);
+
+    Environment_free(&global_env);
+    return return_code;
 }
