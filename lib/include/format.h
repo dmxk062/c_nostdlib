@@ -31,13 +31,15 @@ typedef struct {
 // a formatted null terminated string
 typedef struct {
     zstr val;
-    u16 padd;
+    u16 lpadd;
+    u16 rpadd;
 } zstr_fmt;
 
 // a formatted string
 typedef struct {
     String* val;
-    u16 padd;
+    u16 lpadd;
+    u16 rpadd;
 } string_fmt;
 
 /*

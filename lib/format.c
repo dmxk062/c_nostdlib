@@ -3,7 +3,6 @@
 #include <cstring.h>
 #include <string.h>
 #include <format.h>
-#include <errno.h>
 
 
 
@@ -13,7 +12,7 @@
  */
 i64 i_to_base(i64 num, i8 base, char* out, i64 maxlen, u16 padd) {
     static const char digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    static const i64 buffsize = 256;
+    const i64 buffsize = 256;
 
     char buffer[buffsize];
     i64 index = buffsize - 1;
@@ -71,7 +70,7 @@ i64 f_to_decimal(f128 num, char* out, i64 maxlen, u16 padd, u16 num_frac) {
     bool is_negative = false;
 
     // use two separate stack local buffers for integer and fraction 
-    static const i64 buffsize = 128;
+    const i64 buffsize = 128;
     char ibuffer[buffsize];
     char fbuffer[buffsize];
 
@@ -141,8 +140,6 @@ i64 f_to_decimal(f128 num, char* out, i64 maxlen, u16 padd, u16 num_frac) {
     out[ilen] = '.';
     memcpy(out + 1 + ilen, fbuffer, findex);
     return total_length;
-
-
 }
 
 /*
@@ -169,10 +166,12 @@ i64 f_to_decimal(f128 num, char* out, i64 maxlen, u16 padd, u16 num_frac) {
  * {D,X,O,B}:
  *    - padd: padd with zeroes
  * S: 
- *    - padd: padd with spaces
+ *    - rpadd: padd with spaces
  *
  *
  */
+
+
 Result(u64) fmt(const zstr format, char* out, u64 outlen, fmt_value* values) {
     u64 fmtlen = strlen(format);
     u64 outind = 0;
@@ -202,13 +201,15 @@ Result(u64) fmt(const zstr format, char* out, u64 outlen, fmt_value* values) {
                 out[outind++] = tmpchar;
             } else if (format[i] == 'z' || format[i] == 'Z') {
                 char* str_val;
-                u16 padding;
+                u16 padding, filling;
                 if (format[i] == 'Z') {
                     str_val = values->Z.val;
-                    padding = values->Z.padd;
+                    padding = values->Z.lpadd;
+                    filling = values->Z.rpadd;
                 } else {
                     str_val = values->z;
                     padding = 0;
+                    filling = 0;
                 }
                 values++;
                 // insert a string
@@ -234,15 +235,28 @@ Result(u64) fmt(const zstr format, char* out, u64 outlen, fmt_value* values) {
                 // copy the string into place if we have space
                 memcpy(out + outind, str_val, len);
                 outind += len;
+                if (filling > 0 && filling > len) {
+                    i64 filling_left = filling - len;
+                    if (filling + outind > outlen) {
+                        return Err(u64, 2);
+                    }
+
+                    while (filling_left > 0) {
+                        out[outind++] = ' '; 
+                        filling_left--;
+                    }
+                }
 
             } else if (format[i] == 's' || format[i] == 'S') {
                 String* str_val;
-                u16 padding;
+                u16 padding, filling;
                 if (format[i] == 'S') {
                     str_val = values->S.val;
-                    padding = values->S.padd;
+                    padding = values->S.lpadd;
+                    filling = values->S.rpadd;
                 } else {
                     str_val = values->s;
+                    padding = 0;
                     padding = 0;
                 }
                 values++;
@@ -267,6 +281,17 @@ Result(u64) fmt(const zstr format, char* out, u64 outlen, fmt_value* values) {
                 // copy the string into place if we have space
                 memcpy(out + outind, str_val->buffer, len);
                 outind += len;
+                if (filling > 0 && filling > len) {
+                    i64 filling_left = filling - len;
+                    if (filling + outind > outlen) {
+                        return Err(u64, 2);
+                    }
+
+                    while (filling_left > 0) {
+                        out[outind++] = ' '; 
+                        filling_left--;
+                    }
+                }
 
             // ansi format
             } else if (format[i] == 'e') {
