@@ -121,9 +121,6 @@ errno_t Arguments_parse(u64 argc, zstr argv[argc],
 {
 
     program_name = program_name ?: argv[0];
-    if (argc == 1) {
-        return 0;
-    }      
 
     PResult(String) new_error_buffer = String_new(ARG_ERROR_LEN);
     if (!new_error_buffer.ok) {
