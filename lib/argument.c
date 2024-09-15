@@ -45,7 +45,7 @@ static errno_t handler_toggle(zstr value, void* dest, void* config, String* erro
     return 0;
 }
 static errno_t handler_set(zstr value, void* dest, void* config, String* error_msg) {
-    *(bool*)dest = !*(bool*)dest;
+    *(bool*)dest = true;
     return 0;
 }
 
@@ -93,15 +93,24 @@ static void print_help(zstr program_name, zstr synopsis, zstr description,
 
     for (u64 ni = 0; ni < named_len; ni++) {
         ArgDesc_Named cur = named[ni];
+
+        String* long_var = String_new(100).value;
+        if (cur.meta_name) {
+            String_format(long_var, "--%z=%z", Fmt({.z = cur.long_name}, {.z = cur.meta_name}));
+        } else {
+            String_format(long_var, "--%z", Fmt({.z = cur.long_name}));
+        }
         if (cur.short_name) {
-            fprint("  -%c, --%Z       %z\n", Fmt(
-                    {.c = cur.short_name}, {.Z = {cur.long_name, .rpadd = 12}}, {.z = cur.description}));
+            fprint("  -%c, %S       %z\n", Fmt(
+                    {.c = cur.short_name}, {.S = {long_var, .rpadd = 12}}, {.z = cur.description}));
         }
         else {
-            fprint("      --%Z       %z\n", Fmt(
-                    {.Z = {cur.long_name, .rpadd = 12}}, {.z = cur.description}));
+            fprint("      %S       %z\n", Fmt(
+                    {.S = {long_var, .rpadd = 12}}, {.z = cur.description}));
         }
+        String_free(long_var);
     }
+    print(description);
     
 }
 
@@ -152,6 +161,9 @@ errno_t Arguments_parse(u64 argc, zstr argv[argc],
                         value = arg + eq_pos.value + 1;
                         arg += 2;
                         arg_len = eq_pos.value - 2;
+                    } else {
+                        arg += 2;
+                        arg_len = eq_pos.value - 2;
                     }
                 }
 
@@ -164,7 +176,7 @@ errno_t Arguments_parse(u64 argc, zstr argv[argc],
                     u64 cur_len = strlen(cur.long_name);
                     if (String_buf_eq(cur.long_name, cur_len, arg, arg_len)) {
                         if (value == NULL && cur.kind % 2 != 0) {
-                            fwrite(STDERR, "%z: Missing argument to long option %z\n", Fmt({.z = program_name}, {.z = cur.long_name}));
+                            fwrite(STDERR, "%z: Option '--%z' requires an argument: '%z'\n", Fmt({.z = program_name}, {.z = cur.long_name}, {.z = cur.meta_name}));
                             goto abort_parsing;
                         }
 
@@ -199,8 +211,8 @@ errno_t Arguments_parse(u64 argc, zstr argv[argc],
 
                         if (cur.short_name == cur_flag) {
                             zstr value = argv[i+1];
-                            if ((ai != arg_len-1 && cur.kind % 2 != 0) || !value) {
-                                fwrite(STDERR, "%z: Missing argument to short option %c\n", Fmt({.z = program_name}, {.c = cur_flag}));
+                            if (cur.kind % 2 != 0 && (ai != arg_len-1 || !value)) {
+                                fwrite(STDERR, "%z: Option '-%c' requires an argument: '%z'\n", Fmt({.z = program_name}, {.c = cur_flag}, {.z = cur.meta_name}));
                                 goto abort_parsing;
                             }
 
@@ -246,6 +258,7 @@ errno_t Arguments_parse(u64 argc, zstr argv[argc],
 
     return 0;
 abort_parsing:
+    fwrite(STDERR, "Try '%z --help' for more information\n", Fmt({.z = program_name}));
     String_free(error_buffer);
     return 1;
 }
