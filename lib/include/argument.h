@@ -15,6 +15,7 @@ enum ArgumentType {
     ArgumentType_FLOAT = 3,
     ArgumentType_STRING = 5,
     ArgumentType_CALLBACK = 7,
+    ArgumentType_STRINGVEC = 9,
 
     // without argument
     ArgumentType_TOGGLE = 2,
@@ -45,9 +46,14 @@ typedef struct {
     u8                  base;
 } ArgConfig_Int;
 
+enum ArgumentResult {
+    ArgumentResult_Success = 0,
+    ArgumentResult_Error = 1,
+    ArgumentResult_Continue = 2,
+};
 
-typedef errno_t (*ArgumentHandler)(zstr value, void* dest, void* config,  String* error_msg);
-typedef errno_t (*ArgumentCallback)(zstr value, void* dest, void* data, String* error_msg);
+typedef enum ArgumentResult (*ArgumentHandler)(zstr value, void* dest, void* config,  String* error_msg);
+typedef enum ArgumentResult (*ArgumentCallback)(zstr value, void* dest, void* data, String* error_msg);
 
 typedef struct {
     ArgumentCallback    callback;

@@ -10,7 +10,7 @@
 #include <process.h>
 
 
-errno_t handler_int(zstr value, void* dest, void* config, String* error_msg) {
+static enum ArgumentResult handler_int(zstr value, void* dest, void* config, String* error_msg) {
     u64 value_len = strlen(value);
     u64 base = 10;
     if (config) {
@@ -20,43 +20,58 @@ errno_t handler_int(zstr value, void* dest, void* config, String* error_msg) {
     Result(i64) new_int = str_to_int(value, value_len, base);
     if (!new_int.ok) {
         String_format(error_msg, "Invalid base %d integer: %z", Fmt({.i = base}, {.z = value}));
-        return 1;
+        return ArgumentResult_Error;
     }
 
     *(i64*)dest = new_int.value;
-    return 0;
+    return ArgumentResult_Success;
 }
 
-static errno_t handler_float(zstr value, void* dest, void* config, String* error_msg) {
+static enum ArgumentResult handler_float(zstr value, void* dest, void* config, String* error_msg) {
     u64 value_len = strlen(value);
 
     Result(f128) new_float = str_to_float(value, value_len);
     if (!new_float.ok) {
         String_format(error_msg, "Invalid floating point number: %z", Fmt({.z = value}));
-        return 1;
+        return ArgumentResult_Error;
     }
 
     *(f64*)dest = new_float.value;
-    return 0;
+    return ArgumentResult_Success;
 }
 
-static errno_t handler_toggle(zstr value, void* dest, void* config, String* error_msg) {
-    *(bool*)dest = !*(bool*)dest;
-    return 0;
+static enum ArgumentResult handler_toggle(zstr value, void* dest, void* config, String* error_msg) {
+    bool old = *(bool*)dest;
+    *(bool*)dest = !old;
+    return ArgumentResult_Success;
 }
-static errno_t handler_set(zstr value, void* dest, void* config, String* error_msg) {
+static enum ArgumentResult handler_set(zstr value, void* dest, void* config, String* error_msg) {
     *(bool*)dest = true;
-    return 0;
+    return ArgumentResult_Success;
 }
 
-static errno_t handler_string(zstr value, void* dest, void* config, String* error_msg) {
+static enum ArgumentResult handler_string(zstr value, void* dest, void* config, String* error_msg) {
     *(zstr*)dest = value;
-    return 0;
+    return ArgumentResult_Success;
 }
 
-static errno_t handler_callback(zstr value, void* dest, void* config, String* error_msg) {
+static enum ArgumentResult handler_callback(zstr value, void* dest, void* config, String* error_msg) {
     ArgConfig_Callback* callback = config; 
     return callback->callback(value, dest, callback->data, error_msg);
+}
+
+static enum ArgumentResult handler_stringarray(zstr value, void* _dest, void* config, String* error_msg) {
+    Vec(zstr)* dest = (Vec(zstr)*)_dest;
+    if (VecFull((*dest))) {
+        return ArgumentResult_Error;
+    }
+
+    VecPush((*dest), value);
+    if (VecFull((*dest))) {
+        return ArgumentResult_Success;
+    } else {
+        return ArgumentResult_Continue;
+    }
 }
 
 static ArgumentHandler builtin_handlers[] = {
@@ -67,6 +82,7 @@ static ArgumentHandler builtin_handlers[] = {
     [ArgumentType_TOGGLE]   = handler_toggle,
     [ArgumentType_CALLBACK] = handler_callback,
     [ArgumentType_CALLBACK_NO_ARGS] = handler_callback,
+    [ArgumentType_STRINGVEC] = handler_stringarray,
 };
 
 #define ABORT_WITH_ERR() \
@@ -89,7 +105,7 @@ static void print_help(zstr program_name, zstr synopsis, zstr description,
             fprint(" [%z]", Fmt({.z = positional[pi].meta_name}));
         }
     }
-    fprint("\n%z\n\nOptions:\n", Fmt({.z = synopsis}));
+    fprint("\n%z\n\nOptions:\n  -h, --help                         Show this help\n", Fmt({.z = synopsis}));
 
     for (u64 ni = 0; ni < named_len; ni++) {
         ArgDesc_Named cur = named[ni];
@@ -102,11 +118,11 @@ static void print_help(zstr program_name, zstr synopsis, zstr description,
         }
         if (cur.short_name) {
             fprint("  -%c, %S       %z\n", Fmt(
-                    {.c = cur.short_name}, {.S = {long_var, .rpadd = 12}}, {.z = cur.description}));
+                    {.c = cur.short_name}, {.S = {long_var, .rpadd = 24}}, {.z = cur.description}));
         }
         else {
             fprint("      %S       %z\n", Fmt(
-                    {.S = {long_var, .rpadd = 12}}, {.z = cur.description}));
+                    {.S = {long_var, .rpadd = 24}}, {.z = cur.description}));
         }
         String_free(long_var);
     }
@@ -139,7 +155,7 @@ errno_t Arguments_parse(u64 argc, zstr argv[argc],
         }
         zstr arg = argv[i];
         u64 arg_len = strlen(arg);
-        errno_t err = 0;
+        enum ArgumentResult res = 0;
 
 
         // some option, not a positional arg, exception: a single '-', as commonly used to indicate a standard stream for I/O
@@ -178,8 +194,8 @@ errno_t Arguments_parse(u64 argc, zstr argv[argc],
                         }
 
                         // we found smth that is valid, finally
-                        err = builtin_handlers[cur.kind](value, cur.dest, cur.config, error_buffer);
-                        if (err) {
+                        res = builtin_handlers[cur.kind](value, cur.dest, cur.config, error_buffer);
+                        if (res == ArgumentResult_Error) {
                             ABORT_WITH_ERR();
                         }
                         if (cur.kind % 2 != 0) { i++; } // skip next arg, used as param
@@ -213,8 +229,8 @@ errno_t Arguments_parse(u64 argc, zstr argv[argc],
                                 goto abort_parsing;
                             }
 
-                            err = builtin_handlers[cur.kind](value, cur.dest, cur.config, error_buffer);
-                            if (err) {
+                            res = builtin_handlers[cur.kind](value, cur.dest, cur.config, error_buffer);
+                            if (res == ArgumentResult_Error) {
                                 ABORT_WITH_ERR();
                             }
                             if (cur.kind % 2 != 0) { i++; }
@@ -236,12 +252,13 @@ errno_t Arguments_parse(u64 argc, zstr argv[argc],
         } else {
             if (positional_index < positional_len) {
                 ArgDesc_Positional cur = positional[positional_index];
-                err = builtin_handlers[cur.kind](arg, cur.dest, cur.config, error_buffer);
-                if (err) {
+                res = builtin_handlers[cur.kind](arg, cur.dest, cur.config, error_buffer);
+                if (res == ArgumentResult_Error) {
                     ABORT_WITH_ERR();
                     goto abort_parsing;
+                } else if (res != ArgumentResult_Continue) {
+                    positional_index++;
                 }
-                positional_index++;
             }
         }
     }

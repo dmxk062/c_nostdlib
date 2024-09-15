@@ -124,15 +124,44 @@ typedef u64                 errno_t;
 
 #ifndef COUNTED_ARRAY
 
-#define COUNTED_ARRAY(type, name) \
-    struct { \
+#define DefineVec(type) \
+    typedef struct { \
         u64     size; \
         u64     len; \
-        type*    name; \
-    }
+        type*   vals; \
+    } __counted_array_##type;
+
+
+#define VecNew(_type, _size) \
+        (__counted_array_##_type) { \
+            .size = _size, \
+            .len = 0, \
+            .vals = (_type[_size]){[_size-1] = NULL}, \
+        }
+#define VecPush(_vec, _val) \
+    (_vec.vals[_vec.len++] = _val)
+
+#define VecGet(_vec, _index) \
+    (_vec.vals[_index])
+
+#define VecPop(_vec) \
+    _vec.vals[--_vec.len]
+
+
+#define Vec(type) \
+    __counted_array_##type
+
+#define VecFull(_vec) \
+    (_vec.size <= _vec.len)
+
+#define VecForeach(_vec, _name) \
+    for (u64 _i_##_vec = 0; _name = _vec.vals[_i_##_vec], _i_##_vec < _vec.len; _i_##_vec++)
+
 
 #endif /* COUNTED_ARRAY */
 
+DefineVec(zstr);
+DefineResult(u8);
 DefineResult(i64);
 DefineResult(u64);
 DefineResult(f64);
