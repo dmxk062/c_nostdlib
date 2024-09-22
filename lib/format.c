@@ -1,3 +1,4 @@
+#include "io.h"
 #include "types.h"
 #include <mem.h>
 #include <cstring.h>
@@ -257,7 +258,7 @@ Result(u64) fmt(const zstr format, char* out, u64 outlen, fmt_value* values) {
                 } else {
                     str_val = values->s;
                     padding = 0;
-                    padding = 0;
+                    filling = 0;
                 }
                 values++;
                 u64 len = str_val->len;
@@ -286,7 +287,6 @@ Result(u64) fmt(const zstr format, char* out, u64 outlen, fmt_value* values) {
                     if (filling + outind > outlen) {
                         return Err(u64, 2);
                     }
-
                     while (filling_left > 0) {
                         out[outind++] = ' '; 
                         filling_left--;
@@ -377,7 +377,7 @@ Result(u64) fmt(const zstr format, char* out, u64 outlen, fmt_value* values) {
 
 Result(u64) String_format(String* str, const zstr format, fmt_value* values) {
     Result(u64) ret = fmt(format, str->buffer, str->size, values);
-    if (ret.ok){
+    if (ret.ok) {
         str->len = ret.value;
     }
     return ret;

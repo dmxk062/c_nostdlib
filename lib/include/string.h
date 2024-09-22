@@ -46,6 +46,8 @@ String* String_view_on_zstr(const zstr char_array);
 // create a view on an existing String as a slice
 String* String_view_on_slice(const String* str, u64 start, u64 end);
 
+u64 String_count_char(const String* str, char ch);
+
 Result(zstr) String_to_zstr(String* str);
 
 

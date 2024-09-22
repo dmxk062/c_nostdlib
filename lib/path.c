@@ -1,25 +1,79 @@
-#include "format.h"
-#include "types.h"
+#include "io.h"
+#include <format.h>
+#include <types.h>
+#include <constants.h>
+#include <errno.h>
+#include <alloc.h>
 #include <string.h>
 #include <filesystem.h>
-#include "utils/path.h"
+#include <cstring.h>
+#include <utils/path.h>
 
-errno_t find_in_path(struct PathAccess* path, String* out, String* search, u64 mode) {
-    Vec(String)* PathDirs = path->path;
-    Result(u64) num_written;
 
-    for (u64 i = 0; i < PathDirs->len; i++) {
+PathList* PathList_new_from_zstr(zstr path, char sep) {
+    u64 length = strlen(path);
+    String str = STRING_CAST_BUF(path, length);
 
-        num_written = String_format(out, "%s/%s ", (fmts){{.s = PathDirs->vals[i]}, {.s = search}});
-        if (!num_written.ok)
-            return num_written.errno;
-        out->buffer[num_written.value-1] = '\0';
-        if (access(out->buffer, mode) == 0) {
-            out->len--;
-            return 0;
+    u64 num_separators = String_count_char(&str, sep);
+    Vec(String)* vec = malloc(sizeof(Vec(String)));
+    String** buf = malloc(sizeof(String*) * (num_separators + 1));
+    if (!vec || !buf) {
+        return NULL;
+    }
+
+    *vec = (Vec(String)){.len = 0, .size = num_separators + 1, .vals = buf};
+
+    u64 num_elems = String_split_char_as_view(&str, vec, sep);
+    if (num_elems == 0) {
+        return NULL;
+    }
+    vec->len = num_elems;
+
+    PathList* list = malloc(sizeof(PathList));
+    if (!list) {
+        return NULL;
+    }
+
+    *list = (PathList){.path = vec};
+    return list;
+}
+
+PResult(String) PathList_lookup_name(PathList* list, String* name, enum AccessMode mode) {
+    PResult(String) new_buffer = String_new(PATH_MAX);
+    if (!new_buffer.ok) {
+        return PErr(String, ENOMEM);
+    }
+    String* buffer = new_buffer.value;
+    
+    for (u64 i = 0; i < list->path->len; i++) {
+        String* path= list->path->vals[i];
+        Result(u64) ret = String_format(buffer, "%s/%s", Fmt({.s = path}, {.s = name}));
+        if (!ret.ok) {
+            String_free(buffer);
+            return PErr(String, ret.errno);
+        } else if (ret.value >= PATH_MAX) {
+            String_free(buffer);
+            return PErr(String, ENAMETOOLONG);
+        }
+
+        // HACK:
+        // so we can pass it directly to linux without having to turn it into a zstr
+        buffer->buffer[buffer->len] = '\0';
+
+        if (access(buffer->buffer, AccessMode_F | AccessMode_X) == 0) {
+            return POk(String, buffer);
         }
     }
 
-    out->len = 0;
-    return 1;
+    return PErr(String, 0);
+}
+
+void PathList_free(PathList* list) {
+    Vec(String)* path = list->path;
+    String* to_free;
+    VecpForeach(path, to_free) {
+        String_free(to_free);
+    }
+
+    free(list);
 }

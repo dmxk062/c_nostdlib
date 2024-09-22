@@ -155,8 +155,7 @@ String* String_slice_as_view(const String* str, i64 start, i64 end) {
 
 
 u64 String_split_char_as_copy(String* str, Vec(String)* buffer, char delim) {
-    u64 start_at = buffer->len;
-    u64 index = start_at;
+    u64 num_split = 0;
 
     u64 start = 0;
     u64 end   = 0;
@@ -167,12 +166,12 @@ u64 String_split_char_as_copy(String* str, Vec(String)* buffer, char delim) {
             if (!VecpFull(buffer)) {
                 PResult(String) new_str = String_slice_as_copy(str, start, end);
                 if (!new_str.ok) 
-                    return index - start_at;
+                    return num_split;
 
                 VecpPush(buffer, new_str.value);
                 start = end+1;
             } else {
-                return index - start_at;
+                return num_split;
             }
         }
     }
@@ -180,17 +179,16 @@ u64 String_split_char_as_copy(String* str, Vec(String)* buffer, char delim) {
     if (end < str->len && !(VecpFull(buffer))) {
         PResult(String) new_str = String_slice_as_copy(str, start, str->len);
         if (!new_str.ok) {
-            return index - start_at;
+            return num_split;
         }
         VecpPush(buffer, new_str.value);
     }
 
-    return index - start_at;
+    return num_split;
 }
 
 u64 String_split_char_as_view(String* str, Vec(String)* buffer, char delim) {
-    u64 start_at = buffer->len;
-    u64 index = start_at;
+    u64 num_split = 0;
 
     u64 start = 0;
     u64 end   = 0;
@@ -201,12 +199,13 @@ u64 String_split_char_as_view(String* str, Vec(String)* buffer, char delim) {
             if (!VecpFull(buffer)) {
                 String* new_str = String_slice_as_view(str, start, end);
                 if (!new_str) 
-                    return index - start_at;
+                    return num_split;
 
                 VecpPush(buffer, new_str);
+                num_split++;
                 start = end+1;
             } else {
-                return index - start_at;
+                return num_split;
             }
         }
     }
@@ -214,12 +213,13 @@ u64 String_split_char_as_view(String* str, Vec(String)* buffer, char delim) {
     if (end < str->len && !(VecpFull(buffer))) {
         String* new_str = String_slice_as_view(str, start, str->len);
         if (!new_str) {
-            return index - start_at;
+            return num_split;
         }
         VecpPush(buffer, new_str);
+        num_split++;
     }
 
-    return index - start_at;
+    return num_split;
 }
 
 
@@ -283,4 +283,13 @@ bool String_buf_eq(const char* char1array, u64 char1len, const char* char2array,
 
 bool String_eq(const String* str1, const String* str2) {
     return String_buf_eq(str1->buffer, str1->len, str2->buffer, str2->len);
+}
+
+u64 String_count_char(const String* str, char ch) {
+    u64 count = 0;
+    for (u64 i = 0; i < str->len; i++) {
+        if (str->buffer[i] == ch) count++;
+    }
+
+    return count;
 }

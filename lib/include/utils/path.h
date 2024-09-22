@@ -4,13 +4,16 @@
 
 #include "types.h"
 #include "string.h"
+#include "filesystem.h"
 
 
-struct PathAccess {
+typedef struct PathList {
     Vec(String)* path;
-};
+} PathList;
 
+PathList* PathList_new_from_zstr(zstr list, char sep);
+PResult(String) PathList_lookup_name(PathList* list, String* name, enum AccessMode mode);
+void PathList_free(PathList* list);
 
-errno_t find_in_path(struct PathAccess* path, String* out, String* search, u64 mode);
 
 #endif
