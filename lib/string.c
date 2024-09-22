@@ -1,3 +1,4 @@
+#include "io.h"
 #include <types.h>
 #include <mem.h>
 #include <alloc.h>
@@ -24,16 +25,18 @@ PResult(String) String_new(u64 size) {
         str->buffer = buffer;
         str->size = size;
     }
-    str->alloc = true;
+    str->type = StringType_allocated;
     return POk(String, str);
 }
 
 errno_t String_free(String* str) {
-    if (!str->alloc)
-        return SUCCESS;
+    if (str->type == StringType_allocated) {
+        free(str->buffer);
+        free(str);
+    } else if (str->type == StringType_view) {
+        free(str);
+    }
 
-    free(str->buffer);
-    free(str);
     return SUCCESS;
 }
 
@@ -102,7 +105,7 @@ errno_t String_append(String* dst, const String* src) {
     return String_append_buf(dst, src->buffer, src->len);
 }
 
-PResult(String) String_slice(const String* str, u64 start, u64 end) {
+PResult(String) String_slice_as_copy(const String* str, i64 start, i64 end) {
     u64 new_len = end - start;
     if (new_len == 0) {
         new_len = 1;
@@ -123,40 +126,35 @@ PResult(String) String_slice(const String* str, u64 start, u64 end) {
     return POk(String, ret);
 }
 
-
-PResult(StringList) StringList_new(u64 size) {
-    StringList* new_list = malloc(sizeof(StringList));
-    if (new_list == NULL) 
-        return PErr(StringList, ENOMEM);
-
-    new_list->len = 0;
-    if (size == 0) {
-        new_list->size = 0;
-        new_list->strings = NULL;
-    } else {
-        String** strings = malloc(size * sizeof(String));
-        if (strings == NULL) {
-            free(new_list);
-            return PErr(StringList, ENOMEM);
-        }
-        new_list->size = size;
-        new_list->strings = strings;
-
+String* String_slice_as_view(const String* str, i64 start, i64 end) {
+    if (start < 0) { start = str->len - start; }
+    if (end < 0) { end = str->len - end; }
+    if (start > end) {
+        return NULL;
     }
-    return POk(StringList, new_list);
+    if (end < 0 || start < 0) {
+        return NULL;
+    }
+
+    if (end > str->len || start > str->len) {
+        return NULL;
+    }
+
+    String* new = String_new(0).value;
+    if (!new) {
+        return NULL;
+    }
+
+    new->type = StringType_view;
+    new->len = end - start;
+    new->buffer = str->buffer + start;
+    new->size = 0;
+
+    return new;
 }
 
-errno_t StringList_free(StringList* strings) {
-    for (u64 i = 0; i < strings->len; i++) {
-        if (strings->strings[i] != NULL)
-            String_free(strings->strings[i]);
-    }
-    free(strings->strings);
-    free(strings);
-    return SUCCESS;
-}
 
-u64 String_split_char(String* str, StringList* buffer, char delim) {
+u64 String_split_char_as_copy(String* str, Vec(String)* buffer, char delim) {
     u64 start_at = buffer->len;
     u64 index = start_at;
 
@@ -166,13 +164,12 @@ u64 String_split_char(String* str, StringList* buffer, char delim) {
     for (i64 i = 0; i < str->len; i++) {
         if (str->buffer[i] == delim) {
             end = i;
-            if (index < buffer->size) {
-                PResult(String) new_str = String_slice(str, start, end);
+            if (!VecpFull(buffer)) {
+                PResult(String) new_str = String_slice_as_copy(str, start, end);
                 if (!new_str.ok) 
                     return index - start_at;
 
-                buffer->strings[index++] = new_str.value;
-                buffer->len++;
+                VecpPush(buffer, new_str.value);
                 start = end+1;
             } else {
                 return index - start_at;
@@ -180,23 +177,56 @@ u64 String_split_char(String* str, StringList* buffer, char delim) {
         }
     }
 
-    if (end < str->len && index < buffer->size) {
-        PResult(String) new_str = String_slice(str, start, str->len);
+    if (end < str->len && !(VecpFull(buffer))) {
+        PResult(String) new_str = String_slice_as_copy(str, start, str->len);
         if (!new_str.ok) {
             return index - start_at;
         }
-        buffer->strings[index++] = new_str.value;
-        buffer->len++;
+        VecpPush(buffer, new_str.value);
+    }
+
+    return index - start_at;
+}
+
+u64 String_split_char_as_view(String* str, Vec(String)* buffer, char delim) {
+    u64 start_at = buffer->len;
+    u64 index = start_at;
+
+    u64 start = 0;
+    u64 end   = 0;
+
+    for (i64 i = 0; i < str->len; i++) {
+        if (str->buffer[i] == delim) {
+            end = i;
+            if (!VecpFull(buffer)) {
+                String* new_str = String_slice_as_view(str, start, end);
+                if (!new_str) 
+                    return index - start_at;
+
+                VecpPush(buffer, new_str);
+                start = end+1;
+            } else {
+                return index - start_at;
+            }
+        }
+    }
+
+    if (end < str->len && !(VecpFull(buffer))) {
+        String* new_str = String_slice_as_view(str, start, str->len);
+        if (!new_str) {
+            return index - start_at;
+        }
+        VecpPush(buffer, new_str);
     }
 
     return index - start_at;
 }
 
 
-PResult(String) StringList_join(StringList* list, String* delim) {
+PResult(String) StringList_join(Vec(String)* list, String* delim) {
     u64 total_length = 0;
     for (u64 i = 0; i < list->len; i++) {
-        total_length += list->strings[i]->len;
+        total_length += list->vals[i]->len;
         if (i != list->len - 1)
             total_length += delim->len;
     }
@@ -211,9 +241,9 @@ PResult(String) StringList_join(StringList* list, String* delim) {
 
     for(u64 i = 0; i < list->len; i++) {
         memcpy(str->buffer + outindex,
-                list->strings[i]->buffer,
-                list->strings[i]->len);
-        outindex += list->strings[i]->len;
+                list->vals[i]->buffer,
+                list->vals[i]->len);
+        outindex += list->vals[i]->len;
         if (i != list->len - 1) {
             memcpy(str->buffer + outindex,
                     delim->buffer,

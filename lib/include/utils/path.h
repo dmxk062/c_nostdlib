@@ -7,7 +7,7 @@
 
 
 struct PathAccess {
-    StringList* path;
+    Vec(String)* path;
 };
 
 

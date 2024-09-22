@@ -208,7 +208,7 @@ errno_t Arguments_parse(u64 argc, zstr argv[argc],
                         print_help(program_name, synopsis, description, named_len, named, positional_len, positional);
                         exit(1);
                     }
-                    fwrite(STDERR, "%z: Unknown long option: --%s\n", Fmt({.z = program_name}, {.s = &(String){.buffer = arg, .alloc = false, .size = arg_len, .len = arg_len}}));
+                    fwrite(STDERR, "%z: Unknown long option: --%s\n", Fmt({.z = program_name}, {.s = &STRING_CAST_BUF(arg, arg_len)}));
                     goto abort_parsing;
                 }
             // a single or multiple short options of the form -xyz

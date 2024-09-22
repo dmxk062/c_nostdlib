@@ -4,6 +4,18 @@
 #include <mmap.h>
 #include <private/alloc.h>
 
+
+/*
+ * Memory allocator based on a linked list design
+ * 
+ * AllocHead 
+ * | AllocPage -> AllocChunk -> AllocChunk
+ * v
+ * | AllocPage -> AllocChunk -> AllocChunk
+ *
+ */
+
+
 static AllocHead pg_Head = {
     .initialized = false,
     .num_pages = 0,
@@ -73,8 +85,7 @@ static inline u64 p_get_alloc_page_size(u64 size) {
     return val;
 }
 
-static AllocChunk* p_AllocChunk_split(AllocPage* page, AllocChunk* chunk,
-                                      u64 _size) {
+static AllocChunk* p_AllocChunk_split(AllocPage* page, AllocChunk* chunk, u64 _size) {
      // padd to be a multiple of 8(align)
     u64 size = (_size + 7) & ~7;
 
@@ -179,8 +190,7 @@ address malloc(u64 size) {
 /*
  * Walk the tree to determine the location of a pointer
  */
-static errno_t p_Allocation_find(address ptr, AllocPage** page_dest,
-                                 AllocChunk** chunk_dest) {
+static errno_t p_Allocation_find(address ptr, AllocPage** page_dest, AllocChunk** chunk_dest) {
     AllocPage* page = pg_Head.first;
     while (page) {
         if (page->start < ptr && page->end > ptr) {
