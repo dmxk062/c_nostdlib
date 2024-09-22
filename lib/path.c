@@ -1,4 +1,3 @@
-#include "io.h"
 #include <format.h>
 #include <types.h>
 #include <constants.h>
@@ -60,7 +59,7 @@ PResult(String) PathList_lookup_name(PathList* list, String* name, enum AccessMo
         // so we can pass it directly to linux without having to turn it into a zstr
         buffer->buffer[buffer->len] = '\0';
 
-        if (access(buffer->buffer, AccessMode_F | AccessMode_X) == 0) {
+        if (access(buffer->buffer, mode) == 0) {
             return POk(String, buffer);
         }
     }
