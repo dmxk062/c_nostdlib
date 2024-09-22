@@ -104,8 +104,6 @@ errno_t Environment_set(struct Environment* env, const char* name, u64 name_len,
     if (index.ok) {
         if (!replace)
             return 1;
-
-
         target = env->env + index.value;
         free(env->env[index.value]);
     // append one
@@ -113,8 +111,8 @@ errno_t Environment_set(struct Environment* env, const char* name, u64 name_len,
         if (env->env_count >= env->env_size)
             return ENOMEM;
 
-        target=env->env + env->env_count;
-        append = false;
+        target = env->env + env->env_count;
+        append = true;
     }
 
     zstr buffer = malloc(name_len + value_len + 2*sizeof(char)); /* + '=' + '\0' */
@@ -151,6 +149,10 @@ errno_t Environment_unset(struct Environment* env, const char* name, u64 name_le
         env->env[i] = env->env[i+1];
     }
     env->env_count--;
+}
+
+errno_t Environment_zunset(struct Environment* env, const zstr name) {
+    return Environment_unset(env, name, strlen(name));
 }
 
 Result(zstr) getenv(const zstr name) {
