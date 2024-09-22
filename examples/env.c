@@ -20,7 +20,7 @@ const zstr Description = "";
 
 bool delete_environment = false;
 ArgDesc_Named named[] = {
-    {&delete_environment, ArgumentType_SET, 'c', "clear-environment", "Start with empty environment"},
+    {&delete_environment, ArgumentType_SET, 'c', "clear-environment", NULL, "Start with empty environment"},
 };
 Vec(zstr) arguments = VecNew(zstr, 1024);
 ArgDesc_Positional positional[] = {
