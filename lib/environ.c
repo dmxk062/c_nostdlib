@@ -6,6 +6,18 @@
 #include <types.h>
 #include <private/libc_start.h>
 
+struct Environment* Environment_new(u64 size) {
+    struct Environment* environ = malloc(sizeof(struct Environment));
+    zstr* envvec = malloc(size * sizeof(zstr));
+    if (!environ||!envvec) {
+        return NULL;
+    }
+    environ->env_size = size;
+    environ->env_count = 0;
+    environ->env = envvec;
+    return environ;
+}
+
 errno_t Environment_init(struct Environment* environ, zstr* envvec) {
     u64 count = 0;
     zstr* envp = envvec;
@@ -51,8 +63,7 @@ errno_t Environment_free(struct Environment* env) {
     return 0;
 }
 
-Result(u64) Environment_find(struct Environment* env, const zstr name) {
-    u64 name_len = strlen(name);
+Result(u64) Environment_find(struct Environment* env, const char* name, u64 name_len) {
     for (u64 i = 0; i < env->env_count; i++) {
         u64 ent_len = strlen(env->env[i]);
         if (ent_len < name_len) 
@@ -66,20 +77,27 @@ Result(u64) Environment_find(struct Environment* env, const zstr name) {
 
 }
 
-Result(zstr) Environment_get(struct Environment* env, const zstr name) {
-    Result(u64) index = Environment_find(env, name);
-    if (!index.ok)
-        return Err(zstr, NULL);
-
-    return Ok(zstr, env->env[index.value] + strlen(name) + 1);
+Result(u64) Environment_zfind(struct Environment* env, const zstr name) {
+    u64 name_len = strlen(name);
+    return Environment_find(env, name, name_len);
 
 }
 
-errno_t Environment_set(struct Environment* env, const zstr name, const zstr value, bool replace) {
-    u64 name_len  = strlen(name);
-    u64 value_len = strlen(value);
+Result(zstr) Environment_get(struct Environment* env, const char* name, u64 name_len) {
+    Result(u64) index = Environment_find(env, name, name_len);
+    if (!index.ok)
+        return Err(zstr, NULL);
 
-    Result(u64) index = Environment_find(env, name);
+    return Ok(zstr, env->env[index.value] + name_len + 1);
+
+}
+Result(zstr) Environment_zget(struct Environment* env, const zstr name) {
+    return Environment_get(env, name, strlen(name));
+}
+
+errno_t Environment_set(struct Environment* env, const char* name, u64 name_len, const char* value, u64 value_len, bool replace) {
+
+    Result(u64) index = Environment_find(env, name, name_len);
     zstr* target = NULL;
     bool append = false;
     // variable already exists, create it
@@ -118,8 +136,12 @@ errno_t Environment_set(struct Environment* env, const zstr name, const zstr val
     return 0;
 }
 
-errno_t Environment_unset(struct Environment* env, const zstr name) {
-    Result(u64) index = Environment_find(env, name);
+errno_t Environment_zset(struct Environment* env, const zstr name, const zstr value, bool replace) {
+    return Environment_set(env, name, strlen(name), value, strlen(value), replace);
+}
+
+errno_t Environment_unset(struct Environment* env, const char* name, u64 name_len) {
+    Result(u64) index = Environment_find(env, name, name_len);
     if (!index.ok)
         return 1;
 
@@ -129,15 +151,14 @@ errno_t Environment_unset(struct Environment* env, const zstr name) {
         env->env[i] = env->env[i+1];
     }
     env->env_count--;
-
 }
 
 Result(zstr) getenv(const zstr name) {
-    return Environment_get(g_nolibc_global_STATE.environ, name);
+    return Environment_zget(g_nolibc_global_STATE.environ, name);
 }
 errno_t setenv(const zstr name, const zstr value, bool replace) {
-    return Environment_set(g_nolibc_global_STATE.environ, name, value, replace);
+    return Environment_zset(g_nolibc_global_STATE.environ, name, value, replace);
 }
 errno_t unsetenv(const zstr name) {
-    return Environment_unset(g_nolibc_global_STATE.environ, name);
+    return Environment_zunset(g_nolibc_global_STATE.environ, name);
 }
