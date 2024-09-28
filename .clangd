@@ -5,6 +5,7 @@ Index:
 Diagnostics:
   Includes:
     AnalyzeAngledIncludes: true
+  StandardLibrary: false
 
 CompileFlags:
   Add: [-nostdlib,
