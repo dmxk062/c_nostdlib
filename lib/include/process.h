@@ -17,6 +17,8 @@ errno_t Process_send_signal(u64 pid, enum Signal sig);
 
 errno_t Process_exec(const zstr program, const zstr argv[], const zstr envv[]);
 
+struct Environment* Process_get_Environment(void);
+
 
 enum PrctlOp {
     PrctlOp_SET_NAME = 15,

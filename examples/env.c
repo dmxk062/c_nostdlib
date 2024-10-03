@@ -11,7 +11,7 @@
 #include <process.h>
 #include <types.h>
 #include <private/environ.h>
-#include <private/libc_start.h>
+#include <process.h>
 
 
 const zstr ProgramName = "env";
@@ -43,7 +43,7 @@ i32 main(i32 argc, zstr argv[], zstr envv[]) {
             return 1;
         }
     } else {
-        environ = g_nolibc_global_STATE.environ;
+        environ = Process_get_Environment();
     }
 
     u64 argindex = 0;
