@@ -37,13 +37,10 @@ Result(u64) open(const char *path, i64 flags, i64 mode) {
         return Ok(u64, ret);
 }
 
-Result(u64) close(u64 fd) {
-    i64 ret = (i64)syscall1(SYS_CLOSE,
-            (void*) fd);
-    if (ret < 0) 
-        return Err(u64, -ret);
-    else
-        return Ok(u64, ret);
+errno_t close(u64 fd) {
+    return (errno_t)-(i64)
+    syscall1(SYS_CLOSE, 
+            (untyped)fd);
 }
 
 

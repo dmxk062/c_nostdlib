@@ -42,7 +42,7 @@ enum SeekFlag {
 
     
 Result(u64) open(const char* path, i64 flags, i64 mode);
-Result(u64) close(u64 fd);
+errno_t close(u64 fd);
 Result(u64) seek(u64 fd, i64 offset, enum SeekFlag origin);
 
 void print(const zstr string);
