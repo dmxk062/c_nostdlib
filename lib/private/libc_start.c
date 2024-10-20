@@ -3,7 +3,6 @@
  * right now it:
  *     - initializes and parses the vdso
  */
-#include "alloc.h"
 #include "linux/auxv.h"
 #include "private/vdso.h"
 #include "types.h"

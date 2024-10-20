@@ -7,7 +7,7 @@
  * slightly faster than a naive implementation that just copies u8s
  * for faster performance, this should be rewritten in asm to take advantage of vector instructions
  */ 
-void memcpy (void* dst, const void* src, i64 size) {
+void memcpy(void* dst, const void* src, i64 size) {
     u64* td = (u64*)dst;
     u64* ts = (u64*)src;
     u8 *cd, *cs;
@@ -27,11 +27,17 @@ void memcpy (void* dst, const void* src, i64 size) {
 }
 
 void* memset(void* dest, u64 val, u64 count) {
-    for (; count > 8; count -= 8)
-        *(u64*)++dest = val;
+    u64* dest64 = (u64*)dest;
+    while (count >= 8) {
+        *dest64++ = val;
+        count -= 8;
+    }
 
-    while (count > 0)
-        *(u8*)++dest = (u8)val;
+    u8* dest8 = (u8*)dest64;
+    while (count > 0) {
+        *dest8++ = (u8)val;
+        count--;
+    }
 
     return dest;
 }

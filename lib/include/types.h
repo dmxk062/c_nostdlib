@@ -187,6 +187,7 @@ typedef u64                 errno_t;
 #endif /* COUNTED_ARRAY */
 
 DefineVec(zstr);
+DefineResult(char);
 DefineResult(u8);
 DefineResult(i64);
 DefineResult(u64);
