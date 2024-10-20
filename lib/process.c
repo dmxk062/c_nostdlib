@@ -1,7 +1,9 @@
+#include "private/environ.h"
 #include "signal.h"
 #include <process.h>
 #include <syscall.h>
 #include <types.h>
+#include <private/libc_start.h>
 
 
 void exit(u8 exitcode) {
@@ -89,4 +91,8 @@ errno_t Process_set_gid(u64 gid) {
     return (errno_t)-(i64)
     syscall1(SYS_SETGID,
             (untyped)gid);
+}
+
+struct Environment* Process_get_Environment() {
+    return g_nolibc_global_STATE.environ;
 }
