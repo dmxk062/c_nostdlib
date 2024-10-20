@@ -16,7 +16,10 @@
 
 const zstr ProgramName = "env";
 const zstr Synopsis = "Execute program with custom environment";
-const zstr Description = "";
+const zstr Description = "\n"
+                         "Set values in environment for key=value pairs\n"
+                         "After last key=value pair is encountered, WORDs are treated as a program to execute\n"
+                         "If the program is not an absolute or relative path, $PATH is searched for it\n";
 
 bool delete_environment = false;
 ArgDesc_Named named[] = {
